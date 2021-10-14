@@ -19,13 +19,13 @@ class GTReadTimeView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.blue
+        self.backgroundColor = UIColor.white
         
         // 总时间
         timeLabel = UILabel()
         timeLabel.textAlignment = .center
         timeLabel.font = timeLabel.font.withSize(100)
-        timeLabel.textColor = UIColor.white
+        timeLabel.textColor = UIColor.black
         timeLabel.text = "0"
         self.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { (make) in
@@ -37,7 +37,7 @@ class GTReadTimeView: UIView {
         unitLabel = UILabel()
         unitLabel.textAlignment = .center
         unitLabel.font = unitLabel.font.withSize(30)
-        unitLabel.textColor = UIColor.white
+        unitLabel.textColor = UIColor.black
         unitLabel.text = "小时"
         self.addSubview(unitLabel)
         unitLabel.snp.makeConstraints { (make) in
@@ -56,6 +56,9 @@ class GTReadTimeView: UIView {
         chartView.scaleXEnabled = false
         chartView.scaleYEnabled = false
         chartView.doubleTapToZoomEnabled = false
+        chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
+        chartView.noDataFont = UIFont(name: "Helvetica", size: 25.0)!
+        chartView.noDataTextColor = UIColor(hexString: "#2ec9a4")
         self.addSubview(chartView)
         chartView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
@@ -63,6 +66,20 @@ class GTReadTimeView: UIView {
             make.height.equalTo(300)
             make.bottom.equalToSuperview()
         }
+        
+        // 测试
+        var dataEntries = [BarChartDataEntry]()
+        for i in 0..<20 {
+                    let y = arc4random()%10
+                    let entry = BarChartDataEntry.init(x: Double(i), y: Double(y))
+                    dataEntries.append(entry)
+                }
+        
+        let chartDataSet = BarChartDataSet(entries: dataEntries)
+        chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
+        chartDataSet.valueFont = UIFont.systemFont(ofSize: 15)
+        let chartData = BarChartData(dataSets: [chartDataSet])
+        chartView.data = chartData
 
     }
     
@@ -71,15 +88,14 @@ class GTReadTimeView: UIView {
         var dataEntries = [BarChartDataEntry]()
         var totalTime = 0.0
         
-        print(model.lists.count)
-        
         for index in 0..<model.lists.count {
             let entry = BarChartDataEntry(x: Double(index), y: model.lists[index].min)
             dataEntries.append(entry)
             totalTime += model.lists[index].min
         }
+        
         let chartDataSet = BarChartDataSet(entries: dataEntries)
-        chartDataSet.colors = [.green]
+        chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
         chartDataSet.valueFont = UIFont.systemFont(ofSize: 15)
         let chartData = BarChartData(dataSets: [chartDataSet])
         chartView.data = chartData

@@ -13,10 +13,7 @@ class GTTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        frost.frame = self.tabBar.bounds
-        self.tabBar.insertSubview(frost, at: 0)
-        
+        self.tabBar.backgroundColor = UIColor.white
         self.createControllers()
     }
     

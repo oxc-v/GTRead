@@ -38,20 +38,19 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         tableView.mj_header?.beginRefreshing()
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.top.equalTo(88)
+            make.top.equalTo(70)
             make.left.right.bottom.equalToSuperview()
         }
     }
 
     // 下拉刷新操作
     @objc func refresh(refreshControl: UIRefreshControl) {
-        let timer = Timer.scheduledTimer(withTimeInterval: 6.0, repeats: false) { timer in
-            refreshControl.endRefreshing()
-            self.showWarningAlertController(message: "")
-        }
 
         // 获取用户个人信息
-        GTNet.shared.getPersonalInfo() {(json) in
+        GTNet.shared.getPersonalInfo(failure: { json in
+            self.showWarningAlertController(message: "请求个人信息失败")
+            refreshControl.endRefreshing()
+        }, success: { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             let dataModel = try! decoder.decode(GTPersonalInfoModel.self, from: data!)
@@ -69,8 +68,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
             UserDefaults.standard.set(dataModel.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
 
             self.tableView.mj_header?.endRefreshing()
-            timer.invalidate()
-        }
+        })
     }
     
     // 退出登录重置信息
@@ -161,13 +159,13 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         let okAction = UIAlertAction(title: "登录", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
             // 加载动画
             HUD.show(.labeledProgress(title: "登录中...", subtitle: ""))
-            HUD.hide(afterDelay: 6, completion: {_ in
-                self.showWarningAlertController(message: "登录失败")
-            })
             
             let account = alertController.textFields!.first!
             let password = alertController.textFields!.last!
-            GTNet.shared.requestLogin(userId: account.text ?? "", userPwd: password.text ?? "") { (json) in
+            GTNet.shared.requestLogin(userId: account.text ?? "", userPwd: password.text ?? "", failure: {json in
+                HUD.hide()
+                self.showWarningAlertController(message: "请求登录失败")
+            }, success: { (json) in
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
                 let dataModel = try! decoder.decode(GTPersonalRegisterModel.self, from: data!)
@@ -181,9 +179,8 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
                     self.tableView.mj_header?.beginRefreshing()
                 }
                 
-                // 关闭加载动画
                 HUD.hide()
-            }
+            })
         }
         let cancelAction = UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel, handler: nil)
         alertController.addAction(okAction)
@@ -221,12 +218,12 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
             } else {
                 // 加载动画
                 HUD.show(.labeledProgress(title: "注册中...", subtitle: ""))
-                HUD.hide(afterDelay: 6, completion: {_ in
-                    self.showWarningAlertController(message: "注册失败")
-                })
 
                 // 注册请求
-                GTNet.shared.requestRegister(userId: account.text ?? "", userPwd: password_2.text ?? "") { json in
+                GTNet.shared.requestRegister(userId: account.text ?? "", userPwd: password_2.text ?? "", failure: { json in
+                    HUD.hide()
+                    self.showWarningAlertController(message: "请求注册失败")
+                }, success: { json in
                     // 提取数据
                     let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                     let decoder = JSONDecoder()
@@ -240,9 +237,8 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
                         self.tableView.mj_header?.beginRefreshing()
                     }
 
-                    // 关闭加载动画
                     HUD.hide()
-                }
+                })
             }
         }
         let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)

@@ -40,17 +40,17 @@ class GTBookShelfViewModel: NSObject {
     
     private func createBookShelfData() {
         
-        var width = kGTScreenWidth - 16 * 2 - (CGFloat(itemCountInRow - 1) * itemMargin)
+        var width = kGTScreenWidth - 16 * 3.5 - (CGFloat(itemCountInRow - 1) * itemMargin)
         
         width = floor(width/CGFloat(itemCountInRow))
         
-        let height = floor(width * 6 / 5.0)
+        let height = floor(width * 1.3)
         
         itemWidth = width
         itemHeight = height
         
-//        self.collectionView.mj_header?.endRefreshing()
         images.removeAll()
+
         for i in 0...5 {
             let path = Bundle.main.url(forResource: "\(i)", withExtension: ".pdf")
             guard let pdf = path else {
@@ -66,7 +66,13 @@ class GTBookShelfViewModel: NSObject {
             images.append(image)
         }
         
-//        GTNet.shared.getShelfBook() { json in
+//        GTNet.shared.getShelfBook(failure: { json in
+//            self.collectionView.mj_header?.endRefreshing()
+//            let alertController = UIAlertController(title: "请求书架数据失败", message: "", preferredStyle: .alert)
+//            let okAction = UIAlertAction(title: "确定", style: .default)
+//            alertController.addAction(okAction)
+//            self.viewController.present(alertController, animated: true, completion: nil)
+//        }, success: { json in
 //            self.images.removeAll()
 //            self.collectionView.mj_header?.endRefreshing()
 //
@@ -90,8 +96,7 @@ class GTBookShelfViewModel: NSObject {
 //                    self.images.append(image)
 //                }
 //            }
-//        }
-        
+//        })
     }
     
     func reloadBookDate() {

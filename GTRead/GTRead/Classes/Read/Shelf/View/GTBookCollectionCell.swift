@@ -13,7 +13,7 @@ class GTBookCollectionCell: UICollectionViewCell {
     
     lazy var pdfImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -44,7 +44,11 @@ class GTBookCollectionCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
-
+        
+        self.contentView.layer.masksToBounds = true
+        self.contentView.layer.borderWidth = 0.2
+        self.contentView.layer.cornerRadius = 10
+        
         self.contentView.addSubview(pdfImageView)
         self.contentView.addSubview(grayView)
         self.contentView.addSubview(circleImageView)

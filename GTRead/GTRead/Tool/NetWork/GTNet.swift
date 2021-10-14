@@ -217,53 +217,52 @@ extension GTNet {
 extension GTNet {
 
     // 获取个人信息
-    func getPersonalInfo(success: @escaping ((AnyObject)->())) {
+    func getPersonalInfo(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
         GTNet.shared.requestWith(url: "http://39.105.217.90:8000/accountService/userInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
-            debugPrint(error)
+            failure(error)
         }
     }
     
     // 注册请求
-    func requestRegister(userId: String, userPwd: String, success: @escaping ((AnyObject)->())) {
+    func requestRegister(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/accountService/registerFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
-            debugPrint(e)
+            failure(e)
         }
     }
     
     // 登录请求
-    func requestLogin(userId: String, userPwd: String, success: @escaping ((AnyObject)->())) {
+    func requestLogin(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/accountService/loginFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
-            debugPrint(e)
+            failure(e)
         }
     }
     
     // 获取阅读时间
-    func getReadTimeList(dayTime: String, success: @escaping ((AnyObject)->())) {
+    func getReadTimeList(dayTime: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "dayTime": dayTime] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
-            debugPrint(e)
+            failure(e)
         }
     }
 
     // 获取书架书籍
-    func getShelfBook(success: @escaping ((AnyObject)->())) {
-//        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
-        let params = ["userId": "100001"] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:6666/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
+    func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
-            debugPrint(e)
+           failure(e)
         }
     }
 

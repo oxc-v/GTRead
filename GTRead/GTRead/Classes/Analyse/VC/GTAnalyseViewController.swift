@@ -14,7 +14,7 @@ class GTAnalyseViewController: GTBaseViewController {
     
     lazy var analyseCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.backgroundColor = UIColor.white
+        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellName)
         return collectionView
     }()
@@ -33,40 +33,39 @@ class GTAnalyseViewController: GTBaseViewController {
         analyseCollectionView.mj_header?.beginRefreshing()
         self.view.addSubview(analyseCollectionView)
         analyseCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(88)
+            make.top.equalTo(70)
             make.left.equalToSuperview()
             make.right.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         
         timeView = GTReadTimeView()
+        timeView.layer.cornerRadius = 10
         self.analyseCollectionView.addSubview(timeView)
         timeView.snp.makeConstraints { (make) in
-            make.left.right.top.centerX.equalToSuperview()
+            make.left.right.top.equalTo(16)
+            make.centerX.equalToSuperview()
             make.height.equalTo(500)
         }
     }
     
     // 下拉刷新操作
     @objc func refresh(refreshControl: UIRefreshControl) {
-        let timer = Timer.scheduledTimer(withTimeInterval: 6.0, repeats: false) { timer in
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        GTNet.shared.getReadTimeList(dayTime: dateFormatter.string(from: Date()), failure: { json in
             refreshControl.endRefreshing()
-            let alertController = UIAlertController(title: "加载信息失败，请检查是否连接网络", message: "", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "请求阅读数据失败", message: "", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "确定", style: .default)
             alertController.addAction(okAction)
             self.present(alertController, animated: true, completion: nil)
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-dd"
-        GTNet.shared.getReadTimeList(dayTime: dateFormatter.string(from: Date()), success: {(json) in
+        }, success: {json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             self.dataModel = try! decoder.decode(GTReadTimeModel.self, from: data!)
             self.timeView.updateChartWithData(model: self.dataModel!)
             
             refreshControl.endRefreshing()
-            timer.invalidate()
         })
     }
 }

@@ -14,8 +14,11 @@ let cellName = "bookCollectioncell"
 class GTBookShelfViewController: GTBaseViewController {
     
     lazy var bookCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.backgroundColor = UIColor.white
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
+        layout.minimumLineSpacing = 333.0
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
         collectionView.register(GTBookCollectionCell.self, forCellWithReuseIdentifier: cellName)
         return collectionView
     }()
@@ -61,10 +64,8 @@ class GTBookShelfViewController: GTBaseViewController {
         bookCollectionView.mj_header?.beginRefreshing()
         self.view.addSubview(bookCollectionView)
         bookCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(88)
-            make.left.equalTo(16)
-            make.right.equalTo(-16)
-            make.bottom.equalToSuperview()
+            make.top.equalTo(70)
+            make.bottom.right.left.equalToSuperview()
         }
         self.viewModel = GTBookShelfViewModel(viewController: self,collectionView: self.bookCollectionView)
         self.viewModel?.seletedEvent = { [weak self] count in
@@ -119,4 +120,5 @@ class GTBookShelfViewController: GTBaseViewController {
         rightButton.setTitle("编辑", for: .normal)
         self.viewModel?.deleteImages()
     }
+
 }
