@@ -1,0 +1,1151 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0E94E694AD967475FB6262D8 /* Pods_GTRead_GTReadUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCF3F60C55F91B4E58ED9B3 /* Pods_GTRead_GTReadUITests.framework */; };
+		7A9998051B8863AA528DED3E /* Pods_GTRead.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7736EBA3C55BCE74C1F239F7 /* Pods_GTRead.framework */; };
+		AE6DDCC925E12B3400C0773A /* GTBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6DDCC825E12B3400C0773A /* GTBaseViewController.swift */; };
+		AE6DDCCE25E12B8300C0773A /* GTBaseNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6DDCCD25E12B8300C0773A /* GTBaseNavigationViewController.swift */; };
+		AE6DDCD325E12BBF00C0773A /* GTTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6DDCD225E12BBF00C0773A /* GTTabBarViewController.swift */; };
+		AEA5B0A2262C14500064D4AE /* EyeTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B098262C144F0064D4AE /* EyeTrack.swift */; };
+		AEA5B0A3262C14500064D4AE /* EyeTrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B099262C144F0064D4AE /* EyeTrackView.swift */; };
+		AEA5B0A4262C14500064D4AE /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B09A262C144F0064D4AE /* Extension.swift */; };
+		AEA5B0A5262C14500064D4AE /* EyeTrackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B09B262C144F0064D4AE /* EyeTrackController.swift */; };
+		AEA5B0A6262C14500064D4AE /* Eye.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B09D262C144F0064D4AE /* Eye.swift */; };
+		AEA5B0A7262C14500064D4AE /* EyeTrackInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B09E262C144F0064D4AE /* EyeTrackInfo.swift */; };
+		AEA5B0A8262C14500064D4AE /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B09F262C144F0064D4AE /* Face.swift */; };
+		AEA5B0A9262C14500064D4AE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B0A0262C144F0064D4AE /* Device.swift */; };
+		AEA5B0AA262C14500064D4AE /* EyeTrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA5B0A1262C144F0064D4AE /* EyeTrackViewController.swift */; };
+		AEE40E5D25E0DDB100C6E7CD /* GTReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE40E5C25E0DDB100C6E7CD /* GTReadTests.swift */; };
+		AEE40E6825E0DDB100C6E7CD /* GTReadUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE40E6725E0DDB100C6E7CD /* GTReadUITests.swift */; };
+		AEE40E9825E120BE00C6E7CD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE40E9625E120BE00C6E7CD /* AppDelegate.swift */; };
+		AEE40E9925E120BE00C6E7CD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE40E9725E120BE00C6E7CD /* SceneDelegate.swift */; };
+		AEE40EA625E120D900C6E7CD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEE40EA025E120D900C6E7CD /* LaunchScreen.storyboard */; };
+		AEE40EA725E120D900C6E7CD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEE40EA225E120D900C6E7CD /* Main.storyboard */; };
+		D7AA04D02717D36700CE4DD3 /* GTAnalyseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CB2717D36700CE4DD3 /* GTAnalyseViewController.swift */; };
+		D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */; };
+		D7AA04D22717D36700CE4DD3 /* GTReadTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */; };
+		D7AA04DB2717D3DD00CE4DD3 /* GTPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */; };
+		D7AA04DC2717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */; };
+		D7AA04DD2717D3DD00CE4DD3 /* GTPersonalInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D82717D3DD00CE4DD3 /* GTPersonalInfoModel.swift */; };
+		D7AA04DE2717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D92717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift */; };
+		D7AA04FC2717D42200CE4DD3 /* GTOulineTableviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E22717D42200CE4DD3 /* GTOulineTableviewController.swift */; };
+		D7AA04FD2717D42200CE4DD3 /* GTReadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E32717D42200CE4DD3 /* GTReadViewController.swift */; };
+		D7AA04FE2717D42200CE4DD3 /* GTCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E42717D42200CE4DD3 /* GTCommentViewController.swift */; };
+		D7AA04FF2717D42200CE4DD3 /* GTEidtCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E52717D42200CE4DD3 /* GTEidtCommentViewController.swift */; };
+		D7AA05002717D42200CE4DD3 /* GTThumbnailGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E62717D42200CE4DD3 /* GTThumbnailGridViewController.swift */; };
+		D7AA05012717D42200CE4DD3 /* GTCommentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E82717D42200CE4DD3 /* GTCommentModel.swift */; };
+		D7AA05022717D42200CE4DD3 /* GTTrackCorrectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04E92717D42200CE4DD3 /* GTTrackCorrectModel.swift */; };
+		D7AA05032717D42200CE4DD3 /* GTOulineTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04EB2717D42200CE4DD3 /* GTOulineTableViewCell.swift */; };
+		D7AA05042717D42200CE4DD3 /* GTCommentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04EC2717D42200CE4DD3 /* GTCommentViewCell.swift */; };
+		D7AA05052717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04ED2717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift */; };
+		D7AA05062717D42200CE4DD3 /* 4.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7AA04EF2717D42200CE4DD3 /* 4.pdf */; };
+		D7AA05072717D42200CE4DD3 /* 0.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7AA04F02717D42200CE4DD3 /* 0.pdf */; };
+		D7AA05082717D42200CE4DD3 /* 1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7AA04F12717D42200CE4DD3 /* 1.pdf */; };
+		D7AA05092717D42200CE4DD3 /* 3.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7AA04F22717D42200CE4DD3 /* 3.pdf */; };
+		D7AA050A2717D42200CE4DD3 /* 2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7AA04F32717D42200CE4DD3 /* 2.pdf */; };
+		D7AA050B2717D42200CE4DD3 /* GTBookShelfViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04F62717D42200CE4DD3 /* GTBookShelfViewController.swift */; };
+		D7AA050C2717D42200CE4DD3 /* GTShelfBookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04F82717D42200CE4DD3 /* GTShelfBookModel.swift */; };
+		D7AA050D2717D42200CE4DD3 /* GTBookShelfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04F92717D42200CE4DD3 /* GTBookShelfViewModel.swift */; };
+		D7AA050E2717D42200CE4DD3 /* GTBookCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04FB2717D42200CE4DD3 /* GTBookCollectionCell.swift */; };
+		D7AA05102717D46A00CE4DD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */; };
+		D7AA05192717D49600CE4DD3 /* GTNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05132717D49600CE4DD3 /* GTNet.swift */; };
+		D7AA051A2717D49600CE4DD3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05152717D49600CE4DD3 /* UserInfo.swift */; };
+		D7AA051B2717D49600CE4DD3 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05162717D49600CE4DD3 /* NotificationName.swift */; };
+		D7AA051C2717D49600CE4DD3 /* GTBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05182717D49600CE4DD3 /* GTBook.swift */; };
+		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AEE40E5925E0DDB100C6E7CD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AEE40E3A25E0DDAE00C6E7CD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AEE40E4125E0DDAE00C6E7CD;
+			remoteInfo = GTRead;
+		};
+		AEE40E6425E0DDB100C6E7CD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AEE40E3A25E0DDAE00C6E7CD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AEE40E4125E0DDAE00C6E7CD;
+			remoteInfo = GTRead;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0D2F0D0CC889568E7A272E7A /* Pods-GTRead-GTReadUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTRead-GTReadUITests.debug.xcconfig"; path = "Target Support Files/Pods-GTRead-GTReadUITests/Pods-GTRead-GTReadUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		10DD16B40019F3F082A8AC15 /* Pods-GTRead.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTRead.release.xcconfig"; path = "Target Support Files/Pods-GTRead/Pods-GTRead.release.xcconfig"; sourceTree = "<group>"; };
+		5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GTReadTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DCF3F60C55F91B4E58ED9B3 /* Pods_GTRead_GTReadUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GTRead_GTReadUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7736EBA3C55BCE74C1F239F7 /* Pods_GTRead.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GTRead.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9479237C85C60CBB3EB75964 /* Pods-GTRead-GTReadUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTRead-GTReadUITests.release.xcconfig"; path = "Target Support Files/Pods-GTRead-GTReadUITests/Pods-GTRead-GTReadUITests.release.xcconfig"; sourceTree = "<group>"; };
+		94CB0EA52D5D83DA63E9853B /* Pods-GTRead.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTRead.debug.xcconfig"; path = "Target Support Files/Pods-GTRead/Pods-GTRead.debug.xcconfig"; sourceTree = "<group>"; };
+		970A0AF2392A8CD611363A14 /* Pods-GTReadTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.debug.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AE6DDCC825E12B3400C0773A /* GTBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBaseViewController.swift; sourceTree = "<group>"; };
+		AE6DDCCD25E12B8300C0773A /* GTBaseNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBaseNavigationViewController.swift; sourceTree = "<group>"; };
+		AE6DDCD225E12BBF00C0773A /* GTTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTTabBarViewController.swift; sourceTree = "<group>"; };
+		AEA5B098262C144F0064D4AE /* EyeTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeTrack.swift; sourceTree = "<group>"; };
+		AEA5B099262C144F0064D4AE /* EyeTrackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeTrackView.swift; sourceTree = "<group>"; };
+		AEA5B09A262C144F0064D4AE /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		AEA5B09B262C144F0064D4AE /* EyeTrackController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeTrackController.swift; sourceTree = "<group>"; };
+		AEA5B09D262C144F0064D4AE /* Eye.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Eye.swift; sourceTree = "<group>"; };
+		AEA5B09E262C144F0064D4AE /* EyeTrackInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeTrackInfo.swift; sourceTree = "<group>"; };
+		AEA5B09F262C144F0064D4AE /* Face.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
+		AEA5B0A0262C144F0064D4AE /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		AEA5B0A1262C144F0064D4AE /* EyeTrackViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeTrackViewController.swift; sourceTree = "<group>"; };
+		AEE40E4225E0DDAE00C6E7CD /* GTRead.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GTRead.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEE40E5825E0DDB100C6E7CD /* GTReadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTReadTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEE40E5C25E0DDB100C6E7CD /* GTReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadTests.swift; sourceTree = "<group>"; };
+		AEE40E5E25E0DDB100C6E7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AEE40E6325E0DDB100C6E7CD /* GTReadUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTReadUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEE40E6725E0DDB100C6E7CD /* GTReadUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadUITests.swift; sourceTree = "<group>"; };
+		AEE40E6925E0DDB100C6E7CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AEE40E9625E120BE00C6E7CD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AEE40E9725E120BE00C6E7CD /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		AEE40EA125E120D900C6E7CD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AEE40EA325E120D900C6E7CD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		AEE40EA425E120D900C6E7CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7AA04CB2717D36700CE4DD3 /* GTAnalyseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTAnalyseViewController.swift; sourceTree = "<group>"; };
+		D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTReadTimeModel.swift; sourceTree = "<group>"; };
+		D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTReadTimeView.swift; sourceTree = "<group>"; };
+		D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalViewController.swift; sourceTree = "<group>"; };
+		D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalSettingViewController.swift; sourceTree = "<group>"; };
+		D7AA04D82717D3DD00CE4DD3 /* GTPersonalInfoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalInfoModel.swift; sourceTree = "<group>"; };
+		D7AA04D92717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalRegisterModel.swift; sourceTree = "<group>"; };
+		D7AA04E22717D42200CE4DD3 /* GTOulineTableviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTOulineTableviewController.swift; sourceTree = "<group>"; };
+		D7AA04E32717D42200CE4DD3 /* GTReadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTReadViewController.swift; sourceTree = "<group>"; };
+		D7AA04E42717D42200CE4DD3 /* GTCommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTCommentViewController.swift; sourceTree = "<group>"; };
+		D7AA04E52717D42200CE4DD3 /* GTEidtCommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTEidtCommentViewController.swift; sourceTree = "<group>"; };
+		D7AA04E62717D42200CE4DD3 /* GTThumbnailGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTThumbnailGridViewController.swift; sourceTree = "<group>"; };
+		D7AA04E82717D42200CE4DD3 /* GTCommentModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTCommentModel.swift; sourceTree = "<group>"; };
+		D7AA04E92717D42200CE4DD3 /* GTTrackCorrectModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTTrackCorrectModel.swift; sourceTree = "<group>"; };
+		D7AA04EB2717D42200CE4DD3 /* GTOulineTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTOulineTableViewCell.swift; sourceTree = "<group>"; };
+		D7AA04EC2717D42200CE4DD3 /* GTCommentViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTCommentViewCell.swift; sourceTree = "<group>"; };
+		D7AA04ED2717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
+		D7AA04EF2717D42200CE4DD3 /* 4.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 4.pdf; sourceTree = "<group>"; };
+		D7AA04F02717D42200CE4DD3 /* 0.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 0.pdf; sourceTree = "<group>"; };
+		D7AA04F12717D42200CE4DD3 /* 1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 1.pdf; sourceTree = "<group>"; };
+		D7AA04F22717D42200CE4DD3 /* 3.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 3.pdf; sourceTree = "<group>"; };
+		D7AA04F32717D42200CE4DD3 /* 2.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 2.pdf; sourceTree = "<group>"; };
+		D7AA04F62717D42200CE4DD3 /* GTBookShelfViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBookShelfViewController.swift; sourceTree = "<group>"; };
+		D7AA04F82717D42200CE4DD3 /* GTShelfBookModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTShelfBookModel.swift; sourceTree = "<group>"; };
+		D7AA04F92717D42200CE4DD3 /* GTBookShelfViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBookShelfViewModel.swift; sourceTree = "<group>"; };
+		D7AA04FB2717D42200CE4DD3 /* GTBookCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBookCollectionCell.swift; sourceTree = "<group>"; };
+		D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../oxc/GTRead/GTRead/Resource/Assets.xcassets; sourceTree = "<group>"; };
+		D7AA05132717D49600CE4DD3 /* GTNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTNet.swift; sourceTree = "<group>"; };
+		D7AA05152717D49600CE4DD3 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		D7AA05162717D49600CE4DD3 /* NotificationName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
+		D7AA05182717D49600CE4DD3 /* GTBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBook.swift; sourceTree = "<group>"; };
+		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AEE40E3F25E0DDAE00C6E7CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A9998051B8863AA528DED3E /* Pods_GTRead.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E5525E0DDB100C6E7CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E6025E0DDB100C6E7CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E94E694AD967475FB6262D8 /* Pods_GTRead_GTReadUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6C7A8BEB9D831ABC0176E35E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7736EBA3C55BCE74C1F239F7 /* Pods_GTRead.framework */,
+				5DCF3F60C55F91B4E58ED9B3 /* Pods_GTRead_GTReadUITests.framework */,
+				5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AE6DDCC725E12B1100C0773A /* BaseViewController */ = {
+			isa = PBXGroup;
+			children = (
+				AE6DDCD225E12BBF00C0773A /* GTTabBarViewController.swift */,
+				AE6DDCC825E12B3400C0773A /* GTBaseViewController.swift */,
+				AE6DDCCD25E12B8300C0773A /* GTBaseNavigationViewController.swift */,
+			);
+			name = BaseViewController;
+			path = GTRead/BaseViewController;
+			sourceTree = SOURCE_ROOT;
+		};
+		AEA5B097262C144F0064D4AE /* EyeTrackKit */ = {
+			isa = PBXGroup;
+			children = (
+				AEA5B098262C144F0064D4AE /* EyeTrack.swift */,
+				AEA5B099262C144F0064D4AE /* EyeTrackView.swift */,
+				AEA5B09A262C144F0064D4AE /* Extension.swift */,
+				AEA5B09B262C144F0064D4AE /* EyeTrackController.swift */,
+				AEA5B09C262C144F0064D4AE /* Model */,
+				AEA5B0A1262C144F0064D4AE /* EyeTrackViewController.swift */,
+			);
+			path = EyeTrackKit;
+			sourceTree = "<group>";
+		};
+		AEA5B09C262C144F0064D4AE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AEA5B09D262C144F0064D4AE /* Eye.swift */,
+				AEA5B09E262C144F0064D4AE /* EyeTrackInfo.swift */,
+				AEA5B09F262C144F0064D4AE /* Face.swift */,
+				AEA5B0A0262C144F0064D4AE /* Device.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		AEE40E3925E0DDAE00C6E7CD = {
+			isa = PBXGroup;
+			children = (
+				AEE40E4425E0DDAE00C6E7CD /* GTRead */,
+				AEE40E5B25E0DDB100C6E7CD /* GTReadTests */,
+				AEE40E6625E0DDB100C6E7CD /* GTReadUITests */,
+				AEE40E4325E0DDAE00C6E7CD /* Products */,
+				EB1BF41AFB4E335A24066273 /* Pods */,
+				6C7A8BEB9D831ABC0176E35E /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		AEE40E4325E0DDAE00C6E7CD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AEE40E4225E0DDAE00C6E7CD /* GTRead.app */,
+				AEE40E5825E0DDB100C6E7CD /* GTReadTests.xctest */,
+				AEE40E6325E0DDB100C6E7CD /* GTReadUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AEE40E4425E0DDAE00C6E7CD /* GTRead */ = {
+			isa = PBXGroup;
+			children = (
+				AEE40E9525E120BE00C6E7CD /* Application */,
+				AEA5B097262C144F0064D4AE /* EyeTrackKit */,
+				AE6DDCC725E12B1100C0773A /* BaseViewController */,
+				AEE40E9D25E120C800C6E7CD /* Classes */,
+				AEE40E9E25E120D900C6E7CD /* Resource */,
+				D7AA05112717D49600CE4DD3 /* Tool */,
+			);
+			path = GTRead;
+			sourceTree = "<group>";
+		};
+		AEE40E5B25E0DDB100C6E7CD /* GTReadTests */ = {
+			isa = PBXGroup;
+			children = (
+				AEE40E5C25E0DDB100C6E7CD /* GTReadTests.swift */,
+				AEE40E5E25E0DDB100C6E7CD /* Info.plist */,
+			);
+			path = GTReadTests;
+			sourceTree = "<group>";
+		};
+		AEE40E6625E0DDB100C6E7CD /* GTReadUITests */ = {
+			isa = PBXGroup;
+			children = (
+				AEE40E6725E0DDB100C6E7CD /* GTReadUITests.swift */,
+				AEE40E6925E0DDB100C6E7CD /* Info.plist */,
+			);
+			path = GTReadUITests;
+			sourceTree = "<group>";
+		};
+		AEE40E9525E120BE00C6E7CD /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				AEE40E9625E120BE00C6E7CD /* AppDelegate.swift */,
+				AEE40E9725E120BE00C6E7CD /* SceneDelegate.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		AEE40E9D25E120C800C6E7CD /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04DF2717D42200CE4DD3 /* Read */,
+				D737140026343D36002DD3DD /* Analyse */,
+				D7AA04D32717D3DD00CE4DD3 /* Personal */,
+			);
+			name = Classes;
+			path = GTRead/Classes;
+			sourceTree = SOURCE_ROOT;
+		};
+		AEE40E9E25E120D900C6E7CD /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */,
+				AEE40EA025E120D900C6E7CD /* LaunchScreen.storyboard */,
+				AEE40EA225E120D900C6E7CD /* Main.storyboard */,
+				AEE40EA425E120D900C6E7CD /* Info.plist */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		D737140026343D36002DD3DD /* Analyse */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04CA2717D36700CE4DD3 /* VC */,
+				D7AA04CE2717D36700CE4DD3 /* View */,
+				D7AA04CC2717D36700CE4DD3 /* Model */,
+			);
+			path = Analyse;
+			sourceTree = "<group>";
+		};
+		D7AA04CA2717D36700CE4DD3 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04CB2717D36700CE4DD3 /* GTAnalyseViewController.swift */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		D7AA04CC2717D36700CE4DD3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D7AA04CE2717D36700CE4DD3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D7AA04D32717D3DD00CE4DD3 /* Personal */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04D42717D3DD00CE4DD3 /* VC */,
+				D7AA04D72717D3DD00CE4DD3 /* Model */,
+				D7AA04DA2717D3DD00CE4DD3 /* View */,
+			);
+			path = Personal;
+			sourceTree = "<group>";
+		};
+		D7AA04D42717D3DD00CE4DD3 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */,
+				D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		D7AA04D72717D3DD00CE4DD3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04D82717D3DD00CE4DD3 /* GTPersonalInfoModel.swift */,
+				D7AA04D92717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D7AA04DA2717D3DD00CE4DD3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D7AA04DF2717D42200CE4DD3 /* Read */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04E02717D42200CE4DD3 /* PDFView */,
+				D7AA04F42717D42200CE4DD3 /* Shelf */,
+				D7AA04EE2717D42200CE4DD3 /* PDFResource */,
+			);
+			path = Read;
+			sourceTree = "<group>";
+		};
+		D7AA04E02717D42200CE4DD3 /* PDFView */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04E12717D42200CE4DD3 /* VC */,
+				D7AA04E72717D42200CE4DD3 /* Model */,
+				D7AA04EA2717D42200CE4DD3 /* View */,
+			);
+			path = PDFView;
+			sourceTree = "<group>";
+		};
+		D7AA04E12717D42200CE4DD3 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04E22717D42200CE4DD3 /* GTOulineTableviewController.swift */,
+				D7AA04E32717D42200CE4DD3 /* GTReadViewController.swift */,
+				D7AA04E42717D42200CE4DD3 /* GTCommentViewController.swift */,
+				D7AA04E52717D42200CE4DD3 /* GTEidtCommentViewController.swift */,
+				D7AA04E62717D42200CE4DD3 /* GTThumbnailGridViewController.swift */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		D7AA04E72717D42200CE4DD3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04E82717D42200CE4DD3 /* GTCommentModel.swift */,
+				D7AA04E92717D42200CE4DD3 /* GTTrackCorrectModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D7AA04EA2717D42200CE4DD3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04EB2717D42200CE4DD3 /* GTOulineTableViewCell.swift */,
+				D7AA04EC2717D42200CE4DD3 /* GTCommentViewCell.swift */,
+				D7AA04ED2717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D7AA04EE2717D42200CE4DD3 /* PDFResource */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04EF2717D42200CE4DD3 /* 4.pdf */,
+				D7AA04F02717D42200CE4DD3 /* 0.pdf */,
+				D7AA04F12717D42200CE4DD3 /* 1.pdf */,
+				D7AA04F22717D42200CE4DD3 /* 3.pdf */,
+				D7AA04F32717D42200CE4DD3 /* 2.pdf */,
+			);
+			path = PDFResource;
+			sourceTree = "<group>";
+		};
+		D7AA04F42717D42200CE4DD3 /* Shelf */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04F52717D42200CE4DD3 /* VC */,
+				D7AA04F72717D42200CE4DD3 /* Model */,
+				D7AA04FA2717D42200CE4DD3 /* View */,
+			);
+			path = Shelf;
+			sourceTree = "<group>";
+		};
+		D7AA04F52717D42200CE4DD3 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04F62717D42200CE4DD3 /* GTBookShelfViewController.swift */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		D7AA04F72717D42200CE4DD3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04F82717D42200CE4DD3 /* GTShelfBookModel.swift */,
+				D7AA04F92717D42200CE4DD3 /* GTBookShelfViewModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D7AA04FA2717D42200CE4DD3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA04FB2717D42200CE4DD3 /* GTBookCollectionCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D7AA05112717D49600CE4DD3 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA05122717D49600CE4DD3 /* NetWork */,
+				D7AA05142717D49600CE4DD3 /* Common */,
+				D7AA05172717D49600CE4DD3 /* GTBook */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
+		D7AA05122717D49600CE4DD3 /* NetWork */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA05132717D49600CE4DD3 /* GTNet.swift */,
+			);
+			path = NetWork;
+			sourceTree = "<group>";
+		};
+		D7AA05142717D49600CE4DD3 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA05152717D49600CE4DD3 /* UserInfo.swift */,
+				D7AA05162717D49600CE4DD3 /* NotificationName.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		D7AA05172717D49600CE4DD3 /* GTBook */ = {
+			isa = PBXGroup;
+			children = (
+				D7AA05182717D49600CE4DD3 /* GTBook.swift */,
+			);
+			path = GTBook;
+			sourceTree = "<group>";
+		};
+		EB1BF41AFB4E335A24066273 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				94CB0EA52D5D83DA63E9853B /* Pods-GTRead.debug.xcconfig */,
+				10DD16B40019F3F082A8AC15 /* Pods-GTRead.release.xcconfig */,
+				0D2F0D0CC889568E7A272E7A /* Pods-GTRead-GTReadUITests.debug.xcconfig */,
+				9479237C85C60CBB3EB75964 /* Pods-GTRead-GTReadUITests.release.xcconfig */,
+				970A0AF2392A8CD611363A14 /* Pods-GTReadTests.debug.xcconfig */,
+				ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AEE40E4125E0DDAE00C6E7CD /* GTRead */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AEE40E6C25E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTRead" */;
+			buildPhases = (
+				B0EAF1C30C3A8EC373599E88 /* [CP] Check Pods Manifest.lock */,
+				AEE40E3E25E0DDAE00C6E7CD /* Sources */,
+				AEE40E3F25E0DDAE00C6E7CD /* Frameworks */,
+				AEE40E4025E0DDAE00C6E7CD /* Resources */,
+				2136D3A63AB1461D833128C6 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GTRead;
+			productName = GTRead;
+			productReference = AEE40E4225E0DDAE00C6E7CD /* GTRead.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AEE40E5725E0DDB100C6E7CD /* GTReadTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AEE40E6F25E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTReadTests" */;
+			buildPhases = (
+				324E9BF02EE02C1814CBA99A /* [CP] Check Pods Manifest.lock */,
+				AEE40E5425E0DDB100C6E7CD /* Sources */,
+				AEE40E5525E0DDB100C6E7CD /* Frameworks */,
+				AEE40E5625E0DDB100C6E7CD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AEE40E5A25E0DDB100C6E7CD /* PBXTargetDependency */,
+			);
+			name = GTReadTests;
+			productName = GTReadTests;
+			productReference = AEE40E5825E0DDB100C6E7CD /* GTReadTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AEE40E6225E0DDB100C6E7CD /* GTReadUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AEE40E7225E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTReadUITests" */;
+			buildPhases = (
+				17A58B03BA069B99D56E17FB /* [CP] Check Pods Manifest.lock */,
+				AEE40E5F25E0DDB100C6E7CD /* Sources */,
+				AEE40E6025E0DDB100C6E7CD /* Frameworks */,
+				AEE40E6125E0DDB100C6E7CD /* Resources */,
+				D79523EAD8A9098A5AD20586 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AEE40E6525E0DDB100C6E7CD /* PBXTargetDependency */,
+			);
+			name = GTReadUITests;
+			productName = GTReadUITests;
+			productReference = AEE40E6325E0DDB100C6E7CD /* GTReadUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AEE40E3A25E0DDAE00C6E7CD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = GT;
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					AEE40E4125E0DDAE00C6E7CD = {
+						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
+					};
+					AEE40E5725E0DDB100C6E7CD = {
+						CreatedOnToolsVersion = 12.4;
+						TestTargetID = AEE40E4125E0DDAE00C6E7CD;
+					};
+					AEE40E6225E0DDB100C6E7CD = {
+						CreatedOnToolsVersion = 12.4;
+						TestTargetID = AEE40E4125E0DDAE00C6E7CD;
+					};
+				};
+			};
+			buildConfigurationList = AEE40E3D25E0DDAE00C6E7CD /* Build configuration list for PBXProject "GTRead" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AEE40E3925E0DDAE00C6E7CD;
+			productRefGroup = AEE40E4325E0DDAE00C6E7CD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AEE40E4125E0DDAE00C6E7CD /* GTRead */,
+				AEE40E5725E0DDB100C6E7CD /* GTReadTests */,
+				AEE40E6225E0DDB100C6E7CD /* GTReadUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AEE40E4025E0DDAE00C6E7CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7AA05082717D42200CE4DD3 /* 1.pdf in Resources */,
+				AEE40EA725E120D900C6E7CD /* Main.storyboard in Resources */,
+				D7AA05092717D42200CE4DD3 /* 3.pdf in Resources */,
+				D7AA05062717D42200CE4DD3 /* 4.pdf in Resources */,
+				D7AA05072717D42200CE4DD3 /* 0.pdf in Resources */,
+				AEE40EA625E120D900C6E7CD /* LaunchScreen.storyboard in Resources */,
+				D7AA05102717D46A00CE4DD3 /* Assets.xcassets in Resources */,
+				D7AA050A2717D42200CE4DD3 /* 2.pdf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E5625E0DDB100C6E7CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E6125E0DDB100C6E7CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		17A58B03BA069B99D56E17FB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GTRead-GTReadUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2136D3A63AB1461D833128C6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GTRead/Pods-GTRead-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GTRead/Pods-GTRead-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GTRead/Pods-GTRead-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		324E9BF02EE02C1814CBA99A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GTReadTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B0EAF1C30C3A8EC373599E88 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GTRead-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D79523EAD8A9098A5AD20586 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GTRead-GTReadUITests/Pods-GTRead-GTReadUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GTRead-GTReadUITests/Pods-GTRead-GTReadUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GTRead-GTReadUITests/Pods-GTRead-GTReadUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AEE40E3E25E0DDAE00C6E7CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7AA05032717D42200CE4DD3 /* GTOulineTableViewCell.swift in Sources */,
+				D7AA04DC2717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift in Sources */,
+				D7AA050E2717D42200CE4DD3 /* GTBookCollectionCell.swift in Sources */,
+				AE6DDCCE25E12B8300C0773A /* GTBaseNavigationViewController.swift in Sources */,
+				AEA5B0A5262C14500064D4AE /* EyeTrackController.swift in Sources */,
+				D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */,
+				D7AA04DD2717D3DD00CE4DD3 /* GTPersonalInfoModel.swift in Sources */,
+				AEA5B0A8262C14500064D4AE /* Face.swift in Sources */,
+				D7AA050D2717D42200CE4DD3 /* GTBookShelfViewModel.swift in Sources */,
+				AEE40E9825E120BE00C6E7CD /* AppDelegate.swift in Sources */,
+				AEA5B0A2262C14500064D4AE /* EyeTrack.swift in Sources */,
+				AEA5B0A3262C14500064D4AE /* EyeTrackView.swift in Sources */,
+				D7AA04FE2717D42200CE4DD3 /* GTCommentViewController.swift in Sources */,
+				AEA5B0A7262C14500064D4AE /* EyeTrackInfo.swift in Sources */,
+				D7AA051C2717D49600CE4DD3 /* GTBook.swift in Sources */,
+				D7AA04FD2717D42200CE4DD3 /* GTReadViewController.swift in Sources */,
+				D7AA04D22717D36700CE4DD3 /* GTReadTimeView.swift in Sources */,
+				D7AA05002717D42200CE4DD3 /* GTThumbnailGridViewController.swift in Sources */,
+				D7AA050C2717D42200CE4DD3 /* GTShelfBookModel.swift in Sources */,
+				D7AA05052717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift in Sources */,
+				D7AA051B2717D49600CE4DD3 /* NotificationName.swift in Sources */,
+				D7AA05042717D42200CE4DD3 /* GTCommentViewCell.swift in Sources */,
+				AE6DDCD325E12BBF00C0773A /* GTTabBarViewController.swift in Sources */,
+				D7AA05012717D42200CE4DD3 /* GTCommentModel.swift in Sources */,
+				AE6DDCC925E12B3400C0773A /* GTBaseViewController.swift in Sources */,
+				AEE40E9925E120BE00C6E7CD /* SceneDelegate.swift in Sources */,
+				D7AA04DB2717D3DD00CE4DD3 /* GTPersonalViewController.swift in Sources */,
+				AEA5B0AA262C14500064D4AE /* EyeTrackViewController.swift in Sources */,
+				AEA5B0A4262C14500064D4AE /* Extension.swift in Sources */,
+				AEA5B0A6262C14500064D4AE /* Eye.swift in Sources */,
+				AEA5B0A9262C14500064D4AE /* Device.swift in Sources */,
+				D7AA05022717D42200CE4DD3 /* GTTrackCorrectModel.swift in Sources */,
+				D7AA04D02717D36700CE4DD3 /* GTAnalyseViewController.swift in Sources */,
+				D7AA051A2717D49600CE4DD3 /* UserInfo.swift in Sources */,
+				D7AA04FF2717D42200CE4DD3 /* GTEidtCommentViewController.swift in Sources */,
+				D7AA05192717D49600CE4DD3 /* GTNet.swift in Sources */,
+				D7AA050B2717D42200CE4DD3 /* GTBookShelfViewController.swift in Sources */,
+				D7AA04DE2717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift in Sources */,
+				D7AA04FC2717D42200CE4DD3 /* GTOulineTableviewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E5425E0DDB100C6E7CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEE40E5D25E0DDB100C6E7CD /* GTReadTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEE40E5F25E0DDB100C6E7CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEE40E6825E0DDB100C6E7CD /* GTReadUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AEE40E5A25E0DDB100C6E7CD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AEE40E4125E0DDAE00C6E7CD /* GTRead */;
+			targetProxy = AEE40E5925E0DDB100C6E7CD /* PBXContainerItemProxy */;
+		};
+		AEE40E6525E0DDB100C6E7CD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AEE40E4125E0DDAE00C6E7CD /* GTRead */;
+			targetProxy = AEE40E6425E0DDB100C6E7CD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		AEE40EA025E120D900C6E7CD /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AEE40EA125E120D900C6E7CD /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		AEE40EA225E120D900C6E7CD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AEE40EA325E120D900C6E7CD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		AEE40E6A25E0DDB100C6E7CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AEE40E6B25E0DDB100C6E7CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AEE40E6D25E0DDB100C6E7CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94CB0EA52D5D83DA63E9853B /* Pods-GTRead.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = "$(SRCROOT)/GTRead/Resource/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread1.www;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		AEE40E6E25E0DDB100C6E7CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 10DD16B40019F3F082A8AC15 /* Pods-GTRead.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = "$(SRCROOT)/GTRead/Resource/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread1.www;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		AEE40E7025E0DDB100C6E7CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 970A0AF2392A8CD611363A14 /* Pods-GTReadTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = GTReadTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread.GTReadTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTRead.app/GTRead";
+			};
+			name = Debug;
+		};
+		AEE40E7125E0DDB100C6E7CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = GTReadTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread.GTReadTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTRead.app/GTRead";
+			};
+			name = Release;
+		};
+		AEE40E7325E0DDB100C6E7CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D2F0D0CC889568E7A272E7A /* Pods-GTRead-GTReadUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = GTReadUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread.GTReadUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GTRead;
+			};
+			name = Debug;
+		};
+		AEE40E7425E0DDB100C6E7CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9479237C85C60CBB3EB75964 /* Pods-GTRead-GTReadUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2RFU452P5;
+				INFOPLIST_FILE = GTReadUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtread.GTReadUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GTRead;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AEE40E3D25E0DDAE00C6E7CD /* Build configuration list for PBXProject "GTRead" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEE40E6A25E0DDB100C6E7CD /* Debug */,
+				AEE40E6B25E0DDB100C6E7CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AEE40E6C25E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTRead" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEE40E6D25E0DDB100C6E7CD /* Debug */,
+				AEE40E6E25E0DDB100C6E7CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AEE40E6F25E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTReadTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEE40E7025E0DDB100C6E7CD /* Debug */,
+				AEE40E7125E0DDB100C6E7CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AEE40E7225E0DDB100C6E7CD /* Build configuration list for PBXNativeTarget "GTReadUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEE40E7325E0DDB100C6E7CD /* Debug */,
+				AEE40E7425E0DDB100C6E7CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AEE40E3A25E0DDAE00C6E7CD /* Project object */;
+}
