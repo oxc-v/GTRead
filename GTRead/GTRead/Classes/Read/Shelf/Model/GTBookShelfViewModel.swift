@@ -51,7 +51,7 @@ class GTBookShelfViewModel: NSObject {
         
 //        self.collectionView.mj_header?.endRefreshing()
         images.removeAll()
-        for i in 0...4 {
+        for i in 0...5 {
             let path = Bundle.main.url(forResource: "\(i)", withExtension: ".pdf")
             guard let pdf = path else {
                 continue

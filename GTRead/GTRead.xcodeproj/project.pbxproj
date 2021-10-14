@@ -58,6 +58,7 @@
 		D7AA051B2717D49600CE4DD3 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05162717D49600CE4DD3 /* NotificationName.swift */; };
 		D7AA051C2717D49600CE4DD3 /* GTBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05182717D49600CE4DD3 /* GTBook.swift */; };
 		D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92D2717DB0A00336968 /* Images.xcassets */; };
+		D7F8C9302717DE7500336968 /* 5.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92F2717DE7500336968 /* 5.pdf */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -142,6 +143,7 @@
 		D7AA05162717D49600CE4DD3 /* NotificationName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		D7AA05182717D49600CE4DD3 /* GTBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBook.swift; sourceTree = "<group>"; };
 		D7F8C92D2717DB0A00336968 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D7F8C92F2717DE7500336968 /* 5.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 5.pdf; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -425,6 +427,7 @@
 		D7AA04EE2717D42200CE4DD3 /* PDFResource */ = {
 			isa = PBXGroup;
 			children = (
+				D7F8C92F2717DE7500336968 /* 5.pdf */,
 				D7AA04EF2717D42200CE4DD3 /* 4.pdf */,
 				D7AA04F02717D42200CE4DD3 /* 0.pdf */,
 				D7AA04F12717D42200CE4DD3 /* 1.pdf */,
@@ -630,6 +633,7 @@
 				D7AA05082717D42200CE4DD3 /* 1.pdf in Resources */,
 				D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */,
 				AEE40EA725E120D900C6E7CD /* Main.storyboard in Resources */,
+				D7F8C9302717DE7500336968 /* 5.pdf in Resources */,
 				D7AA05092717D42200CE4DD3 /* 3.pdf in Resources */,
 				D7AA05062717D42200CE4DD3 /* 4.pdf in Resources */,
 				D7AA05072717D42200CE4DD3 /* 0.pdf in Resources */,
