@@ -53,11 +53,11 @@
 		D7AA050C2717D42200CE4DD3 /* GTShelfBookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04F82717D42200CE4DD3 /* GTShelfBookModel.swift */; };
 		D7AA050D2717D42200CE4DD3 /* GTBookShelfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04F92717D42200CE4DD3 /* GTBookShelfViewModel.swift */; };
 		D7AA050E2717D42200CE4DD3 /* GTBookCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04FB2717D42200CE4DD3 /* GTBookCollectionCell.swift */; };
-		D7AA05102717D46A00CE4DD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */; };
 		D7AA05192717D49600CE4DD3 /* GTNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05132717D49600CE4DD3 /* GTNet.swift */; };
 		D7AA051A2717D49600CE4DD3 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05152717D49600CE4DD3 /* UserInfo.swift */; };
 		D7AA051B2717D49600CE4DD3 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05162717D49600CE4DD3 /* NotificationName.swift */; };
 		D7AA051C2717D49600CE4DD3 /* GTBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05182717D49600CE4DD3 /* GTBook.swift */; };
+		D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92D2717DB0A00336968 /* Images.xcassets */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -137,11 +137,11 @@
 		D7AA04F82717D42200CE4DD3 /* GTShelfBookModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTShelfBookModel.swift; sourceTree = "<group>"; };
 		D7AA04F92717D42200CE4DD3 /* GTBookShelfViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBookShelfViewModel.swift; sourceTree = "<group>"; };
 		D7AA04FB2717D42200CE4DD3 /* GTBookCollectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBookCollectionCell.swift; sourceTree = "<group>"; };
-		D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../../oxc/GTRead/GTRead/Resource/Assets.xcassets; sourceTree = "<group>"; };
 		D7AA05132717D49600CE4DD3 /* GTNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTNet.swift; sourceTree = "<group>"; };
 		D7AA05152717D49600CE4DD3 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D7AA05162717D49600CE4DD3 /* NotificationName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		D7AA05182717D49600CE4DD3 /* GTBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBook.swift; sourceTree = "<group>"; };
+		D7F8C92D2717DB0A00336968 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -294,10 +294,10 @@
 		AEE40E9E25E120D900C6E7CD /* Resource */ = {
 			isa = PBXGroup;
 			children = (
-				D7AA050F2717D46A00CE4DD3 /* Assets.xcassets */,
 				AEE40EA025E120D900C6E7CD /* LaunchScreen.storyboard */,
 				AEE40EA225E120D900C6E7CD /* Main.storyboard */,
 				AEE40EA425E120D900C6E7CD /* Info.plist */,
+				D7F8C92D2717DB0A00336968 /* Images.xcassets */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -628,12 +628,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7AA05082717D42200CE4DD3 /* 1.pdf in Resources */,
+				D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */,
 				AEE40EA725E120D900C6E7CD /* Main.storyboard in Resources */,
 				D7AA05092717D42200CE4DD3 /* 3.pdf in Resources */,
 				D7AA05062717D42200CE4DD3 /* 4.pdf in Resources */,
 				D7AA05072717D42200CE4DD3 /* 0.pdf in Resources */,
 				AEE40EA625E120D900C6E7CD /* LaunchScreen.storyboard in Resources */,
-				D7AA05102717D46A00CE4DD3 /* Assets.xcassets in Resources */,
 				D7AA050A2717D42200CE4DD3 /* 2.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -975,18 +975,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 94CB0EA52D5D83DA63E9853B /* Pods-GTRead.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Y2RFU452P5;
+				DEVELOPMENT_TEAM = XMDSF89B4U;
 				INFOPLIST_FILE = "$(SRCROOT)/GTRead/Resource/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gtread1.www;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtreadcqnu.www;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -999,18 +999,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 10DD16B40019F3F082A8AC15 /* Pods-GTRead.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Y2RFU452P5;
+				DEVELOPMENT_TEAM = XMDSF89B4U;
 				INFOPLIST_FILE = "$(SRCROOT)/GTRead/Resource/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gtread1.www;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gtreadcqnu.www;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
