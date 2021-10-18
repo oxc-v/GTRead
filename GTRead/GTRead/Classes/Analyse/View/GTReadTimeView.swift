@@ -20,6 +20,9 @@ class GTReadTimeView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = UIColor.white
+        self.layer.shadowRadius = 5
+        self.layer.shadowOffset = CGSize(width: 3.0, height: -3.0)
+        self.layer.shadowOpacity = 0.2
         
         // 提示语
         txtLabel = UILabel()
@@ -67,7 +70,7 @@ class GTReadTimeView: UIView {
         chartView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.equalTo(300)
+            make.top.equalTo(timeLabel.snp.bottom).offset(16)
             make.bottom.equalToSuperview()
         }
         

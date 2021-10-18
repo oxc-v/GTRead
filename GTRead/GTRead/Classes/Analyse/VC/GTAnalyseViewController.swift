@@ -9,12 +9,22 @@ import UIKit
 import MJRefresh
 
 class GTAnalyseViewController: GTBaseViewController {
-    var timeView: GTReadTimeView!
+    
+    var oneDayReadTimeView: GTReadTimeView!
+    
+    var thisReadTimeView: GTReadThisReadDataView!
+    var thisReadLineView: GTReadThisReadDataView!
+    var thisReadPageView: GTReadThisReadDataView!
+    var thisReadConcentrationView: GTReadThisReadDataView!
+    let thisTimeReadDataCellMargin = 32.0
+    let thisTimeReadDataCellCornerRadius = 16.0
+    
     var dataModel: GTReadTimeModel?
+    let kGTScreenWidth = UIScreen.main.bounds.width
     
     lazy var analyseCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
+//        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellName)
         return collectionView
     }()
@@ -39,12 +49,51 @@ class GTAnalyseViewController: GTBaseViewController {
             make.bottom.equalToSuperview()
         }
         
-        timeView = GTReadTimeView()
-        self.analyseCollectionView.addSubview(timeView)
-        timeView.snp.makeConstraints { (make) in
-            make.left.right.top.equalToSuperview()
+        oneDayReadTimeView = GTReadTimeView()
+        oneDayReadTimeView.layer.cornerRadius = 20
+        self.analyseCollectionView.addSubview(oneDayReadTimeView)
+        oneDayReadTimeView.snp.makeConstraints { (make) in
+//            make.left.right.top.equalToSuperview()
+            make.left.top.equalTo(16)
+            make.right.equalTo(-16)
             make.centerX.equalToSuperview()
-            make.height.equalTo(500)
+            make.height.equalTo(400)
+        }
+        
+        thisReadTimeView = GTReadThisReadDataView(titleTxt: "本次阅读时间", dataTxt: "1时40分", imgName: "this_time")
+        thisReadTimeView.layer.cornerRadius = thisTimeReadDataCellCornerRadius
+        self.analyseCollectionView.addSubview(thisReadTimeView)
+        thisReadTimeView.snp.makeConstraints { (make) in
+            make.left.equalTo(16)
+            make.width.height.equalTo((kGTScreenWidth - 2.0 * 16 - 3.0 * thisTimeReadDataCellMargin) / 4.0)
+            make.top.equalTo(oneDayReadTimeView.snp.bottom).offset(32)
+        }
+        
+        thisReadConcentrationView = GTReadThisReadDataView(titleTxt: "本次阅读专注度", dataTxt: "90%", imgName: "this_concentration")
+        thisReadConcentrationView.layer.cornerRadius = thisTimeReadDataCellCornerRadius
+        self.analyseCollectionView.addSubview(thisReadConcentrationView)
+        thisReadConcentrationView.snp.makeConstraints { (make) in
+            make.left.equalTo(thisReadTimeView.snp.right).offset(thisTimeReadDataCellMargin)
+            make.width.height.equalTo((kGTScreenWidth - 2.0 * 16 - 3.0 * thisTimeReadDataCellMargin) / 4.0)
+            make.top.equalTo(thisReadTimeView.snp.top)
+        }
+        
+        thisReadPageView = GTReadThisReadDataView(titleTxt: "本次阅读行数", dataTxt: "255", imgName: "this_line")
+        thisReadPageView.layer.cornerRadius = thisTimeReadDataCellCornerRadius
+        self.analyseCollectionView.addSubview(thisReadPageView)
+        thisReadPageView.snp.makeConstraints { (make) in
+            make.left.equalTo(thisReadConcentrationView.snp.right).offset(thisTimeReadDataCellMargin)
+            make.width.height.equalTo((kGTScreenWidth - 2.0 * 16 - 3.0 * thisTimeReadDataCellMargin) / 4.0)
+            make.top.equalTo(thisReadTimeView.snp.top)
+        }
+        
+        thisReadLineView = GTReadThisReadDataView(titleTxt: "本次阅读页数", dataTxt: "15", imgName: "this_page")
+        thisReadLineView.layer.cornerRadius = thisTimeReadDataCellCornerRadius
+        self.analyseCollectionView.addSubview(thisReadLineView)
+        thisReadLineView.snp.makeConstraints { (make) in
+            make.left.equalTo(thisReadPageView.snp.right).offset(thisTimeReadDataCellMargin)
+            make.width.height.equalTo((kGTScreenWidth - 2.0 * 16 - 3.0 * thisTimeReadDataCellMargin) / 4.0)
+            make.top.equalTo(thisReadTimeView.snp.top)
         }
     }
     
@@ -62,7 +111,7 @@ class GTAnalyseViewController: GTBaseViewController {
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             self.dataModel = try! decoder.decode(GTReadTimeModel.self, from: data!)
-            self.timeView.updateChartWithData(model: self.dataModel!)
+            self.oneDayReadTimeView.updateChartWithData(model: self.dataModel!)
             
             refreshControl.endRefreshing()
         })

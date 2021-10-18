@@ -45,9 +45,9 @@ class GTBookCollectionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
         
-        self.layer.shadowRadius = 3
-        self.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
-        self.layer.shadowOpacity = 0.2
+        self.layer.shadowRadius = 5
+        self.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
+        self.layer.shadowOpacity = 0.1
         
         self.contentView.layer.masksToBounds = true
         self.contentView.layer.cornerRadius = 10

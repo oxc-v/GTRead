@@ -16,6 +16,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
     var cellOtherRowHeight = 70
     let cellInfo = [["登录"], ["消息", "最近浏览"], ["换肤", "夜间模式"], ["设置"]]
     let cellImg = [["profile"], ["info", "browse"], ["skin", "night"], ["setting"]]
+    var personalInfoDataModel: GTPersonalInfoModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,11 +55,13 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             let dataModel = try! decoder.decode(GTPersonalInfoModel.self, from: data!)
-
+            self.personalInfoDataModel = dataModel
+            
             // 更新cell
             let indexPath = IndexPath(item: 0, section: 0)
             let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
             cell.nicknameLabel.text = dataModel.nickName
+            cell.nicknameLabel.textColor = .black
             cell.headImgView.sd_setImage(with: URL(string: dataModel.headImgUrl), placeholderImage: UIImage(named: self.cellImg[0][0]))
             cell.detailTxtLabel.text = dataModel.profile
             self.tableView.rectForRow(at: indexPath)
@@ -76,6 +79,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         let indexPath = IndexPath(item: 0, section: 0)
         let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
         cell.nicknameLabel.text = cellInfo[0][0]
+        cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
         cell.headImgView.image = UIImage(named: self.cellImg[0][0])
         cell.detailTxtLabel.text = ""
         self.tableView.rectForRow(at: indexPath)
@@ -104,6 +108,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
             cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .none
             cell.headImgView.image = UIImage(named: cellImg[0][0])
+            cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
         } else {
             cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .disclosureIndicator
@@ -117,6 +122,10 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         if indexPath.section == 0 {
             if UserDefaults.standard.bool(forKey: UserDefaultKeys.LoginStatus.isLogin) == false {
                 showActionSheetController()
+            } else {
+                self.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.personalInfoDataModel!), animated: true)
+                self.hidesBottomBarWhenPushed = false
             }
         } else if indexPath.section == 3 {
             self.hidesBottomBarWhenPushed = true

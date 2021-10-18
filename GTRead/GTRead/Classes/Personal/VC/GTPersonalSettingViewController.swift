@@ -77,8 +77,10 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
                 self.navigationController?.popViewController(animated: true)
                 self.viewController.showLoginAlertController()
             }
+            let cancelAction = UIAlertAction(title: "取消", style: .default)
             alertController.addAction(loginAction)
             alertController.addAction(registerAction)
+            alertController.addAction(cancelAction)
             self.present(alertController, animated: true, completion: nil)
         }
     }

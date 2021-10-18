@@ -60,6 +60,9 @@
 		D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92D2717DB0A00336968 /* Images.xcassets */; };
 		D7F8C9302717DE7500336968 /* 5.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92F2717DE7500336968 /* 5.pdf */; };
 		D7F8C937271D01D200336968 /* GTPersonalViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */; };
+		D7F8C93D271D357C00336968 /* GTReadThisReadDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C93C271D357C00336968 /* GTReadThisReadDataView.swift */; };
+		D7F8C93F271D41F200336968 /* GTPersonalInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C93E271D41F200336968 /* GTPersonalInfoViewController.swift */; };
+		D7F8C941271D45BE00336968 /* GTPersonalInfoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -146,6 +149,9 @@
 		D7F8C92D2717DB0A00336968 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D7F8C92F2717DE7500336968 /* 5.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 5.pdf; sourceTree = "<group>"; };
 		D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalViewCell.swift; sourceTree = "<group>"; };
+		D7F8C93C271D357C00336968 /* GTReadThisReadDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadThisReadDataView.swift; sourceTree = "<group>"; };
+		D7F8C93E271D41F200336968 /* GTPersonalInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalInfoViewController.swift; sourceTree = "<group>"; };
+		D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalInfoViewCell.swift; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -336,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */,
+				D7F8C93C271D357C00336968 /* GTReadThisReadDataView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -355,6 +362,7 @@
 			children = (
 				D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */,
 				D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */,
+				D7F8C93E271D41F200336968 /* GTPersonalInfoViewController.swift */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -506,6 +514,7 @@
 			isa = PBXGroup;
 			children = (
 				D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */,
+				D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -770,6 +779,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7AA05032717D42200CE4DD3 /* GTOulineTableViewCell.swift in Sources */,
+				D7F8C93D271D357C00336968 /* GTReadThisReadDataView.swift in Sources */,
 				D7AA04DC2717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift in Sources */,
 				D7AA050E2717D42200CE4DD3 /* GTBookCollectionCell.swift in Sources */,
 				AE6DDCCE25E12B8300C0773A /* GTBaseNavigationViewController.swift in Sources */,
@@ -777,6 +787,7 @@
 				D7F8C937271D01D200336968 /* GTPersonalViewCell.swift in Sources */,
 				D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */,
 				D7AA04DD2717D3DD00CE4DD3 /* GTPersonalInfoModel.swift in Sources */,
+				D7F8C941271D45BE00336968 /* GTPersonalInfoViewCell.swift in Sources */,
 				AEA5B0A8262C14500064D4AE /* Face.swift in Sources */,
 				D7AA050D2717D42200CE4DD3 /* GTBookShelfViewModel.swift in Sources */,
 				AEE40E9825E120BE00C6E7CD /* AppDelegate.swift in Sources */,
@@ -805,6 +816,7 @@
 				D7AA04D02717D36700CE4DD3 /* GTAnalyseViewController.swift in Sources */,
 				D7AA051A2717D49600CE4DD3 /* UserInfo.swift in Sources */,
 				D7AA04FF2717D42200CE4DD3 /* GTEidtCommentViewController.swift in Sources */,
+				D7F8C93F271D41F200336968 /* GTPersonalInfoViewController.swift in Sources */,
 				D7AA05192717D49600CE4DD3 /* GTNet.swift in Sources */,
 				D7AA050B2717D42200CE4DD3 /* GTBookShelfViewController.swift in Sources */,
 				D7AA04DE2717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift in Sources */,

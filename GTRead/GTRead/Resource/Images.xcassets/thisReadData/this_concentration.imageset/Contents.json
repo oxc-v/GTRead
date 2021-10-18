@@ -1,11 +1,11 @@
 {
   "images" : [
     {
+      "filename" : "大脑.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "淘公仔.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

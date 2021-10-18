@@ -201,7 +201,11 @@ class GTReadViewController: EyeTrackViewController {
         self.trackCorrectViewPoints = [CGPoint(x: 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: UIScreen.main.bounds.height - 24), CGPoint(x: 24, y: UIScreen.main.bounds.height - 24)]
         let alertController = UIAlertController(title: "视线校准", message: "分别注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
         let okAction = UIAlertAction(title: "校准", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
+            
             self.trackView.isHidden = false
+            self.navigationController?.setNavigationBarHidden(true, animated: true)
+            self.adjustSwitch.isEnabled = false
+            
             let timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer_1 in
                 if isFirstRunning == false {
                     self.correctPointsSet.append(self.correctPoints)
@@ -212,6 +216,9 @@ class GTReadViewController: EyeTrackViewController {
                     self.trackCorrectView.isHidden = true
                     let alertController = UIAlertController(title: "视线校准完毕", message: "", preferredStyle:UIAlertController.Style.alert)
                     let okAction = UIAlertAction(title: "确定", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
+                        
+                        self.adjustSwitch.isEnabled = true
+                        
                         var points = [CGPoint]()
                         for i in 0..<self.correctPointsSet.count {
                             points.append(CGPoint(x: self.correctPointsSet[i].medianX(), y: self.correctPointsSet[i].medianY()))
