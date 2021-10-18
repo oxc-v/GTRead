@@ -15,7 +15,7 @@ struct GTReadTimeModel: Codable {
     }
     
     struct GTReadTimeItem: Codable {
-        var min: Double
+        var min: Int
         
         enum CodingKeys: String, CodingKey {
             case min

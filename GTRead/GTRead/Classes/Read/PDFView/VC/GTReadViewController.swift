@@ -194,7 +194,7 @@ class GTReadViewController: EyeTrackViewController {
     // 视线校准提示框
     func showTrackAlertController() {
         var isFirstRunning = true
-        self.getSightDataTimer.invalidate()
+        self.getSightDataTimer.fireDate = Date.distantFuture
         self.correctPoints.removeAll()
         self.correctPointsSet.removeAll()
         
@@ -218,7 +218,7 @@ class GTReadViewController: EyeTrackViewController {
                         }
                         self.sightDataModel.acceptPoints = points
                         self.sightDataModel.isCorrect = true
-                        self.getSightDataTimer.fire()
+                        self.getSightDataTimer.fireDate = Date.init(timeIntervalSinceNow: 0)
                     }
                     alertController.addAction(okAction)
                     self.present(alertController, animated: true, completion: nil)

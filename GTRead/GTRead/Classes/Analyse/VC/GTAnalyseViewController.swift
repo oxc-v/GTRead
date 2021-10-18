@@ -33,17 +33,16 @@ class GTAnalyseViewController: GTBaseViewController {
         analyseCollectionView.mj_header?.beginRefreshing()
         self.view.addSubview(analyseCollectionView)
         analyseCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(70)
+            make.top.equalTo(75)
             make.left.equalToSuperview()
             make.right.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         
         timeView = GTReadTimeView()
-        timeView.layer.cornerRadius = 10
         self.analyseCollectionView.addSubview(timeView)
         timeView.snp.makeConstraints { (make) in
-            make.left.right.top.equalTo(16)
+            make.left.right.top.equalToSuperview()
             make.centerX.equalToSuperview()
             make.height.equalTo(500)
         }

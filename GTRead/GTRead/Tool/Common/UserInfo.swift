@@ -14,7 +14,6 @@ struct UserDefaultKeys {
         static let nickname = "nickname"
         static let password = "password"
         static let account = "account"
-        static let imgUrl = "imgUrl"
     }
     
     // 登录状态

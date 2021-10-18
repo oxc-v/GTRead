@@ -16,10 +16,11 @@ class GTBookShelfViewController: GTBaseViewController {
     lazy var bookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
-        layout.minimumLineSpacing = 333.0
+        layout.minimumLineSpacing = 600
+        layout.minimumInteritemSpacing = 600
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
         collectionView.register(GTBookCollectionCell.self, forCellWithReuseIdentifier: cellName)
+        
         return collectionView
     }()
     var leftButton: UIButton = {
@@ -54,7 +55,9 @@ class GTBookShelfViewController: GTBaseViewController {
     
     func setupView() {
         self.view.backgroundColor = UIColor.white
+        
         self.setupNavigation()
+        
         let header = MJRefreshNormalHeader()
         header.setTitle("下拉刷新", for: .idle)
         header.setTitle("释放更新", for: .pulling)

@@ -14,8 +14,8 @@ class GTBookShelfViewModel: NSObject {
     let viewController: GTBaseViewController
     let kGTScreenWidth = UIScreen.main.bounds.width
     let KGTScreenHeight = UIScreen.main.bounds.height
-    let itemMargin: CGFloat = 16
-    let itemCountInRow = 3;
+    let itemMargin: CGFloat = 32
+    let itemCountInRow = 4;
     var images = [UIImage]()
     var pdfURLs = [URL]()
     var itemWidth: CGFloat = 0
@@ -40,7 +40,7 @@ class GTBookShelfViewModel: NSObject {
     
     private func createBookShelfData() {
         
-        var width = kGTScreenWidth - 16 * 3.5 - (CGFloat(itemCountInRow - 1) * itemMargin)
+        var width = kGTScreenWidth - 16 * 6 - (CGFloat(itemCountInRow - 1) * itemMargin)
         
         width = floor(width/CGFloat(itemCountInRow))
         

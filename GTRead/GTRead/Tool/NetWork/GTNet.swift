@@ -286,7 +286,7 @@ extension GTNet {
         }
     }
     
-    // 视线数据
+    // 发送视线数据
     func commitGazeTrackData(success: @escaping ((AnyObject)->()), startTime: TimeInterval, lists: Array<[String:Any]>, bookId: String = "123", pageNum: Int = 1) {
         let date = Date.init()
         let endTime = date.timeIntervalSince1970

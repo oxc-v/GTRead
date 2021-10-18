@@ -24,7 +24,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         self.view.backgroundColor = UIColor.white
 
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "GTPersonalViewCell")
+        tableView.register(GTPersonalViewCell.self, forCellReuseIdentifier: "GTPersonalViewCell")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .singleLine
@@ -57,14 +57,13 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
 
             // 更新cell
             let indexPath = IndexPath(item: 0, section: 0)
-            let cell = self.tableView.cellForRow(at: indexPath)
-            cell?.textLabel?.text = dataModel.nickName
-            cell?.detailTextLabel?.text = dataModel.profile
-            cell?.imageView?.sd_setImage(with: URL(string: dataModel.headImgUrl), placeholderImage: UIImage(named: self.cellImg[0][0]))
+            let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
+            cell.nicknameLabel.text = dataModel.nickName
+            cell.headImgView.sd_setImage(with: URL(string: dataModel.headImgUrl), placeholderImage: UIImage(named: self.cellImg[0][0]))
+            cell.detailTxtLabel.text = dataModel.profile
             self.tableView.rectForRow(at: indexPath)
 
             // 保存数据
-            UserDefaults.standard.set(dataModel.headImgUrl, forKey: UserDefaultKeys.AccountInfo.imgUrl)
             UserDefaults.standard.set(dataModel.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
 
             self.tableView.mj_header?.endRefreshing()
@@ -75,9 +74,10 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
     func resetPersonalInfo() {
         // 更新cell
         let indexPath = IndexPath(item: 0, section: 0)
-        let cell = self.tableView.cellForRow(at: indexPath)
-        cell?.textLabel?.text = cellInfo[0][0]
-        cell?.imageView?.image = UIImage(named: self.cellImg[0][0])
+        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
+        cell.nicknameLabel.text = cellInfo[0][0]
+        cell.headImgView.image = UIImage(named: self.cellImg[0][0])
+        cell.detailTxtLabel.text = ""
         self.tableView.rectForRow(at: indexPath)
     }
 
@@ -98,15 +98,14 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as UITableViewCell
-        cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
-        cell.imageView?.layer.masksToBounds = true
-        cell.imageView?.layer.cornerRadius = cell.imageView?.frame.width ?? 0 / 2
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
 
         if indexPath.section == 0 {
+            cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .none
-            cell.imageView?.sd_setImage(with: URL(string: UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.imgUrl) ?? ""), placeholderImage: UIImage(named: cellImg[0][0]))
+            cell.headImgView.image = UIImage(named: cellImg[0][0])
         } else {
+            cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .disclosureIndicator
             cell.imageView?.image = UIImage(named: cellImg[indexPath.section][indexPath.row])
         }

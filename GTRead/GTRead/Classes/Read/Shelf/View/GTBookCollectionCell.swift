@@ -45,14 +45,17 @@ class GTBookCollectionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
         
-        self.contentView.layer.masksToBounds = true
-        self.contentView.layer.borderWidth = 0.2
-        self.contentView.layer.cornerRadius = 10
+        self.layer.shadowRadius = 3
+        self.layer.shadowOffset = CGSize(width: 5.0, height: 5.0)
+        self.layer.shadowOpacity = 0.2
         
+        self.contentView.layer.masksToBounds = true
+        self.contentView.layer.cornerRadius = 10
         self.contentView.addSubview(pdfImageView)
         self.contentView.addSubview(grayView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
+        
         pdfImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }

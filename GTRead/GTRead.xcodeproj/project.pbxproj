@@ -59,6 +59,7 @@
 		D7AA051C2717D49600CE4DD3 /* GTBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA05182717D49600CE4DD3 /* GTBook.swift */; };
 		D7F8C92E2717DB0A00336968 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92D2717DB0A00336968 /* Images.xcassets */; };
 		D7F8C9302717DE7500336968 /* 5.pdf in Resources */ = {isa = PBXBuildFile; fileRef = D7F8C92F2717DE7500336968 /* 5.pdf */; };
+		D7F8C937271D01D200336968 /* GTPersonalViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -144,6 +145,7 @@
 		D7AA05182717D49600CE4DD3 /* GTBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTBook.swift; sourceTree = "<group>"; };
 		D7F8C92D2717DB0A00336968 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D7F8C92F2717DE7500336968 /* 5.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = 5.pdf; sourceTree = "<group>"; };
+		D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalViewCell.swift; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -343,7 +345,7 @@
 			children = (
 				D7AA04D42717D3DD00CE4DD3 /* VC */,
 				D7AA04D72717D3DD00CE4DD3 /* Model */,
-				D7AA04DA2717D3DD00CE4DD3 /* View */,
+				D7F8C935271D019C00336968 /* View */,
 			);
 			path = Personal;
 			sourceTree = "<group>";
@@ -364,13 +366,6 @@
 				D7AA04D92717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		D7AA04DA2717D3DD00CE4DD3 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		D7AA04DF2717D42200CE4DD3 /* Read */ = {
@@ -505,6 +500,14 @@
 				D7AA05182717D49600CE4DD3 /* GTBook.swift */,
 			);
 			path = GTBook;
+			sourceTree = "<group>";
+		};
+		D7F8C935271D019C00336968 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		EB1BF41AFB4E335A24066273 /* Pods */ = {
@@ -771,6 +774,7 @@
 				D7AA050E2717D42200CE4DD3 /* GTBookCollectionCell.swift in Sources */,
 				AE6DDCCE25E12B8300C0773A /* GTBaseNavigationViewController.swift in Sources */,
 				AEA5B0A5262C14500064D4AE /* EyeTrackController.swift in Sources */,
+				D7F8C937271D01D200336968 /* GTPersonalViewCell.swift in Sources */,
 				D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */,
 				D7AA04DD2717D3DD00CE4DD3 /* GTPersonalInfoModel.swift in Sources */,
 				AEA5B0A8262C14500064D4AE /* Face.swift in Sources */,

@@ -10,8 +10,8 @@ import Charts
 
 class GTReadTimeView: UIView {
 
+    var txtLabel: UILabel!
     var timeLabel: UILabel! // 时间
-    var unitLabel: UILabel! // 时间单位
     var chartView: BarChartView! // 柱状图
 
     // 重新父类的init方法
@@ -21,28 +21,28 @@ class GTReadTimeView: UIView {
         
         self.backgroundColor = UIColor.white
         
-        // 总时间
-        timeLabel = UILabel()
-        timeLabel.textAlignment = .center
-        timeLabel.font = timeLabel.font.withSize(100)
-        timeLabel.textColor = UIColor.black
-        timeLabel.text = "0"
-        self.addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { (make) in
+        // 提示语
+        txtLabel = UILabel()
+        txtLabel.textAlignment = .center
+        txtLabel.textColor = UIColor.black
+        txtLabel.text = "今日阅读进度"
+        txtLabel.font = txtLabel.font.withSize(25)
+        self.addSubview(txtLabel)
+        txtLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(50)
         }
         
-        // 时间单位
-        unitLabel = UILabel()
-        unitLabel.textAlignment = .center
-        unitLabel.font = unitLabel.font.withSize(30)
-        unitLabel.textColor = UIColor.black
-        unitLabel.text = "小时"
-        self.addSubview(unitLabel)
-        unitLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(timeLabel.snp.right).offset(5)
-            make.top.equalTo(timeLabel.snp.bottom)
+        // 时间
+        timeLabel = UILabel()
+        timeLabel.textAlignment = .center
+        timeLabel.font = timeLabel.font.withSize(100)
+        timeLabel.textColor = UIColor.black
+        timeLabel.text = "0:00"
+        self.addSubview(timeLabel)
+        timeLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(txtLabel.snp.top).offset(20)
         }
 
         // 柱状图
@@ -50,7 +50,11 @@ class GTReadTimeView: UIView {
         chartView.xAxis.drawGridLinesEnabled = false
         chartView.leftAxis.enabled = false
         chartView.rightAxis.enabled = false
-        chartView.xAxis.enabled = false
+        chartView.xAxis.labelCount = 12
+        let xValues = ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"]
+        chartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: xValues)
+        chartView.xAxis.drawAxisLineEnabled = false
+        chartView.xAxis.labelPosition = .bottom
         chartView.legend.enabled = false
         chartView.dragEnabled = false
         chartView.scaleXEnabled = false
@@ -69,38 +73,54 @@ class GTReadTimeView: UIView {
         
         // 测试
         var dataEntries = [BarChartDataEntry]()
-        for i in 0..<20 {
-                    let y = arc4random()%10
-                    let entry = BarChartDataEntry.init(x: Double(i), y: Double(y))
-                    dataEntries.append(entry)
-                }
+        for i in 0..<12 {
+            let y = arc4random()%10
+            let entry = BarChartDataEntry.init(x: Double(i), y: Double(y))
+
+            dataEntries.append(entry)
+        }
         
         let chartDataSet = BarChartDataSet(entries: dataEntries)
         chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-        chartDataSet.valueFont = UIFont.systemFont(ofSize: 15)
+        chartDataSet.drawValuesEnabled = false
         let chartData = BarChartData(dataSets: [chartDataSet])
+        chartData.barWidth = 0.5
         chartView.data = chartData
-
     }
     
     // 更新数据
     func updateChartWithData(model: GTReadTimeModel) {
         var dataEntries = [BarChartDataEntry]()
-        var totalTime = 0.0
+        var totalTime = 0
         
         for index in 0..<model.lists.count {
-            let entry = BarChartDataEntry(x: Double(index), y: model.lists[index].min)
+            let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists[index].min))
             dataEntries.append(entry)
             totalTime += model.lists[index].min
         }
         
         let chartDataSet = BarChartDataSet(entries: dataEntries)
         chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-        chartDataSet.valueFont = UIFont.systemFont(ofSize: 15)
+        chartDataSet.drawValuesEnabled = false
         let chartData = BarChartData(dataSets: [chartDataSet])
         chartView.data = chartData
         
-        timeLabel.text = String(totalTime / 24)
+        // 设置时间格式
+        var minTxt = ""
+        var hourTxt = ""
+        let min = totalTime % 60
+        if min < 10 {
+            minTxt = "0" + String(min)
+        } else {
+            minTxt = String(min)
+        }
+        let hour = (totalTime - min) / 60 % 60
+        if hour < 10 {
+            hourTxt = "0" + String(hour)
+        } else {
+            hourTxt = String(hour)
+        }
+        timeLabel.text = hourTxt + ":" + minTxt
     }
     
     required init?(coder aDecoder: NSCoder) {
