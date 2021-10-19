@@ -46,6 +46,21 @@ class GTPersonalViewCell: UITableViewCell {
             make.left.equalTo(headImgView.snp.right).offset(16)
             make.top.equalTo(nicknameLabel.snp.bottom).offset(5)
         }
+        
+    }
+    
+    override var frame: CGRect {
+        get {
+            return super.frame
+        }
+        set(newFrame) {
+            var frame = newFrame
+            let newWidth = UIScreen.main.bounds.width - 16 * 2
+            let space = (frame.width - newWidth) / 2
+            frame.size.width = newWidth
+            frame.origin.x += space
+            super.frame = frame
+        }
     }
     
     required init?(coder: NSCoder) {

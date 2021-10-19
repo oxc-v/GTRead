@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GTReadThisReadDataView: UIView {
+class GTThisReadDataView: UIView {
     
     var titleLabel: UILabel!
     var dataLabel: UILabel!
@@ -62,4 +62,3 @@ class GTReadThisReadDataView: UIView {
         self.dataLabel.text = dataTxt
     }
 }
-

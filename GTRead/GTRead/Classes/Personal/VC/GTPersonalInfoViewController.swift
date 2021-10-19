@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource {
+class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate {
 
     var tableView: UITableView!
     var cellRowHeight = 70
@@ -22,6 +22,9 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.title = "个人信息"
+        self.view.backgroundColor = UIColor.white
         
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.register(GTPersonalInfoViewCell.self, forCellReuseIdentifier: "GTPersonalInfoViewCell")
@@ -87,11 +90,14 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalInfoViewCell", for: indexPath) as! GTPersonalInfoViewCell
+        
         cell.accessoryType = .disclosureIndicator
         cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
+        cell.selectionStyle = .none
 
         if indexPath.section == 0 {
             cell.imgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: "profile"))
+            cell.detailTextField.isUserInteractionEnabled = false
         } else if indexPath.section == 1 {
             let cellDetailTxt = [dataModel?.nickName, dataModel?.male == true ? "男" : "女", dataModel?.profile]
             cell.detailTextField.placeholder = cellDetailTxt[indexPath.row]
@@ -106,21 +112,76 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
                 cell.detailTextField.inputAssistantItem.trailingBarButtonGroups = []
             }
         }
-
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
+        
         if indexPath.section == 0 {
-            
+            showPopoverPresentationController(cell: cell)
         } else if indexPath.section == 1 {
             self.view.endEditing(true)
-            let cell = tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
             cell.detailTextField.becomeFirstResponder()
         }
     }
     
-    // 选择器按钮
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let sectionCount = tableView.numberOfRows(inSection: indexPath.section)
+                let shapeLayer = CAShapeLayer()
+        let cornerRadius = 10
+        cell.layer.mask = nil
+        if sectionCount > 1 {
+            switch indexPath.row {
+            case 0:
+                var bounds = cell.bounds
+                bounds.origin.y += 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            case sectionCount - 1:
+                var bounds = cell.bounds
+                bounds.size.height -= 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            default:
+                break
+            }
+        } else {
+            let bezierPath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 0.0,dy: 2.0), cornerRadius: CGFloat(cornerRadius))
+            shapeLayer.path = bezierPath.cgPath
+            cell.layer.mask = shapeLayer
+        }
+    }
+    
+    // 图片选择器
+    func showPopoverPresentationController(cell: GTPersonalInfoViewCell) {
+        let vc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        vc.preferredContentSize = CGSize(width: 150, height: 150)
+        vc.modalPresentationStyle = UIModalPresentationStyle.popover
+        
+        let photoAction = UIAlertAction(title: "从相册选择", style: .default, handler: test)
+        let cameraAction = UIAlertAction(title: "拍照", style: .default, handler: test)
+        vc.addAction(photoAction)
+        vc.addAction(cameraAction)
+        
+        let popoverPresentationController = vc.popoverPresentationController
+        popoverPresentationController?.sourceView = cell
+        popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection.up
+        popoverPresentationController?.delegate = self
+        popoverPresentationController?.backgroundColor = .white
+        popoverPresentationController?.sourceRect = CGRect(x: cell.imgView.center.x , y: cell.frame.size.height, width: 0, height: 0)
+        
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    func test(action: UIAlertAction) {
+        
+    }
+    
+    // 性别选择器
     @objc private func pickerToolBarButtonDidClicked() {
         self.view.endEditing(true)
     }

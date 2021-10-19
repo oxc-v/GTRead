@@ -21,7 +21,7 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
         self.view.backgroundColor = UIColor.white
         
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "GTPersonalSettingViewCell")
+        tableView.register(GTPersonalSettingViewCell.self, forCellReuseIdentifier: "GTPersonalSettingViewCell")
         tableView.delegate = self
         tableView.dataSource = self
         self.view.addSubview(tableView)
@@ -52,15 +52,25 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalSettingViewCell", for: indexPath) as UITableViewCell
-        cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalSettingViewCell", for: indexPath) as! GTPersonalSettingViewCell
+        cell.selectionStyle = .none
+        
+        if indexPath.section == 0 {
+            cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
+        }
 
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            let alertController = UIAlertController(title: "是否退出登录", message: "", preferredStyle: .alert)
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+
             let loginAction = UIAlertAction(title: "退出登录", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
                 // 删除配置信息
@@ -78,10 +88,40 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
                 self.viewController.showLoginAlertController()
             }
             let cancelAction = UIAlertAction(title: "取消", style: .default)
-            alertController.addAction(loginAction)
             alertController.addAction(registerAction)
+            alertController.addAction(loginAction)
+            
             alertController.addAction(cancelAction)
             self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let sectionCount = tableView.numberOfRows(inSection: indexPath.section)
+                let shapeLayer = CAShapeLayer()
+        let cornerRadius = 10
+        cell.layer.mask = nil
+        if sectionCount > 1 {
+            switch indexPath.row {
+            case 0:
+                var bounds = cell.bounds
+                bounds.origin.y += 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            case sectionCount - 1:
+                var bounds = cell.bounds
+                bounds.size.height -= 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            default:
+                break
+            }
+        } else {
+            let bezierPath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 0.0,dy: 2.0), cornerRadius: CGFloat(cornerRadius))
+            shapeLayer.path = bezierPath.cgPath
+            cell.layer.mask = shapeLayer
         }
     }
 }

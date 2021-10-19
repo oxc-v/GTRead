@@ -22,7 +22,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         super.viewDidLoad()
 
         self.title = "个人"
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor(hexString: "#f2f2f7")
 
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.register(GTPersonalViewCell.self, forCellReuseIdentifier: "GTPersonalViewCell")
@@ -103,6 +103,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
+        cell.selectionStyle = .none
 
         if indexPath.section == 0 {
             cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
@@ -131,6 +132,35 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
             self.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(GTPersonalSettingViewController(viewController: self), animated: true)
             self.hidesBottomBarWhenPushed = false
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let sectionCount = tableView.numberOfRows(inSection: indexPath.section)
+                let shapeLayer = CAShapeLayer()
+        let cornerRadius = 10
+        cell.layer.mask = nil
+        if sectionCount > 1 {
+            switch indexPath.row {
+            case 0:
+                var bounds = cell.bounds
+                bounds.origin.y += 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            case sectionCount - 1:
+                var bounds = cell.bounds
+                bounds.size.height -= 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            default:
+                break
+            }
+        } else {
+            let bezierPath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 0.0,dy: 2.0), cornerRadius: CGFloat(cornerRadius))
+            shapeLayer.path = bezierPath.cgPath
+            cell.layer.mask = shapeLayer
         }
     }
 
