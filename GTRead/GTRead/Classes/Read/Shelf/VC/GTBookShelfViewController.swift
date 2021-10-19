@@ -19,6 +19,7 @@ class GTBookShelfViewController: GTBaseViewController {
         layout.minimumLineSpacing = 600
         layout.minimumInteritemSpacing = 600
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
         collectionView.register(GTBookCollectionCell.self, forCellWithReuseIdentifier: cellName)
         
         return collectionView

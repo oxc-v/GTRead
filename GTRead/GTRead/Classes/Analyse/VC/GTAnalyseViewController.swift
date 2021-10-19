@@ -24,7 +24,7 @@ class GTAnalyseViewController: GTBaseViewController {
     
     lazy var analyseCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
-//        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
+        collectionView.backgroundColor = UIColor(hexString: "#f2f2f7")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellName)
         return collectionView
     }()
@@ -50,12 +50,9 @@ class GTAnalyseViewController: GTBaseViewController {
         }
         
         oneDayReadTimeView = GTReadTimeView()
-        oneDayReadTimeView.layer.cornerRadius = 20
         self.analyseCollectionView.addSubview(oneDayReadTimeView)
         oneDayReadTimeView.snp.makeConstraints { (make) in
-//            make.left.right.top.equalToSuperview()
-            make.left.top.equalTo(16)
-            make.right.equalTo(-16)
+            make.left.right.top.equalToSuperview()
             make.centerX.equalToSuperview()
             make.height.equalTo(400)
         }

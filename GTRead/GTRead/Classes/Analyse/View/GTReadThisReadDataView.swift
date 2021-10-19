@@ -22,7 +22,7 @@ class GTReadThisReadDataView: UIView {
         self.backgroundColor = UIColor.white
         self.layer.shadowRadius = 5
         self.layer.shadowOffset = CGSize(width: 3.0, height: -3.0)
-        self.layer.shadowOpacity = 0.2
+        self.layer.shadowOpacity = 0.1
         
         imgView = UIImageView()
         imgView.contentMode = .scaleAspectFill
