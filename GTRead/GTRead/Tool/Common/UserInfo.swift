@@ -15,9 +15,9 @@ struct UserDefaultKeys {
         static let password = "password"
         static let account = "account"
     }
-    
-    // 登录状态
-    struct LoginStatus {
-        static let isLogin = "isLogin"
-    }
+}
+
+// 登录状态
+struct LoginStatus {
+    static var isLogin = false
 }

@@ -73,12 +73,6 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
 
             let loginAction = UIAlertAction(title: "退出登录", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
-                // 删除配置信息
-                let userDefaults = UserDefaults.standard
-                for key in userDefaults.dictionaryRepresentation() {
-                    userDefaults.removeObject(forKey: key.key)
-                }
-                userDefaults.synchronize()
                 self.viewController.resetPersonalInfo()
                 self.navigationController?.popViewController(animated: true)
             }

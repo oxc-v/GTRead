@@ -202,6 +202,7 @@
 			children = (
 				AE6DDCD225E12BBF00C0773A /* GTTabBarViewController.swift */,
 				AE6DDCC825E12B3400C0773A /* GTBaseViewController.swift */,
+				D7AA04DF2717D42200CE4DD3 /* Read */,
 				AE6DDCCD25E12B8300C0773A /* GTBaseNavigationViewController.swift */,
 			);
 			name = BaseViewController;
@@ -297,7 +298,6 @@
 		AEE40E9D25E120C800C6E7CD /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D7AA04DF2717D42200CE4DD3 /* Read */,
 				D737140026343D36002DD3DD /* Analyse */,
 				D7AA04D32717D3DD00CE4DD3 /* Personal */,
 			);

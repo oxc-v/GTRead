@@ -83,6 +83,14 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         cell.headImgView.image = UIImage(named: self.cellImg[0][0])
         cell.detailTxtLabel.text = ""
         self.tableView.rectForRow(at: indexPath)
+        
+        // 删除配置信息
+        let userDefaults = UserDefaults.standard
+        for key in userDefaults.dictionaryRepresentation() {
+            userDefaults.removeObject(forKey: key.key)
+        }
+        userDefaults.synchronize()
+        LoginStatus.isLogin = false
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -121,7 +129,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            if UserDefaults.standard.bool(forKey: UserDefaultKeys.LoginStatus.isLogin) == false {
+            if LoginStatus.isLogin == false {
                 showActionSheetController()
             } else {
                 self.hidesBottomBarWhenPushed = true
@@ -129,9 +137,13 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
                 self.hidesBottomBarWhenPushed = false
             }
         } else if indexPath.section == 3 {
-            self.hidesBottomBarWhenPushed = true
-            self.navigationController?.pushViewController(GTPersonalSettingViewController(viewController: self), animated: true)
-            self.hidesBottomBarWhenPushed = false
+            if LoginStatus.isLogin == false {
+                showActionSheetController()
+            } else {
+                self.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(GTPersonalSettingViewController(viewController: self), animated: true)
+                self.hidesBottomBarWhenPushed = false
+            }
         }
     }
     
@@ -213,7 +225,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
                 } else {
                     UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
                     UserDefaults.standard.set(password.text, forKey: UserDefaultKeys.AccountInfo.password)
-                    UserDefaults.standard.set(true, forKey: UserDefaultKeys.LoginStatus.isLogin)
+                    LoginStatus.isLogin = true
                     self.tableView.mj_header?.beginRefreshing()
                 }
                 
@@ -271,7 +283,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
                     } else {
                         UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
                         UserDefaults.standard.set(password_2.text, forKey: UserDefaultKeys.AccountInfo.password)
-                        UserDefaults.standard.set(true, forKey: UserDefaultKeys.LoginStatus.isLogin)
+                        LoginStatus.isLogin = true
                         self.tableView.mj_header?.beginRefreshing()
                     }
 
