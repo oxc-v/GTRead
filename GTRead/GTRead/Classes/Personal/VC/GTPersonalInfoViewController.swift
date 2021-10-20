@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate {
 
@@ -162,8 +163,12 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
         vc.preferredContentSize = CGSize(width: 150, height: 150)
         vc.modalPresentationStyle = UIModalPresentationStyle.popover
         
-        let photoAction = UIAlertAction(title: "从相册选择", style: .default, handler: test)
-        let cameraAction = UIAlertAction(title: "拍照", style: .default, handler: test)
+        let photoAction = UIAlertAction(title: "从相册选择", style: .default) { action in
+            self.goPhotoLibrary()
+        }
+        let cameraAction = UIAlertAction(title: "拍照", style: .default) { action in
+            self.goCamera()
+        }
         vc.addAction(photoAction)
         vc.addAction(cameraAction)
         
@@ -177,8 +182,26 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
         self.present(vc, animated: true, completion: nil)
     }
     
-    func test(action: UIAlertAction) {
+    // 调用相机
+    func goCamera() {
         
+    }
+    
+    // 调用相册
+    func goPhotoLibrary() {
+        if #available(iOS 14, *) {
+            var config = PHPickerConfiguration()
+            config.selectionLimit = 1
+            config.filter = PHPickerFilter.images
+            
+            
+            let pickerViewController = PHPickerViewController(configuration: config)
+            pickerViewController.delegate = self
+            
+            self.present(pickerViewController, animated: true, completion: nil)
+        } else {
+            self.showWarningAlertController(message: "您的系统版本过低，无法打开相册")
+        }
     }
     
     // 性别选择器
@@ -198,5 +221,24 @@ extension GTPersonalInfoViewController: UIPickerViewDelegate, UIPickerViewDataSo
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return self.pickerData[row]
+    }
+}
+
+extension GTPersonalInfoViewController: UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    
+}
+
+extension GTPersonalInfoViewController: PHPickerViewControllerDelegate {
+    @available(iOS 14, *)
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+           
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
+                if let image = object as? UIImage {
+                   
+                }
+            })
+        }
     }
 }

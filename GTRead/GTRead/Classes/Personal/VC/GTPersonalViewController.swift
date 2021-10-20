@@ -68,6 +68,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
 
             // 保存数据
             UserDefaults.standard.set(dataModel.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
+            LoginStatus.isLogin = true
 
             self.tableView.mj_header?.endRefreshing()
         })
@@ -297,15 +298,6 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
 
         self.present(alertController, animated: true, completion: nil)
     }
-    
-    // 提示框
-    func showWarningAlertController(message: String) {
-        let alertController = UIAlertController(title: message, message: "", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "确定", style: .default)
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
     
     func isPurnInt(string: String) -> Bool {
         let scan: Scanner = Scanner(string: string)

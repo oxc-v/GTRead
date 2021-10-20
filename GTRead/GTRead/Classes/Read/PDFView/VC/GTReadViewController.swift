@@ -18,6 +18,7 @@ class GTReadViewController: EyeTrackViewController {
     var outlineBtn: UIButton!   // 目录按钮
     var commentBtn: UIButton!   // 评论按钮
     var adjustSwitch: UISwitch! // 视线校准按钮
+    var eyeBtn: UIButton!   // 视线图标按钮
     
     //MARK: -PDF 相关
     private var pdfdocument: PDFDocument?
@@ -118,6 +119,11 @@ class GTReadViewController: EyeTrackViewController {
     }
     
     func setupNavgationBar() {
+        eyeBtn = UIButton(type: .custom)
+        eyeBtn.setImage(UIImage(named: "track_show"), for: .normal)
+        eyeBtn.backgroundColor = .clear
+        eyeBtn.addTarget(self, action: #selector(eyeButtonDidClicked), for: .touchUpInside)
+        
         adjustSwitch = UISwitch()
         adjustSwitch.isOn = true
         adjustSwitch.addTarget(self, action: #selector(switchChangedValue), for: .valueChanged)
@@ -137,7 +143,7 @@ class GTReadViewController: EyeTrackViewController {
         commentBtn.backgroundColor = UIColor.clear
         commentBtn.addTarget(self, action: #selector(commentButtonDidClicked), for: .touchUpInside)
         
-        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: commentBtn), UIBarButtonItem(customView: outlineBtn),UIBarButtonItem(customView: thumbBtn), UIBarButtonItem(customView: adjustSwitch)]
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: commentBtn), UIBarButtonItem(customView: outlineBtn),UIBarButtonItem(customView: thumbBtn), UIBarButtonItem(customView: adjustSwitch), UIBarButtonItem(customView: eyeBtn)]
     }
     
     func setupPdfView() {
@@ -162,7 +168,7 @@ class GTReadViewController: EyeTrackViewController {
         trackView = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
         trackView.contentMode = .scaleAspectFill
         trackView.image = UIImage(named: "track_icon")
-        trackView.isHidden = true
+        trackView.isHidden = false
         self.view.addSubview(trackView)
         
         trackCorrectView = UIImageView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
@@ -177,7 +183,7 @@ class GTReadViewController: EyeTrackViewController {
 
         self.eyeTrackController = EyeTrackController(device: Device(type: deviceType ?? .iPad11), smoothingRange: 10, blinkThreshold: .infinity, isHidden: true)
         self.eyeTrackController.onUpdate = { [weak self] info in
-            self?.trackView.isHidden = false
+//            self?.trackView.isHidden = false
             let point = CGPoint(x: info?.centerEyeLookAtPoint.x ?? 0, y: info?.centerEyeLookAtPoint.y ?? 0)
             self?.sightPoint = point
             let correctPoint = self?.sightDataModel.getCorrectSightData(p: self?.sightPoint ?? CGPoint())
@@ -202,7 +208,7 @@ class GTReadViewController: EyeTrackViewController {
         let alertController = UIAlertController(title: "视线校准", message: "分别注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
         let okAction = UIAlertAction(title: "校准", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
             
-            self.trackView.isHidden = false
+//            self.trackView.isHidden = false
             self.navigationController?.setNavigationBarHidden(true, animated: true)
             self.adjustSwitch.isEnabled = false
             
@@ -223,6 +229,7 @@ class GTReadViewController: EyeTrackViewController {
                         for i in 0..<self.correctPointsSet.count {
                             points.append(CGPoint(x: self.correctPointsSet[i].medianX(), y: self.correctPointsSet[i].medianY()))
                         }
+                        
                         self.sightDataModel.acceptPoints = points
                         self.sightDataModel.isCorrect = true
                         self.getSightDataTimer.fireDate = Date.init(timeIntervalSinceNow: 0)
@@ -299,6 +306,17 @@ class GTReadViewController: EyeTrackViewController {
         self.view.addSubview(commentVC.view)
         commentVC.view.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+    }
+    
+    // 视线跟踪图标
+    @objc private func eyeButtonDidClicked() {
+        if trackView.isHidden == false {
+            self.eyeBtn.setImage(UIImage(named: "track_hide"), for: .normal)
+            trackView.isHidden = true
+        } else {
+            self.eyeBtn.setImage(UIImage(named: "track_show"), for: .normal)
+            trackView.isHidden = false
         }
     }
     
