@@ -18,8 +18,9 @@ class GTPersonalViewCell: UITableViewCell {
         
         headImgView = UIImageView()
         headImgView.contentMode = .scaleAspectFill
-        headImgView.layer.masksToBounds = true
-        headImgView.layer.cornerRadius = headImgView.frame.width / 2
+        headImgView.layer.masksToBounds = false
+        headImgView.layer.cornerRadius = 35
+        headImgView.clipsToBounds = true
         self.contentView.addSubview(headImgView)
         headImgView.snp.makeConstraints { (make) in
             make.height.width.equalTo(70)

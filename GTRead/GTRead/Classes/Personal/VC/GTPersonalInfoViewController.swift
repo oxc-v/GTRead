@@ -8,7 +8,7 @@
 import UIKit
 import PhotosUI
 
-class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate {
+class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationControllerDelegate {
 
     var tableView: UITableView!
     var cellRowHeight = 70
@@ -77,6 +77,69 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
         fatalError("init(coder:) has not been implemented")
     }
     
+    // 图片选择器
+    func showPopoverPresentationController(cell: GTPersonalInfoViewCell) {
+        let vc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        vc.preferredContentSize = CGSize(width: 150, height: 150)
+        vc.modalPresentationStyle = UIModalPresentationStyle.popover
+        
+        let photoAction = UIAlertAction(title: "从相册选择", style: .default) { action in
+            self.goPhotoLibrary()
+        }
+        let cameraAction = UIAlertAction(title: "拍照", style: .default) { action in
+            self.goCamera()
+        }
+        vc.addAction(photoAction)
+        vc.addAction(cameraAction)
+        
+        let popoverPresentationController = vc.popoverPresentationController
+        popoverPresentationController?.sourceView = cell
+        popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection.up
+        popoverPresentationController?.delegate = self
+        popoverPresentationController?.backgroundColor = .white
+        popoverPresentationController?.sourceRect = CGRect(x: cell.imgView.center.x , y: cell.frame.size.height, width: 0, height: 0)
+        
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    // 调用相机
+    func goCamera() {
+        let imagePicker = UIImagePickerController()
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera){
+            imagePicker.delegate = self
+            imagePicker.sourceType = .camera
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true, completion: nil)
+        } else{
+            self.showWarningAlertController(message: "相机不可用")
+         }
+    }
+    
+    // 调用相册
+    func goPhotoLibrary() {
+        if #available(iOS 14, *) {
+            var config = PHPickerConfiguration()
+            config.selectionLimit = 1
+            config.filter = PHPickerFilter.images
+            
+            let pickerViewController = PHPickerViewController(configuration: config)
+            pickerViewController.delegate = self
+            
+            self.present(pickerViewController, animated: true, completion: nil)
+        } else {
+            self.showWarningAlertController(message: "您的系统版本过低，无法打开相册")
+        }
+    }
+    
+    // 性别选择器
+    @objc private func pickerToolBarButtonDidClicked() {
+        self.view.endEditing(true)
+    }
+}
+
+// UITableView
+extension GTPersonalInfoViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return cellInfo.count
     }
@@ -156,60 +219,9 @@ class GTPersonalInfoViewController: GTBaseViewController, UITableViewDelegate, U
             cell.layer.mask = shapeLayer
         }
     }
-    
-    // 图片选择器
-    func showPopoverPresentationController(cell: GTPersonalInfoViewCell) {
-        let vc = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        vc.preferredContentSize = CGSize(width: 150, height: 150)
-        vc.modalPresentationStyle = UIModalPresentationStyle.popover
-        
-        let photoAction = UIAlertAction(title: "从相册选择", style: .default) { action in
-            self.goPhotoLibrary()
-        }
-        let cameraAction = UIAlertAction(title: "拍照", style: .default) { action in
-            self.goCamera()
-        }
-        vc.addAction(photoAction)
-        vc.addAction(cameraAction)
-        
-        let popoverPresentationController = vc.popoverPresentationController
-        popoverPresentationController?.sourceView = cell
-        popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection.up
-        popoverPresentationController?.delegate = self
-        popoverPresentationController?.backgroundColor = .white
-        popoverPresentationController?.sourceRect = CGRect(x: cell.imgView.center.x , y: cell.frame.size.height, width: 0, height: 0)
-        
-        self.present(vc, animated: true, completion: nil)
-    }
-    
-    // 调用相机
-    func goCamera() {
-        
-    }
-    
-    // 调用相册
-    func goPhotoLibrary() {
-        if #available(iOS 14, *) {
-            var config = PHPickerConfiguration()
-            config.selectionLimit = 1
-            config.filter = PHPickerFilter.images
-            
-            
-            let pickerViewController = PHPickerViewController(configuration: config)
-            pickerViewController.delegate = self
-            
-            self.present(pickerViewController, animated: true, completion: nil)
-        } else {
-            self.showWarningAlertController(message: "您的系统版本过低，无法打开相册")
-        }
-    }
-    
-    // 性别选择器
-    @objc private func pickerToolBarButtonDidClicked() {
-        self.view.endEditing(true)
-    }
 }
 
+// UIPickerView
 extension GTPersonalInfoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         1
@@ -224,10 +236,27 @@ extension GTPersonalInfoViewController: UIPickerViewDelegate, UIPickerViewDataSo
     }
 }
 
-extension GTPersonalInfoViewController: UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-    
+
+//UIImagePickerControllerDelegate
+extension GTPersonalInfoViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+
+        guard let image = info[.editedImage] as? UIImage else {
+            print("No image found")
+            return
+        }
+
+        let indexPath = IndexPath(row: 0, section: 0)
+        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
+        cell.imgView.image = image
+        self.tableView.rectForRow(at: indexPath)
+        
+        self.dismiss(animated: true, completion: nil)
+    }
 }
 
+// PHPickerViewController
 extension GTPersonalInfoViewController: PHPickerViewControllerDelegate {
     @available(iOS 14, *)
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -236,7 +265,12 @@ extension GTPersonalInfoViewController: PHPickerViewControllerDelegate {
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
                 if let image = object as? UIImage {
-                   
+                    DispatchQueue.main.async {
+                        let indexPath = IndexPath(row: 0, section: 0)
+                        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
+                        cell.imgView.image = image
+                        self.tableView.rectForRow(at: indexPath)
+                    }
                 }
             })
         }

@@ -18,8 +18,9 @@ class GTPersonalInfoViewCell: UITableViewCell {
         
         imgView = UIImageView()
         imgView.contentMode = .scaleAspectFill
-        imgView.layer.masksToBounds = true
-        imgView.layer.cornerRadius = imgView.frame.width / 2
+        imgView.layer.masksToBounds = false
+        imgView.layer.cornerRadius = 25
+        imgView.clipsToBounds = true
         self.contentView.addSubview(imgView)
         imgView.snp.makeConstraints { (make) in
             make.right.equalTo(-16)

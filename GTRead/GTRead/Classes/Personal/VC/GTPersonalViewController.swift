@@ -9,7 +9,7 @@ import UIKit
 import MJRefresh
 import PKHUD
 
-class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource {
+class GTPersonalViewController: GTBaseViewController {
     
     var tableView: UITableView!
     var cellFirstRowHeight = 110
@@ -94,88 +94,7 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         LoginStatus.isLogin = false
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return CGFloat(cellFirstRowHeight)
-        } else {
-            return CGFloat(cellOtherRowHeight)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cellInfo[section].count
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return cellInfo.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
-        cell.selectionStyle = .none
-
-        if indexPath.section == 0 {
-            cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
-            cell.accessoryType = .none
-            cell.headImgView.image = UIImage(named: cellImg[0][0])
-            cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
-        } else {
-            cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
-            cell.accessoryType = .disclosureIndicator
-            cell.imageView?.image = UIImage(named: cellImg[indexPath.section][indexPath.row])
-        }
-
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            if LoginStatus.isLogin == false {
-                showActionSheetController()
-            } else {
-                self.hidesBottomBarWhenPushed = true
-                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.personalInfoDataModel!), animated: true)
-                self.hidesBottomBarWhenPushed = false
-            }
-        } else if indexPath.section == 3 {
-            if LoginStatus.isLogin == false {
-                showActionSheetController()
-            } else {
-                self.hidesBottomBarWhenPushed = true
-                self.navigationController?.pushViewController(GTPersonalSettingViewController(viewController: self), animated: true)
-                self.hidesBottomBarWhenPushed = false
-            }
-        }
-    }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let sectionCount = tableView.numberOfRows(inSection: indexPath.section)
-                let shapeLayer = CAShapeLayer()
-        let cornerRadius = 10
-        cell.layer.mask = nil
-        if sectionCount > 1 {
-            switch indexPath.row {
-            case 0:
-                var bounds = cell.bounds
-                bounds.origin.y += 1.0
-                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10,height: cornerRadius))
-                shapeLayer.path = bezierPath.cgPath
-                cell.layer.mask = shapeLayer
-            case sectionCount - 1:
-                var bounds = cell.bounds
-                bounds.size.height -= 1.0
-                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius,height: cornerRadius))
-                shapeLayer.path = bezierPath.cgPath
-                cell.layer.mask = shapeLayer
-            default:
-                break
-            }
-        } else {
-            let bezierPath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 0.0,dy: 2.0), cornerRadius: CGFloat(cornerRadius))
-            shapeLayer.path = bezierPath.cgPath
-            cell.layer.mask = shapeLayer
-        }
-    }
 
     // 显示按钮弹窗
     func showActionSheetController() {
@@ -304,5 +223,91 @@ class GTPersonalViewController: GTBaseViewController, UITableViewDelegate, UITab
         var val:Int = 0
         return scan.scanInt(&val) && scan.isAtEnd
      
+    }
+}
+
+// UITableView
+extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return CGFloat(cellFirstRowHeight)
+        } else {
+            return CGFloat(cellOtherRowHeight)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cellInfo[section].count
+    }
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return cellInfo.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
+        cell.selectionStyle = .none
+
+        if indexPath.section == 0 {
+            cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
+            cell.accessoryType = .none
+            cell.headImgView.image = UIImage(named: cellImg[0][0])
+            cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
+        } else {
+            cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
+            cell.accessoryType = .disclosureIndicator
+            cell.imageView?.image = UIImage(named: cellImg[indexPath.section][indexPath.row])
+        }
+
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            if LoginStatus.isLogin == false {
+                showActionSheetController()
+            } else {
+                self.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.personalInfoDataModel!), animated: true)
+                self.hidesBottomBarWhenPushed = false
+            }
+        } else if indexPath.section == 3 {
+            if LoginStatus.isLogin == false {
+                showActionSheetController()
+            } else {
+                self.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(GTPersonalSettingViewController(viewController: self), animated: true)
+                self.hidesBottomBarWhenPushed = false
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let sectionCount = tableView.numberOfRows(inSection: indexPath.section)
+                let shapeLayer = CAShapeLayer()
+        let cornerRadius = 10
+        cell.layer.mask = nil
+        if sectionCount > 1 {
+            switch indexPath.row {
+            case 0:
+                var bounds = cell.bounds
+                bounds.origin.y += 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 10,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            case sectionCount - 1:
+                var bounds = cell.bounds
+                bounds.size.height -= 1.0
+                let bezierPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: cornerRadius,height: cornerRadius))
+                shapeLayer.path = bezierPath.cgPath
+                cell.layer.mask = shapeLayer
+            default:
+                break
+            }
+        } else {
+            let bezierPath = UIBezierPath(roundedRect: cell.bounds.insetBy(dx: 0.0,dy: 2.0), cornerRadius: CGFloat(cornerRadius))
+            shapeLayer.path = bezierPath.cgPath
+            cell.layer.mask = shapeLayer
+        }
     }
 }

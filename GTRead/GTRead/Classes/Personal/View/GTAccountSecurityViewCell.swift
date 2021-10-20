@@ -1,15 +1,14 @@
 //
-//  GTPersonalSettingViewCell.swift
+//  GTAccountSecurityViewCell.swift
 //  GTRead
 //
-//  Created by Dev on 2021/10/19.
+//  Created by Dev on 2021/10/20.
 //
 
 import UIKit
 
-class GTPersonalSettingViewCell: UITableViewCell {
+class GTAccountSecurityViewCell: UITableViewCell {
     
-    var titleTxtLabel: UILabel!
     var txtLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -24,16 +23,6 @@ class GTPersonalSettingViewCell: UITableViewCell {
         txtLabel.snp.makeConstraints { (make) in
             make.left.equalTo(16)
             make.centerY.equalToSuperview()
-        }
-        
-        titleTxtLabel = UILabel()
-        titleTxtLabel.font = titleTxtLabel.font.withSize(18)
-        titleTxtLabel.textAlignment = .center
-        titleTxtLabel.textColor = .red
-        titleTxtLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        self.contentView.addSubview(titleTxtLabel)
-        titleTxtLabel.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
         }
     }
     
@@ -55,3 +44,4 @@ class GTPersonalSettingViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+

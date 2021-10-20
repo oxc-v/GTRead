@@ -7,11 +7,11 @@
 
 import UIKit
 
-class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate, UITableViewDataSource {
+class GTPersonalSettingViewController: GTBaseViewController {
 
     var tableView: UITableView!
     var cellHeight = 70
-    let cellInfo = [["退出登录"]]
+    let cellInfo = [["账号安全"], ["退出登录"]]
     let viewController: GTPersonalViewController
     
     override func viewDidLoad() {
@@ -39,6 +39,10 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+// UITableView
+extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(self.cellHeight)
     }
@@ -55,8 +59,11 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalSettingViewCell", for: indexPath) as! GTPersonalSettingViewCell
         cell.selectionStyle = .none
         
-        if indexPath.section == 0 {
+        if indexPath.section == cellInfo.count - 1 {
             cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
+        } else {
+            cell.accessoryType = .disclosureIndicator
+            cell.txtLabel.text = cellInfo[indexPath.section][indexPath.row]
         }
 
         return cell
@@ -64,6 +71,11 @@ class GTPersonalSettingViewController: GTBaseViewController, UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                let vc = GTAccountSecurityViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        } else if indexPath.section == cellInfo.count - 1 {
             let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             if let popoverController = alertController.popoverPresentationController {
                 popoverController.sourceView = self.view

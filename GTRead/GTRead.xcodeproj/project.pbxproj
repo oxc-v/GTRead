@@ -65,6 +65,8 @@
 		D7F8C941271D45BE00336968 /* GTPersonalInfoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */; };
 		D7F8C94C271EE29300336968 /* GTPersonalSettingViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C94B271EE29300336968 /* GTPersonalSettingViewCell.swift */; };
 		D7F8C94E271F054700336968 /* GTReadSpeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C94D271F054700336968 /* GTReadSpeedView.swift */; };
+		D7F8C95027203FD100336968 /* GTAccountSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C94F27203FD000336968 /* GTAccountSecurityViewController.swift */; };
+		D7F8C952272040B200336968 /* GTAccountSecurityViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C951272040B100336968 /* GTAccountSecurityViewCell.swift */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +158,8 @@
 		D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalInfoViewCell.swift; sourceTree = "<group>"; };
 		D7F8C94B271EE29300336968 /* GTPersonalSettingViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPersonalSettingViewCell.swift; sourceTree = "<group>"; };
 		D7F8C94D271F054700336968 /* GTReadSpeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadSpeedView.swift; sourceTree = "<group>"; };
+		D7F8C94F27203FD000336968 /* GTAccountSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTAccountSecurityViewController.swift; sourceTree = "<group>"; };
+		D7F8C951272040B100336968 /* GTAccountSecurityViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTAccountSecurityViewCell.swift; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -368,6 +372,7 @@
 				D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */,
 				D7F8C93E271D41F200336968 /* GTPersonalInfoViewController.swift */,
 				D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */,
+				D7F8C94F27203FD000336968 /* GTAccountSecurityViewController.swift */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -521,6 +526,7 @@
 				D7F8C936271D01D200336968 /* GTPersonalViewCell.swift */,
 				D7F8C940271D45BE00336968 /* GTPersonalInfoViewCell.swift */,
 				D7F8C94B271EE29300336968 /* GTPersonalSettingViewCell.swift */,
+				D7F8C951272040B100336968 /* GTAccountSecurityViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -809,6 +815,7 @@
 				D7AA050C2717D42200CE4DD3 /* GTShelfBookModel.swift in Sources */,
 				D7AA05052717D42200CE4DD3 /* GTThumbnailCollectionViewCell.swift in Sources */,
 				D7AA051B2717D49600CE4DD3 /* NotificationName.swift in Sources */,
+				D7F8C95027203FD100336968 /* GTAccountSecurityViewController.swift in Sources */,
 				D7AA05042717D42200CE4DD3 /* GTCommentViewCell.swift in Sources */,
 				AE6DDCD325E12BBF00C0773A /* GTTabBarViewController.swift in Sources */,
 				D7AA05012717D42200CE4DD3 /* GTCommentModel.swift in Sources */,
@@ -821,6 +828,7 @@
 				AEA5B0A9262C14500064D4AE /* Device.swift in Sources */,
 				D7AA05022717D42200CE4DD3 /* GTTrackCorrectModel.swift in Sources */,
 				D7AA04D02717D36700CE4DD3 /* GTAnalyseViewController.swift in Sources */,
+				D7F8C952272040B200336968 /* GTAccountSecurityViewCell.swift in Sources */,
 				D7AA051A2717D49600CE4DD3 /* UserInfo.swift in Sources */,
 				D7AA04FF2717D42200CE4DD3 /* GTEidtCommentViewController.swift in Sources */,
 				D7F8C93F271D41F200336968 /* GTPersonalInfoViewController.swift in Sources */,
