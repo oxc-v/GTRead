@@ -63,9 +63,9 @@ class GTReadTimeView: UIView {
         chartView.scaleXEnabled = false
         chartView.scaleYEnabled = false
         chartView.doubleTapToZoomEnabled = false
+        chartView.animate(xAxisDuration: 1, yAxisDuration: 1)
         chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
-        chartView.noDataFont = UIFont(name: "Helvetica", size: 25.0)!
-        chartView.noDataTextColor = UIColor(hexString: "#2ec9a4")
+        
         self.addSubview(chartView)
         chartView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
@@ -73,33 +73,17 @@ class GTReadTimeView: UIView {
             make.top.equalTo(timeLabel.snp.bottom).offset(16)
             make.bottom.equalToSuperview()
         }
-        
-        // 测试
-        var dataEntries = [BarChartDataEntry]()
-        for i in 0..<12 {
-            let y = arc4random()%10
-            let entry = BarChartDataEntry.init(x: Double(i), y: Double(y))
-
-            dataEntries.append(entry)
-        }
-        
-        let chartDataSet = BarChartDataSet(entries: dataEntries)
-        chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-        chartDataSet.drawValuesEnabled = false
-        let chartData = BarChartData(dataSets: [chartDataSet])
-        chartData.barWidth = 0.5
-        chartView.data = chartData
     }
     
     // 更新数据
-    func updateChartWithData(model: GTReadTimeModel) {
+    func updateWithData(model: GTAnalyseDataModel) {
         var dataEntries = [BarChartDataEntry]()
-        var totalTime = 0
+        var totalMinTime = 0
         
         for index in 0..<model.lists.count {
             let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists[index].min))
             dataEntries.append(entry)
-            totalTime += model.lists[index].min
+            totalMinTime += model.lists[index].min
         }
         
         let chartDataSet = BarChartDataSet(entries: dataEntries)
@@ -111,13 +95,13 @@ class GTReadTimeView: UIView {
         // 设置时间格式
         var minTxt = ""
         var hourTxt = ""
-        let min = totalTime % 60
+        let min = totalMinTime % 60
         if min < 10 {
             minTxt = "0" + String(min)
         } else {
             minTxt = String(min)
         }
-        let hour = (totalTime - min) / 60 % 60
+        let hour = (totalMinTime - min) / 60 % 60
         if hour < 10 {
             hourTxt = "0" + String(hour)
         } else {

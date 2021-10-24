@@ -245,16 +245,6 @@ extension GTNet {
             failure(e)
         }
     }
-    
-    // 获取阅读时间
-    func getReadTimeList(dayTime: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "dayTime": dayTime] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
-            success(json)
-        } error: { (e) in
-            failure(e)
-        }
-    }
 
     // 获取书架书籍
     func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
@@ -265,7 +255,18 @@ extension GTNet {
            failure(e)
         }
     }
-
+    
+    // 分页获取PDF
+    func getOnePagePdf(bookId: String, page: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        print(page)
+        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId, "page": page] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getOneageFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (e) in
+           failure(e)
+        }
+    }
+    
     // 上传评论
     func addCommentList(success: @escaping ((AnyObject)->()), bookId: String = "123", pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
         let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
@@ -295,6 +296,19 @@ extension GTNet {
             success(json)
         } error: { (error) in
             debugPrint(error)
+        }
+    }
+    
+    // 获取分析数据
+    func getAnalyseData(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        let dayTime = dateFormatter.string(from: Date())
+        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "dayTime": dayTime] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
         }
     }
 }

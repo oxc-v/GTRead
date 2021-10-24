@@ -44,7 +44,7 @@ class GTCommentViewCell: UITableViewCell {
         
         // 用户名
         userLabel = UILabel()
-        userLabel.text = "测试1:"
+        userLabel.text = "书友"
         userLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         self.contentView.addSubview(userLabel)
         userLabel.snp.makeConstraints { (make) in
@@ -55,7 +55,7 @@ class GTCommentViewCell: UITableViewCell {
         
         // 评论内容
         contentLabel = UILabel()
-        contentLabel.text = "不错不错，66666666"
+        contentLabel.text = "这章内容很精彩呀！"
         self.contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { (make) in
             make.left.greaterThanOrEqualTo(headImgView.snp.right).offset(10)

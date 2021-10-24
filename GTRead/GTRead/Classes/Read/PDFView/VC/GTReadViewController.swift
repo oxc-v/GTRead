@@ -44,14 +44,17 @@ class GTReadViewController: EyeTrackViewController {
     var currentDate: TimeInterval!
     var getSightDataTimer: Timer!
     var sightDataModel = GTTrackCorrectModel()
+    var bookShelfDataModel: GTShelfBookItemModel?
+    var requestPdfIndex = 10
 
     // 构造函数
-    init(path: URL) {
+    init(path: URL, dataModel: GTShelfBookItemModel) {
         pdfURL = path
+        self.bookShelfDataModel = dataModel
         super.init(nibName: nil, bundle: nil)
         GTBook.shared.currentPdfView = pdfView
         GTBook.shared.pdfURL = pdfURL
-        
+
         // 定时收集视线数据
         getSightDataTimer = Timer(timeInterval:0.1, repeats: true) { timer in
             let date = Date.init()
@@ -61,7 +64,38 @@ class GTReadViewController: EyeTrackViewController {
             self.sightDatas.append(sightData)
         }
         RunLoop.current.add(getSightDataTimer, forMode: .default)
+        
+        for i in 1...requestPdfIndex {
+        
+            GTNet.shared.getOnePagePdf(bookId: self.bookShelfDataModel?.bookId ?? "", page: i, failure: {json in }) { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                let dataModel = try! decoder.decode(GTPdfDataModel.self, from: data!)
+                
+                let document = PDFDocument(url: URL(string: dataModel.Url!)!)
+                self.pdfView.document?.addPages(from: document!)
+            }
+            
+        }
     }
+    
+//    init(path: URL) {
+//        pdfURL = path
+//        super.init(nibName: nil, bundle: nil)
+//        GTBook.shared.currentPdfView = pdfView
+//        GTBook.shared.pdfURL = pdfURL
+//
+//        // 定时收集视线数据
+//        getSightDataTimer = Timer(timeInterval:0.1, repeats: true) { timer in
+//            let date = Date.init()
+//            let timeStamp = date.timeIntervalSince1970
+//            let point = self.sightDataModel.getCorrectSightData(p: self.sightPoint)
+//            let sightData = ["x": point.x, "y": point.y, "timeStamp": String(timeStamp)] as [String : Any]
+//            self.sightDatas.append(sightData)
+//        }
+//        RunLoop.current.add(getSightDataTimer, forMode: .default)
+//    }
+
     
     // 退出阅读界面
     override func viewWillDisappear(_ animated: Bool) {
@@ -160,6 +194,7 @@ class GTReadViewController: EyeTrackViewController {
         }
         
         NotificationCenter.default.addObserver(self,selector: #selector(handlePageChange(notification:)), name: Notification.Name.PDFViewPageChanged, object: nil)
+//        NotificationCenter.default.addObserver(self,selector: #selector(demon), name: Notification.Name.PDFViewVisiblePagesChanged, object: nil)
         let tap = UITapGestureRecognizer(target: self, action: #selector(pdfViewTapEvent))
         pdfView.addGestureRecognizer(tap)
     }
@@ -322,9 +357,24 @@ class GTReadViewController: EyeTrackViewController {
     
     // 翻页回调
     @objc private func handlePageChange(notification: Notification){
+        print(pdfdocument?.index(for: pdfView.currentPage!))
+//        print("oxc")
+        if pdfdocument?.index(for: pdfView.currentPage!) == requestPdfIndex - 1 {
+            for i in (pdfdocument?.index(for: pdfView.currentPage!))! + 1...requestPdfIndex + 10 {
+                GTNet.shared.getOnePagePdf(bookId: self.bookShelfDataModel?.bookId ?? "", page: i, failure: {json in }) { json in
+                    let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                    let decoder = JSONDecoder()
+                    let dataModel = try! decoder.decode(GTPdfDataModel.self, from: data!)
+                    
+                    let document = PDFDocument(url: URL(string: dataModel.Url!)!)
+                    self.pdfView.document?.addPages(from: document!)
+                }
+            }
+            requestPdfIndex += 10
+        }
+        
         // 每一次翻页都保存一次进度
         GTBook.shared.cacheData()
-        
         // 记录进入时间
         currentDate = Date.init().timeIntervalSince1970
 
@@ -378,4 +428,20 @@ extension Array where Element == CGPoint {
             return Double(sortedArray[count / 2].y + sortedArray[count / 2 - 1].y) / 2.0
         }
     }
+}
+
+extension PDFDocument {
+    
+    func addPages(from document: PDFDocument) {
+        let pageCountAddition = document.pageCount
+
+        for pageIndex in 0..<pageCountAddition {
+            guard let addPage = document.page(at: pageIndex) else {
+                break
+            }
+
+            self.insert(addPage, at: self.pageCount) // unfortunately this is very very confusing. The index is the page*after* the insertion. Every normal programmer would assume insert at self.pageCount-1
+        }
+    }
+    
 }

@@ -6,9 +6,9 @@ PODS:
   - Charts/Core (3.6.0)
   - MJRefresh (3.5.0)
   - PKHUD (5.3.0)
-  - SDWebImage (5.12.0):
-    - SDWebImage/Core (= 5.12.0)
-  - SDWebImage/Core (5.12.0)
+  - SDWebImage (5.12.1):
+    - SDWebImage/Core (= 5.12.1)
+  - SDWebImage/Core (5.12.1)
   - SnapKit (5.0.1)
   - SwiftyJSON (4.3.0)
 
@@ -39,7 +39,7 @@ SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
-  SDWebImage: 4ea20cca2986adc5aacde07aa686742fd4c67a37
+  SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 

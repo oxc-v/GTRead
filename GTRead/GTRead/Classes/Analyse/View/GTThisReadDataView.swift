@@ -15,6 +15,7 @@ class GTThisReadDataView: UIView {
     var titleTxt: String!
     var dataTxt: String!
     var imgName: String!
+    var dataModel: GTAnalyseDataModel?
     
     init(titleTxt: String, dataTxt: String, imgName: String) {
         super.init(frame: CGRect())
@@ -58,7 +59,7 @@ class GTThisReadDataView: UIView {
     }
     
     // 更新数据
-    func upThisReadWithData(dataTxt: String) {
-        self.dataLabel.text = dataTxt
+    func updateWithData(text: String) {
+        dataLabel.text = text
     }
 }

@@ -17,6 +17,12 @@ class GTBookCollectionCell: UICollectionViewCell {
         return imageView
     }()
     
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        return label
+    }()
+    
     lazy var circleImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -52,12 +58,18 @@ class GTBookCollectionCell: UICollectionViewCell {
         self.contentView.layer.masksToBounds = true
         self.contentView.layer.cornerRadius = 10
         self.contentView.addSubview(pdfImageView)
+        
         self.contentView.addSubview(grayView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
+        self.addSubview(titleLabel)
         
         pdfImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(pdfImageView.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
         }
         grayView.snp.makeConstraints { (make) in
             make.edges.equalTo(pdfImageView)
@@ -77,8 +89,9 @@ class GTBookCollectionCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateData(image: UIImage) {
+    func updateData(image: UIImage, title: String) {
         pdfImageView.image = image
+        titleLabel.text = title
     }
     
     // 开启编辑模式

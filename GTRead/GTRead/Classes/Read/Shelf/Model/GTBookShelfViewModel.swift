@@ -24,6 +24,7 @@ class GTBookShelfViewModel: NSObject {
     var isSeletedAll: Bool = false
     var seletedImages = [UIImage]()
     var seletedEvent: ((_ count: Int)->())?
+    var dataModel: GTShelfBookModel?
     
     
     init(viewController: GTBaseViewController,collectionView: UICollectionView) {
@@ -49,54 +50,54 @@ class GTBookShelfViewModel: NSObject {
         itemWidth = width
         itemHeight = height
         
-        images.removeAll()
-
-        for i in 0...5 {
-            let path = Bundle.main.url(forResource: "\(i)", withExtension: ".pdf")
-            guard let pdf = path else {
-                continue
-            }
-            pdfURLs.append(pdf)
-            let document = PDFDocument(url:pdf)
-            let page = document?.page(at: 0)
-            let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
-            guard let image = thumbnail else {
-                continue
-            }
-            images.append(image)
-        }
-        
-//        GTNet.shared.getShelfBook(failure: { json in
-//            self.collectionView.mj_header?.endRefreshing()
-//            let alertController = UIAlertController(title: "请求书架数据失败", message: "", preferredStyle: .alert)
-//            let okAction = UIAlertAction(title: "确定", style: .default)
-//            alertController.addAction(okAction)
-//            self.viewController.present(alertController, animated: true, completion: nil)
-//        }, success: { json in
-//            self.images.removeAll()
-//            self.collectionView.mj_header?.endRefreshing()
-//
-//            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-//            let decoder = JSONDecoder()
-//            let dataModel = try! decoder.decode(GTShelfBookModel.self, from: data!)
-//
-//            if dataModel.count != -1 {
-//                for item in dataModel.lists! {
-//                    let path = URL(string: item.bookHeadUrl)
-//                    guard let pdf = path else {
-//                        continue
-//                    }
-//                    self.pdfURLs.append(pdf)
-//                    let document = PDFDocument(url: pdf)
-//                    let page = document?.page(at: 0)
-//                    let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
-//                    guard let image = thumbnail else {
-//                        continue
-//                    }
-//                    self.images.append(image)
-//                }
+//        images.removeAll()
+//        for i in 0...5 {
+//            let path = Bundle.main.url(forResource: "\(i)", withExtension: ".pdf")
+//            guard let pdf = path else {
+//                continue
 //            }
-//        })
+//            pdfURLs.append(pdf)
+//            let document = PDFDocument(url:pdf)
+//            let page = document?.page(at: 0)
+//            let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
+//            guard let image = thumbnail else {
+//                continue
+//            }
+//            images.append(image)
+//        }
+        
+        GTNet.shared.getShelfBook(failure: { json in
+            self.collectionView.mj_header?.endRefreshing()
+            let alertController = UIAlertController(title: "请求书架数据失败", message: "", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "确定", style: .default)
+            alertController.addAction(okAction)
+            self.viewController.present(alertController, animated: true, completion: nil)
+        }, success: { json in
+            self.images.removeAll()
+            self.collectionView.mj_header?.endRefreshing()
+
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            let dataModel = try! decoder.decode(GTShelfBookModel.self, from: data!)
+            self.dataModel = dataModel
+
+            if dataModel.count != -1 {
+                for item in dataModel.lists! {
+                    let path = URL(string: item.bookHeadUrl)
+                    guard let pdf = path else {
+                        continue
+                    }
+                    self.pdfURLs.append(pdf)
+                    let document = PDFDocument(url: pdf)
+                    let page = document?.page(at: 0)
+                    let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
+                    guard let image = thumbnail else {
+                        continue
+                    }
+                    self.images.append(image)
+                }
+            }
+        })
     }
     
     func reloadBookDate() {
@@ -143,7 +144,7 @@ extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "bookCollectioncell", for: indexPath) as! GTBookCollectionCell
         if self.images.count > indexPath.row {
             let image = self.images[indexPath.row]
-            cell.updateData(image: image)
+            cell.updateData(image: image, title: (self.dataModel?.lists?[indexPath.row].bookName)!)
             if isEditing {
                 cell.StartEdit()
                 if isSeletedAll {
@@ -172,7 +173,8 @@ extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSo
                 }
                 seletedEvent?(seletedImages.count)
             }else{
-                let vc = GTReadViewController(path: self.pdfURLs[indexPath.row])
+                let vc = GTReadViewController(path: self.pdfURLs[indexPath.row], dataModel: (self.dataModel?.lists?[indexPath.row])!)
+//                let vc = GTReadViewController(path: self.pdfURLs[indexPath.row])
                 vc.hidesBottomBarWhenPushed = true;
                 self.viewController.navigationController?.pushViewController(vc, animated: true)
             }

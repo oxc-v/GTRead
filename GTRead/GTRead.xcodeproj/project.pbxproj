@@ -28,7 +28,7 @@
 		AEE40EA625E120D900C6E7CD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEE40EA025E120D900C6E7CD /* LaunchScreen.storyboard */; };
 		AEE40EA725E120D900C6E7CD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEE40EA225E120D900C6E7CD /* Main.storyboard */; };
 		D7AA04D02717D36700CE4DD3 /* GTAnalyseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CB2717D36700CE4DD3 /* GTAnalyseViewController.swift */; };
-		D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */; };
+		D7AA04D12717D36700CE4DD3 /* GTAnalyseDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CD2717D36700CE4DD3 /* GTAnalyseDataModel.swift */; };
 		D7AA04D22717D36700CE4DD3 /* GTReadTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */; };
 		D7AA04DB2717D3DD00CE4DD3 /* GTPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */; };
 		D7AA04DC2717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */; };
@@ -67,6 +67,8 @@
 		D7F8C94E271F054700336968 /* GTReadSpeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C94D271F054700336968 /* GTReadSpeedView.swift */; };
 		D7F8C95027203FD100336968 /* GTAccountSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C94F27203FD000336968 /* GTAccountSecurityViewController.swift */; };
 		D7F8C952272040B200336968 /* GTAccountSecurityViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C951272040B100336968 /* GTAccountSecurityViewCell.swift */; };
+		D7F8C9542724803A00336968 /* GTPdfDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C9532724803A00336968 /* GTPdfDataModel.swift */; };
+		D7F8C9562725819F00336968 /* GTReadBehaviourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C9552725819F00336968 /* GTReadBehaviourView.swift */; };
 		E9C6C138E19C2B81657B3AF1 /* Pods_GTReadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5296FA67F20FFA2759B04644 /* Pods_GTReadTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -121,7 +123,7 @@
 		AEE40EA325E120D900C6E7CD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AEE40EA425E120D900C6E7CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7AA04CB2717D36700CE4DD3 /* GTAnalyseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTAnalyseViewController.swift; sourceTree = "<group>"; };
-		D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTReadTimeModel.swift; sourceTree = "<group>"; };
+		D7AA04CD2717D36700CE4DD3 /* GTAnalyseDataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTAnalyseDataModel.swift; sourceTree = "<group>"; };
 		D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTReadTimeView.swift; sourceTree = "<group>"; };
 		D7AA04D52717D3DD00CE4DD3 /* GTPersonalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalViewController.swift; sourceTree = "<group>"; };
 		D7AA04D62717D3DD00CE4DD3 /* GTPersonalSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTPersonalSettingViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +162,8 @@
 		D7F8C94D271F054700336968 /* GTReadSpeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadSpeedView.swift; sourceTree = "<group>"; };
 		D7F8C94F27203FD000336968 /* GTAccountSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTAccountSecurityViewController.swift; sourceTree = "<group>"; };
 		D7F8C951272040B100336968 /* GTAccountSecurityViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTAccountSecurityViewCell.swift; sourceTree = "<group>"; };
+		D7F8C9532724803A00336968 /* GTPdfDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPdfDataModel.swift; sourceTree = "<group>"; };
+		D7F8C9552725819F00336968 /* GTReadBehaviourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTReadBehaviourView.swift; sourceTree = "<group>"; };
 		ECEBD343F3440C1FA06D8ABF /* Pods-GTReadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTReadTests.release.xcconfig"; path = "Target Support Files/Pods-GTReadTests/Pods-GTReadTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -341,7 +345,7 @@
 		D7AA04CC2717D36700CE4DD3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				D7AA04CD2717D36700CE4DD3 /* GTReadTimeModel.swift */,
+				D7AA04CD2717D36700CE4DD3 /* GTAnalyseDataModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -352,6 +356,7 @@
 				D7AA04CF2717D36700CE4DD3 /* GTReadTimeView.swift */,
 				D7F8C93C271D357C00336968 /* GTThisReadDataView.swift */,
 				D7F8C94D271F054700336968 /* GTReadSpeedView.swift */,
+				D7F8C9552725819F00336968 /* GTReadBehaviourView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -423,6 +428,7 @@
 			children = (
 				D7AA04E82717D42200CE4DD3 /* GTCommentModel.swift */,
 				D7AA04E92717D42200CE4DD3 /* GTTrackCorrectModel.swift */,
+				D7F8C9532724803A00336968 /* GTPdfDataModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -797,7 +803,7 @@
 				AE6DDCCE25E12B8300C0773A /* GTBaseNavigationViewController.swift in Sources */,
 				AEA5B0A5262C14500064D4AE /* EyeTrackController.swift in Sources */,
 				D7F8C937271D01D200336968 /* GTPersonalViewCell.swift in Sources */,
-				D7AA04D12717D36700CE4DD3 /* GTReadTimeModel.swift in Sources */,
+				D7AA04D12717D36700CE4DD3 /* GTAnalyseDataModel.swift in Sources */,
 				D7AA04DD2717D3DD00CE4DD3 /* GTPersonalInfoModel.swift in Sources */,
 				D7F8C941271D45BE00336968 /* GTPersonalInfoViewCell.swift in Sources */,
 				AEA5B0A8262C14500064D4AE /* Face.swift in Sources */,
@@ -836,7 +842,9 @@
 				D7F8C94E271F054700336968 /* GTReadSpeedView.swift in Sources */,
 				D7AA050B2717D42200CE4DD3 /* GTBookShelfViewController.swift in Sources */,
 				D7AA04DE2717D3DD00CE4DD3 /* GTPersonalRegisterModel.swift in Sources */,
+				D7F8C9562725819F00336968 /* GTReadBehaviourView.swift in Sources */,
 				D7AA04FC2717D42200CE4DD3 /* GTOulineTableviewController.swift in Sources */,
+				D7F8C9542724803A00336968 /* GTPdfDataModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
