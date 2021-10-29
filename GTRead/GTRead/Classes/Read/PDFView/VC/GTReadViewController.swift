@@ -45,12 +45,9 @@ class GTReadViewController: EyeTrackViewController {
     var getSightDataTimer: Timer!
     var sightDataModel = GTTrackCorrectModel()
     var bookShelfDataModel: GTShelfBookItemModel?
-    var requestPdfIndex = 10
-
-    // 构造函数
-    init(path: URL, dataModel: GTShelfBookItemModel) {
+    
+    init(path: URL) {
         pdfURL = path
-        self.bookShelfDataModel = dataModel
         super.init(nibName: nil, bundle: nil)
         GTBook.shared.currentPdfView = pdfView
         GTBook.shared.pdfURL = pdfURL
@@ -64,39 +61,8 @@ class GTReadViewController: EyeTrackViewController {
             self.sightDatas.append(sightData)
         }
         RunLoop.current.add(getSightDataTimer, forMode: .default)
-        
-        for i in 1...requestPdfIndex {
-        
-            GTNet.shared.getOnePagePdf(bookId: self.bookShelfDataModel?.bookId ?? "", page: i, failure: {json in }) { json in
-                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-                let decoder = JSONDecoder()
-                let dataModel = try! decoder.decode(GTPdfDataModel.self, from: data!)
-                
-                let document = PDFDocument(url: URL(string: dataModel.Url!)!)
-                self.pdfView.document?.addPages(from: document!)
-            }
-            
-        }
     }
-    
-//    init(path: URL) {
-//        pdfURL = path
-//        super.init(nibName: nil, bundle: nil)
-//        GTBook.shared.currentPdfView = pdfView
-//        GTBook.shared.pdfURL = pdfURL
-//
-//        // 定时收集视线数据
-//        getSightDataTimer = Timer(timeInterval:0.1, repeats: true) { timer in
-//            let date = Date.init()
-//            let timeStamp = date.timeIntervalSince1970
-//            let point = self.sightDataModel.getCorrectSightData(p: self.sightPoint)
-//            let sightData = ["x": point.x, "y": point.y, "timeStamp": String(timeStamp)] as [String : Any]
-//            self.sightDatas.append(sightData)
-//        }
-//        RunLoop.current.add(getSightDataTimer, forMode: .default)
-//    }
 
-    
     // 退出阅读界面
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -119,6 +85,11 @@ class GTReadViewController: EyeTrackViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let newBackButton = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: self, action: #selector(newBackButtonDidClicked))
+        newBackButton.image = UIImage(named: "navigation_back")
+        self.navigationItem.leftBarButtonItem = newBackButton
+        
         self.setupView()
         
         // 记录进入时间
@@ -135,6 +106,17 @@ class GTReadViewController: EyeTrackViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
+    // 自定义页面退出操作
+    @objc private func newBackButtonDidClicked() {
+        if self.presentationController != nil {
+            self.dismiss(animated: false, completion: {
+                self.navigationController?.popToRootViewController(animated: true)
+            })
+        } else {
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+    }
+    
     func setupView() {
         // 导航条
         self.setupNavgationBar()
@@ -144,10 +126,7 @@ class GTReadViewController: EyeTrackViewController {
         
         // pdf
         self.setupPdfView()
-        
-        // 视线校准
-        self.showTrackAlertController()
-        
+                
         self.view.bringSubviewToFront(trackView)
         self.view.bringSubviewToFront(trackCorrectView)
     }
@@ -159,7 +138,7 @@ class GTReadViewController: EyeTrackViewController {
         eyeBtn.addTarget(self, action: #selector(eyeButtonDidClicked), for: .touchUpInside)
         
         adjustSwitch = UISwitch()
-        adjustSwitch.isOn = true
+        adjustSwitch.isOn = false
         adjustSwitch.addTarget(self, action: #selector(switchChangedValue), for: .valueChanged)
         
         thumbBtn = UIButton(type: .custom)
@@ -194,7 +173,6 @@ class GTReadViewController: EyeTrackViewController {
         }
         
         NotificationCenter.default.addObserver(self,selector: #selector(handlePageChange(notification:)), name: Notification.Name.PDFViewPageChanged, object: nil)
-//        NotificationCenter.default.addObserver(self,selector: #selector(demon), name: Notification.Name.PDFViewVisiblePagesChanged, object: nil)
         let tap = UITapGestureRecognizer(target: self, action: #selector(pdfViewTapEvent))
         pdfView.addGestureRecognizer(tap)
     }
@@ -218,7 +196,6 @@ class GTReadViewController: EyeTrackViewController {
 
         self.eyeTrackController = EyeTrackController(device: Device(type: deviceType ?? .iPad11), smoothingRange: 10, blinkThreshold: .infinity, isHidden: true)
         self.eyeTrackController.onUpdate = { [weak self] info in
-//            self?.trackView.isHidden = false
             let point = CGPoint(x: info?.centerEyeLookAtPoint.x ?? 0, y: info?.centerEyeLookAtPoint.y ?? 0)
             self?.sightPoint = point
             let correctPoint = self?.sightDataModel.getCorrectSightData(p: self?.sightPoint ?? CGPoint())
@@ -242,8 +219,6 @@ class GTReadViewController: EyeTrackViewController {
         self.trackCorrectViewPoints = [CGPoint(x: 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: UIScreen.main.bounds.height - 24), CGPoint(x: 24, y: UIScreen.main.bounds.height - 24)]
         let alertController = UIAlertController(title: "视线校准", message: "分别注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
         let okAction = UIAlertAction(title: "校准", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
-            
-//            self.trackView.isHidden = false
             self.navigationController?.setNavigationBarHidden(true, animated: true)
             self.adjustSwitch.isEnabled = false
             
@@ -356,23 +331,7 @@ class GTReadViewController: EyeTrackViewController {
     }
     
     // 翻页回调
-    @objc private func handlePageChange(notification: Notification){
-        print(pdfdocument?.index(for: pdfView.currentPage!))
-//        print("oxc")
-        if pdfdocument?.index(for: pdfView.currentPage!) == requestPdfIndex - 1 {
-            for i in (pdfdocument?.index(for: pdfView.currentPage!))! + 1...requestPdfIndex + 10 {
-                GTNet.shared.getOnePagePdf(bookId: self.bookShelfDataModel?.bookId ?? "", page: i, failure: {json in }) { json in
-                    let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-                    let decoder = JSONDecoder()
-                    let dataModel = try! decoder.decode(GTPdfDataModel.self, from: data!)
-                    
-                    let document = PDFDocument(url: URL(string: dataModel.Url!)!)
-                    self.pdfView.document?.addPages(from: document!)
-                }
-            }
-            requestPdfIndex += 10
-        }
-        
+    @objc private func handlePageChange(notification: Notification) {
         // 每一次翻页都保存一次进度
         GTBook.shared.cacheData()
         // 记录进入时间

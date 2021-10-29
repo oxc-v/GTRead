@@ -11,7 +11,7 @@ class GTPersonalSettingViewController: GTBaseViewController {
 
     var tableView: UITableView!
     var cellHeight = 70
-    let cellInfo = [["账号安全"], ["退出登录"]]
+    let cellInfo = [["账号安全"], ["清除缓存"], ["退出登录"]]
     let viewController: GTPersonalViewController
     
     override func viewDidLoad() {
@@ -28,6 +28,7 @@ class GTPersonalSettingViewController: GTBaseViewController {
         tableView.snp.makeConstraints { (make) in
             make.left.right.bottom.top.equalToSuperview()
         }
+        
     }
     
     init(viewController: GTPersonalViewController) {
@@ -58,12 +59,19 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalSettingViewCell", for: indexPath) as! GTPersonalSettingViewCell
         cell.selectionStyle = .none
+        cell.accessoryType = .disclosureIndicator
+        cell.txtLabel.text = cellInfo[indexPath.section][indexPath.row]
+        cell.detailTxtLabel.text = ""
         
         if indexPath.section == cellInfo.count - 1 {
+            cell.accessoryType = .none
+            cell.txtLabel.text = ""
             cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
+        } else if indexPath.section == 1 {
+            let cachesSize = String(format: "%.1f", GTDiskCache.sharedCachePDF.fileSizeOfCache())
+            cell.detailTxtLabel.text = cachesSize + "M"
         } else {
-            cell.accessoryType = .disclosureIndicator
-            cell.txtLabel.text = cellInfo[indexPath.section][indexPath.row]
+            
         }
 
         return cell
@@ -71,10 +79,19 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                let vc = GTAccountSecurityViewController()
-                self.navigationController?.pushViewController(vc, animated: true)
+            let vc = GTAccountSecurityViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.section == 1 {
+            let alertController = UIAlertController(title: "确定要清除缓存么？", message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "确定清除", style: .destructive) {
+                        (action: UIAlertAction!) -> Void in
+                GTDiskCache.sharedCachePDF.clearCache()
+                tableView.reloadData()
             }
+            let cancelAction = UIAlertAction(title: "取消", style: .default)
+            alertController.addAction(cancelAction)
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
         } else if indexPath.section == cellInfo.count - 1 {
             let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             if let popoverController = alertController.popoverPresentationController {

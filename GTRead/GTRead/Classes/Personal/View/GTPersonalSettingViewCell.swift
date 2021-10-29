@@ -11,6 +11,7 @@ class GTPersonalSettingViewCell: UITableViewCell {
     
     var titleTxtLabel: UILabel!
     var txtLabel: UILabel!
+    var detailTxtLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,6 +35,17 @@ class GTPersonalSettingViewCell: UITableViewCell {
         self.contentView.addSubview(titleTxtLabel)
         titleTxtLabel.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
+        }
+        
+        detailTxtLabel = UILabel()
+        detailTxtLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        detailTxtLabel.textColor = UIColor(hexString: "#b4b4b4")
+        detailTxtLabel.textAlignment = .center
+        detailTxtLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.contentView.addSubview(detailTxtLabel)
+        detailTxtLabel.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.right.equalToSuperview().offset(-16)
         }
     }
     

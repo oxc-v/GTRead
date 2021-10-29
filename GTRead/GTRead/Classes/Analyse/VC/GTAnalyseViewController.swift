@@ -132,22 +132,24 @@ class GTAnalyseViewController: GTBaseViewController {
     @objc func refresh(refreshControl: UIRefreshControl) {
         GTNet.shared.getAnalyseData(failure: {json in
             refreshControl.endRefreshing()
-            let alertController = UIAlertController(title: "请求数据失败", message: "", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "确定", style: .default)
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            self.showNotificationMessageView(message: "获取阅读数据错误")
         }) { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            self.dataModel = try! decoder.decode(GTAnalyseDataModel.self, from: data!)
-            
-            self.oneDayReadTimeView.updateWithData(model: self.dataModel!)
-            self.thisReadTimeView.updateWithData(text: String(self.dataModel?.thisTimeData.hour ?? 0) + "时" + String(self.dataModel?.thisTimeData.min ?? 0) + "分")
-            self.thisReadConcentrationView.updateWithData(text: String(format: "%.2f", (self.dataModel?.thisTimeData.focus ?? 0) * 100) + "%")
-            self.thisReadLineView.updateWithData(text: String(self.dataModel?.thisTimeData.rows ?? 0))
-            self.thisReadPageView.updateWithData(text: String(self.dataModel?.thisTimeData.pages ?? 0))
-            self.thisReadSpeedView.updateWithData(model: self.dataModel!)
-            self.thisReadBehaviourView.updateWithData(model: self.dataModel!)
+            self.dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!)
+            if self.dataModel == nil {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            } else if self.dataModel!.status.code == -1 {
+                self.showNotificationMessageView(message: (self.dataModel!.status.errorRes)!)
+            } else {
+                self.oneDayReadTimeView.updateWithData(model: self.dataModel!)
+                self.thisReadTimeView.updateWithData(text: String(self.dataModel?.thisTimeData?.hour ?? 0) + "时" + String(self.dataModel?.thisTimeData?.min ?? 0) + "分")
+                self.thisReadConcentrationView.updateWithData(text: String(format: "%.2f", (self.dataModel?.thisTimeData?.focus ?? 0) * 100) + "%")
+                self.thisReadLineView.updateWithData(text: String(self.dataModel?.thisTimeData?.rows ?? 0))
+                self.thisReadPageView.updateWithData(text: String(self.dataModel?.thisTimeData?.pages ?? 0))
+                self.thisReadSpeedView.updateWithData(model: self.dataModel!)
+                self.thisReadBehaviourView.updateWithData(model: self.dataModel!)
+            }
             
             refreshControl.endRefreshing()
         }

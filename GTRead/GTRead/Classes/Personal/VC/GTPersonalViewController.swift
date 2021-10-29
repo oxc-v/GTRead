@@ -34,9 +34,10 @@ class GTPersonalViewController: GTBaseViewController {
         header.setTitle("下拉刷新", for: .idle)
         header.setTitle("释放更新", for: .pulling)
         header.setTitle("正在刷新...", for: .refreshing)
-        header.setRefreshingTarget(self, refreshingAction: #selector(refresh(refreshControl:)))
+        header.setRefreshingTarget(self, refreshingAction: #selector(refresh))
         tableView.mj_header = header
-        tableView.mj_header?.beginRefreshing()
+//        tableView.mj_header?.beginRefreshing()
+        self.refresh()
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.top.equalTo(70)
@@ -45,30 +46,31 @@ class GTPersonalViewController: GTBaseViewController {
     }
 
     // 下拉刷新操作
-    @objc func refresh(refreshControl: UIRefreshControl) {
+    @objc func refresh() {
 
         // 获取用户个人信息
         GTNet.shared.getPersonalInfo(failure: { json in
-            self.showWarningAlertController(message: "请求个人信息失败")
-            refreshControl.endRefreshing()
+            self.showNotificationMessageView(message: "获取个人信息失败")
+            self.tableView.mj_header?.endRefreshing()
         }, success: { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            let dataModel = try! decoder.decode(GTPersonalInfoModel.self, from: data!)
-            self.personalInfoDataModel = dataModel
-            
-            // 更新cell
-            let indexPath = IndexPath(item: 0, section: 0)
-            let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
-            cell.nicknameLabel.text = dataModel.nickName
-            cell.nicknameLabel.textColor = .black
-            cell.headImgView.sd_setImage(with: URL(string: dataModel.headImgUrl), placeholderImage: UIImage(named: self.cellImg[0][0]))
-            cell.detailTxtLabel.text = dataModel.profile
-            self.tableView.rectForRow(at: indexPath)
+            let dataModel = try? decoder.decode(GTPersonalInfoModel.self, from: data!)
+            if dataModel != nil && dataModel?.userId != "404" {
+                self.personalInfoDataModel = dataModel
+                // 更新cell
+                let indexPath = IndexPath(item: 0, section: 0)
+                let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
+                cell.nicknameLabel.text = dataModel?.nickName
+                cell.nicknameLabel.textColor = .black
+                cell.headImgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.cellImg[0][0]))
+                cell.detailTxtLabel.text = dataModel?.profile
+                self.tableView.rectForRow(at: indexPath)
 
-            // 保存数据
-            UserDefaults.standard.set(dataModel.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
-            LoginStatus.isLogin = true
+                // 保存数据
+                UserDefaults.standard.set(dataModel?.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
+                LoginStatus.isLogin = true
+            }
 
             self.tableView.mj_header?.endRefreshing()
         })

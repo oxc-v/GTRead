@@ -16,8 +16,6 @@ class GTBookShelfViewController: GTBaseViewController {
     lazy var bookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
-        layout.minimumLineSpacing = 600
-        layout.minimumInteritemSpacing = 600
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.register(GTBookCollectionCell.self, forCellWithReuseIdentifier: cellName)
@@ -74,6 +72,8 @@ class GTBookShelfViewController: GTBaseViewController {
         self.viewModel = GTBookShelfViewModel(viewController: self,collectionView: self.bookCollectionView)
         self.viewModel?.seletedEvent = { [weak self] count in
             if count > 0 {
+                self?.deleteButton.isHidden = false
+            }else{
                 self?.deleteButton.isHidden = true
             }
         }
@@ -92,17 +92,18 @@ class GTBookShelfViewController: GTBaseViewController {
     
     @objc func refresh(refreshControl: UIRefreshControl) {
         // 模拟请求
-        self.viewModel?.reloadBookDate()
-        refreshControl.endRefreshing()
+        self.viewModel?.createBookShelfData(refreshControl: refreshControl)
     }
     
     @objc func StartEditEvent() {
         if isEdit {
             // 全选事件
             self.viewModel?.seletedAll()
+            deleteButton.isHidden = false
         } else {
             isEdit = true
             leftButton.isHidden = false
+            deleteButton.isHidden = false
             rightButton.setTitle("全选", for: .normal)
             // 进入编辑模式
             self.viewModel?.startEditing(isEditIng: true)

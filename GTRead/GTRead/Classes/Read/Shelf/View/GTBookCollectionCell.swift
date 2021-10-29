@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class GTBookCollectionCell: UICollectionViewCell {
     
@@ -14,12 +15,19 @@ class GTBookCollectionCell: UICollectionViewCell {
     lazy var pdfImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 10
+        imageView.layer.shadowRadius = 5
+        imageView.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
+        imageView.layer.shadowOpacity = 0.1
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.lineBreakMode = .byTruncatingMiddle
+        label.font = UIFont.systemFont(ofSize: 15)
         return label
     }()
     
@@ -42,33 +50,30 @@ class GTBookCollectionCell: UICollectionViewCell {
     lazy var grayView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.gray
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
         view.alpha = 0.3
         view.isHidden = true
         return view
     }()
     
-    
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
-        
-        self.layer.shadowRadius = 5
-        self.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
-        self.layer.shadowOpacity = 0.1
-        
-        self.contentView.layer.masksToBounds = true
-        self.contentView.layer.cornerRadius = 10
+
         self.contentView.addSubview(pdfImageView)
-        
         self.contentView.addSubview(grayView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
-        self.addSubview(titleLabel)
+        self.contentView.addSubview(titleLabel)
         
         pdfImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.9)
         }
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(pdfImageView.snp.bottom).offset(10)
+            make.width.equalTo(pdfImageView.snp.width)
             make.centerX.equalToSuperview()
         }
         grayView.snp.makeConstraints { (make) in
@@ -82,15 +87,14 @@ class GTBookCollectionCell: UICollectionViewCell {
             make.center.equalTo(circleImageView)
             make.width.height.equalTo(10)
         }
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateData(image: UIImage, title: String) {
-        pdfImageView.image = image
+    func updateData(imageURL: String, title: String) {
+        pdfImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "book_placeholder"))
         titleLabel.text = title
     }
     

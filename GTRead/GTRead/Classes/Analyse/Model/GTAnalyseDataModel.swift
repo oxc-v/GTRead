@@ -9,10 +9,10 @@ import UIKit
 
 struct GTAnalyseDataModel: Codable {
     
-    var lists: [GTOneDayReadTime]
-    var thisTimeData: GTThisTimeReadData
-    var scatterDiagram: [GTOneDayBehaviour]
-    var speedPoints: [GTReadSpeedData]
+    var lists: [GTOneDayReadTime]?
+    var thisTimeData: GTThisTimeReadData?
+    var scatterDiagram: [GTOneDayBehaviour]?
+    var speedPoints: [GTReadSpeedData]?
     var status: GTErrorMessage
     
     enum CodingKeys: String, CodingKey {

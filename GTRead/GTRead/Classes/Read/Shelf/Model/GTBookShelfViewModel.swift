@@ -7,6 +7,7 @@
 
 import UIKit
 import PDFKit
+import SwiftEntryKit
 
 class GTBookShelfViewModel: NSObject {
     
@@ -16,13 +17,13 @@ class GTBookShelfViewModel: NSObject {
     let KGTScreenHeight = UIScreen.main.bounds.height
     let itemMargin: CGFloat = 32
     let itemCountInRow = 4;
-    var images = [UIImage]()
-    var pdfURLs = [URL]()
+    var imageURLs = [String]()
     var itemWidth: CGFloat = 0
     var itemHeight: CGFloat = 0
     var isEditing: Bool = false
     var isSeletedAll: Bool = false
-    var seletedImages = [UIImage]()
+    var seletedImageURLs = [String]()
+    var selectedBookId = [String]()
     var seletedEvent: ((_ count: Int)->())?
     var dataModel: GTShelfBookModel?
     
@@ -33,77 +34,39 @@ class GTBookShelfViewModel: NSObject {
         super.init()
         collectionView.delegate = self
         collectionView.dataSource = self
-        
-        createBookShelfData()
-        collectionView.reloadData()
     }
     
     
-    private func createBookShelfData() {
+    func createBookShelfData(refreshControl: UIRefreshControl) {
         
         var width = kGTScreenWidth - 16 * 6 - (CGFloat(itemCountInRow - 1) * itemMargin)
         
         width = floor(width/CGFloat(itemCountInRow))
         
-        let height = floor(width * 1.3)
+        let height = floor(width * 1.45)
         
         itemWidth = width
         itemHeight = height
         
-//        images.removeAll()
-//        for i in 0...5 {
-//            let path = Bundle.main.url(forResource: "\(i)", withExtension: ".pdf")
-//            guard let pdf = path else {
-//                continue
-//            }
-//            pdfURLs.append(pdf)
-//            let document = PDFDocument(url:pdf)
-//            let page = document?.page(at: 0)
-//            let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
-//            guard let image = thumbnail else {
-//                continue
-//            }
-//            images.append(image)
-//        }
-        
         GTNet.shared.getShelfBook(failure: { json in
-            self.collectionView.mj_header?.endRefreshing()
-            let alertController = UIAlertController(title: "请求书架数据失败", message: "", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "确定", style: .default)
-            alertController.addAction(okAction)
-            self.viewController.present(alertController, animated: true, completion: nil)
+            refreshControl.endRefreshing()
+            self.viewController.showNotificationMessageView(message: "获取书架数据失败")
         }, success: { json in
-            self.images.removeAll()
-            self.collectionView.mj_header?.endRefreshing()
-
+            refreshControl.endRefreshing()
+            self.imageURLs.removeAll()
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             let dataModel = try! decoder.decode(GTShelfBookModel.self, from: data!)
             self.dataModel = dataModel
-
             if dataModel.count != -1 {
                 for item in dataModel.lists! {
-                    let path = URL(string: item.bookHeadUrl)
-                    guard let pdf = path else {
-                        continue
-                    }
-                    self.pdfURLs.append(pdf)
-                    let document = PDFDocument(url: pdf)
-                    let page = document?.page(at: 0)
-                    let thumbnail = page?.thumbnail(of: CGSize(width: width, height: height), for: .cropBox)
-                    guard let image = thumbnail else {
-                        continue
-                    }
-                    self.images.append(image)
+                    self.imageURLs.append(item.bookHeadUrl)
                 }
+                self.collectionView.reloadData()
             }
         })
     }
     
-    func reloadBookDate() {
-        self.createBookShelfData()
-        self.collectionView.reloadData()
-    }
     // 开启编辑
     func startEditing(isEditIng: Bool) {
         self.isEditing = isEditIng
@@ -111,40 +74,50 @@ class GTBookShelfViewModel: NSObject {
     }
     // 取消选中
     func cancelEditing() {
-        seletedImages.removeAll()
+        seletedImageURLs.removeAll()
+        selectedBookId.removeAll()
         self.isEditing = false
         self.isSeletedAll = false
         self.collectionView.reloadData()
     }
     // 选中全部
     func seletedAll() {
-        seletedImages.removeAll()
-        seletedImages = images
+        seletedImageURLs.removeAll()
+        seletedImageURLs = imageURLs
+        
+        for i in 0..<(self.dataModel?.lists?.count ?? 0) {
+            selectedBookId.append(self.dataModel?.lists?[i].bookId ?? "")
+        }
+        
         self.isEditing = true
         self.isSeletedAll = true
         self.collectionView.reloadData()
-        seletedEvent?(seletedImages.count)
+        seletedEvent?(seletedImageURLs.count)
     }
     
     // 删除
     func deleteImages() {
-        images = images.filter({!seletedImages.contains($0)})
+        imageURLs = imageURLs.filter({!seletedImageURLs.contains($0)})
         self.cancelEditing()
         self.collectionView.reloadData()
+        
+        GTNet.shared.delShelfBook(bookIds: self.selectedBookId, failure: {json in }) { json in
+            
+        }
     }
     
 }
 
 extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.images.count
+        return self.imageURLs.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "bookCollectioncell", for: indexPath) as! GTBookCollectionCell
-        if self.images.count > indexPath.row {
-            let image = self.images[indexPath.row]
-            cell.updateData(image: image, title: (self.dataModel?.lists?[indexPath.row].bookName)!)
+        if self.imageURLs.count > indexPath.row {
+            let imageURL = self.imageURLs[indexPath.row]
+            cell.updateData(imageURL: imageURL, title: (self.dataModel?.lists?[indexPath.row].bookName) ?? "")
             if isEditing {
                 cell.StartEdit()
                 if isSeletedAll {
@@ -159,22 +132,30 @@ extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSo
     
     // ----点击事件
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if self.pdfURLs.count > indexPath.row {
-            if self.isEditing {
-                let cell = collectionView.cellForItem(at: indexPath) as! GTBookCollectionCell
-                cell.hiddenRightImageView(hidden: cell.selectedStatu)
-                if cell.selectedStatu {
-                    // 选中
-                    seletedImages.append(images[indexPath.row])
-                }else{
-                    // 取消选中
-                    let image = images[indexPath.row]
-                    seletedImages.removeAll(where: {$0 == image})
-                }
-                seletedEvent?(seletedImages.count)
+        if self.isEditing {
+            let cell = collectionView.cellForItem(at: indexPath) as! GTBookCollectionCell
+            cell.hiddenRightImageView(hidden: cell.selectedStatu)
+            if cell.selectedStatu {
+                // 选中
+                seletedImageURLs.append(imageURLs[indexPath.row])
+                selectedBookId.append(self.dataModel?.lists?[indexPath.row].bookId ?? "")
             }else{
-                let vc = GTReadViewController(path: self.pdfURLs[indexPath.row], dataModel: (self.dataModel?.lists?[indexPath.row])!)
-//                let vc = GTReadViewController(path: self.pdfURLs[indexPath.row])
+                // 取消选中
+                let image = imageURLs[indexPath.row]
+                let bookId = self.dataModel?.lists?[indexPath.row].bookId ?? ""
+                seletedImageURLs.removeAll(where: {$0 == image})
+                selectedBookId.removeAll(where: {$0 == bookId})
+            }
+            seletedEvent?(seletedImageURLs.count)
+        } else{
+            // 读取缓存
+            let fileName = self.dataModel?.lists?[indexPath.row].bookId ?? ""
+            if GTDiskCache.sharedCachePDF.isExist(fileName) {
+                let vc = GTReadViewController(path: URL(fileURLWithPath: GTDiskCache.sharedCachePDF.getFileURL(fileName)))
+                vc.hidesBottomBarWhenPushed = true;
+                self.viewController.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let vc = GTLoadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!)
                 vc.hidesBottomBarWhenPushed = true;
                 self.viewController.navigationController?.pushViewController(vc, animated: true)
             }
@@ -188,7 +169,7 @@ extension GTBookShelfViewModel: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 8
+        return 50
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

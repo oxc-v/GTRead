@@ -214,8 +214,58 @@ extension GTNet {
     }
 }
 
+// 书架
 extension GTNet {
+    // 获取书架书籍
+    func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (e) in
+           failure(e)
+        }
+    }
+    
+    // 删除书架书籍
+    func delShelfBook(bookIds: Array<String>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookIds": bookIds] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (e) in
+           failure(e)
+        }
+    }
+    
+    // 下载书籍
+    func downloadBook(path: String, url: String, downloadProgress: @escaping ((Progress)->()?), failure: @escaping ((String)->()), success: @escaping (()->())) -> DownloadRequest {
+        let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
+        let destination: DownloadRequest.Destination = { _, _ in
+            let folderURL = URL(fileURLWithPath: GTDiskCache.sharedCachePDF.diskCachePath)
+            let fileURL = folderURL.appendingPathComponent(path + ".pdf")
 
+            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        let download = AF.download(url, to: destination)
+            .downloadProgress(queue: progressQueue) { progress in
+                downloadProgress(progress)
+            }
+            .response { response in
+                switch response.result {
+                case .success(_):
+                    success()
+                    print("文件下载完毕: \(response)")
+                case .failure(let error):
+                    failure("文件下载失败")
+                    print(error)
+                }
+            }
+        
+        return download
+    }
+}
+
+// 个人管理
+extension GTNet {
     // 获取个人信息
     func getPersonalInfo(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
@@ -245,28 +295,9 @@ extension GTNet {
             failure(e)
         }
     }
+}
 
-    // 获取书架书籍
-    func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
-            success(json)
-        } error: { (e) in
-           failure(e)
-        }
-    }
-    
-    // 分页获取PDF
-    func getOnePagePdf(bookId: String, page: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        print(page)
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId, "page": page] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getOneageFun", httpMethod: .post, params: params) { (json) in
-            success(json)
-        } error: { (e) in
-           failure(e)
-        }
-    }
-    
+extension GTNet {
     // 上传评论
     func addCommentList(success: @escaping ((AnyObject)->()), bookId: String = "123", pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
         let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]

@@ -77,20 +77,23 @@ class GTReadTimeView: UIView {
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        var dataEntries = [BarChartDataEntry]()
+        
         var totalMinTime = 0
         
-        for index in 0..<model.lists.count {
-            let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists[index].min))
-            dataEntries.append(entry)
-            totalMinTime += model.lists[index].min
+        if model.lists != nil {
+            let chartData = BarChartData()
+            var dataEntries = [BarChartDataEntry]()
+            for index in 0..<model.lists!.count {
+                let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists![index].min))
+                dataEntries.append(entry)
+                totalMinTime += model.lists![index].min
+            }
+            let chartDataSet = BarChartDataSet(entries: dataEntries)
+            chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
+            chartDataSet.drawValuesEnabled = false
+            chartData.dataSets.append(chartDataSet)
+            chartView.data = chartData
         }
-        
-        let chartDataSet = BarChartDataSet(entries: dataEntries)
-        chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-        chartDataSet.drawValuesEnabled = false
-        let chartData = BarChartData(dataSets: [chartDataSet])
-        chartView.data = chartData
         
         // 设置时间格式
         var minTxt = ""

@@ -10,6 +10,7 @@ PODS:
     - SDWebImage/Core (= 5.12.1)
   - SDWebImage/Core (5.12.1)
   - SnapKit (5.0.1)
+  - SwiftEntryKit (2.0.0)
   - SwiftyJSON (4.3.0)
 
 DEPENDENCIES:
@@ -20,6 +21,7 @@ DEPENDENCIES:
   - PKHUD (~> 5.0)
   - SDWebImage (~> 5.0)
   - SnapKit (~> 5.0.0)
+  - SwiftEntryKit (~> 2.0.0)
   - SwiftyJSON (~> 4.0)
 
 SPEC REPOS:
@@ -31,6 +33,7 @@ SPEC REPOS:
     - PKHUD
     - SDWebImage
     - SnapKit
+    - SwiftEntryKit
     - SwiftyJSON
 
 SPEC CHECKSUMS:
@@ -41,8 +44,9 @@ SPEC CHECKSUMS:
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
   SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftEntryKit: 61b5fa36f34a97dd8013e48a7345bc4c4720be9a
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: bd71e40afd93e14b566195bd5de0797ce8026a79
+PODFILE CHECKSUM: 52c125b50532223e564c8caf917ae7367e713be3
 
 COCOAPODS: 1.11.2
