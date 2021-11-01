@@ -58,6 +58,11 @@ class GTThisReadDataView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // 清空数据
+    func clearData() {
+        dataLabel.text = ""
+    }
+    
     // 更新数据
     func updateWithData(text: String) {
         dataLabel.text = text

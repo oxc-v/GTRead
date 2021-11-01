@@ -39,6 +39,11 @@ class GTReadSpeedView: UIView {
         }
     }
     
+    // 清空数据
+    func clearData() {
+        chartView.clear()
+    }
+    
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
         if model.speedPoints != nil {
@@ -66,6 +71,8 @@ class GTReadSpeedView: UIView {
             chartData.dataSets.append(chartDataSet)
             //设置散点图数据
             chartView.data = chartData
+        } else {
+            chartView.clear()
         }
     }
     

@@ -68,7 +68,7 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
             cell.txtLabel.text = ""
             cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
         } else if indexPath.section == 1 {
-            let cachesSize = String(format: "%.1f", GTDiskCache.sharedCachePDF.fileSizeOfCache())
+            let cachesSize = String(format: "%.1f", GTDiskCache.shared.fileSizeOfCache())
             cell.detailTxtLabel.text = cachesSize + "M"
         } else {
             
@@ -85,7 +85,7 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
             let alertController = UIAlertController(title: "确定要清除缓存么？", message: nil, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "确定清除", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
-                GTDiskCache.sharedCachePDF.clearCache()
+                GTDiskCache.shared.clearCache()
                 tableView.reloadData()
             }
             let cancelAction = UIAlertAction(title: "取消", style: .default)
@@ -102,6 +102,9 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
 
             let loginAction = UIAlertAction(title: "退出登录", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
+                // 登录成功通知
+                NotificationCenter.default.post(name: .GTExitAccount, object: self)
+
                 self.viewController.resetPersonalInfo()
                 self.navigationController?.popViewController(animated: true)
             }

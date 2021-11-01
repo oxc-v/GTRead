@@ -112,7 +112,6 @@ class GTLoadPDFViewContrlloer: GTBaseViewController {
         }
     }
     
-    
     // Downloading
     private func downloading() {
         self.isDownloading = true
@@ -146,9 +145,14 @@ class GTLoadPDFViewContrlloer: GTBaseViewController {
             }
         }, success: {
             DispatchQueue.main.async {
-                let vc = GTReadViewController(path: URL(fileURLWithPath: GTDiskCache.sharedCachePDF.getFileURL(self.dataModel.bookId)))
-                vc.hidesBottomBarWhenPushed = true;
-                self.navigationController?.pushViewController(vc, animated: true)
+                if let url = GTDiskCache.shared.getPDF(self.dataModel.bookId) {
+                    let vc = GTReadViewController(path: url, bookId: self.dataModel.bookId)
+                    vc.hidesBottomBarWhenPushed = true;
+                    self.navigationController?.pushViewController(vc, animated: true)
+                } else {
+                    self.showNotificationMessageView(message: "文件打开失败")
+                    self.navigationController?.popViewController(animated: true)
+                }
             }
         })
     }

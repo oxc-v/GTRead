@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct GTShelfBookModel: Codable{
+struct GTShelfBookModel: Codable {
     var lists: [GTShelfBookItemModel]?
     var count: Int
     enum CodingKeys: String, CodingKey {

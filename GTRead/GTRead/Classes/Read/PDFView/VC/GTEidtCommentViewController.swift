@@ -17,6 +17,7 @@ class GTEidtCommentViewController: GTBaseViewController {
     var sendBtn: UIButton!
     var closeBtn: UIButton!
     var textField: UITextField!
+    var bookId: String
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +93,15 @@ class GTEidtCommentViewController: GTBaseViewController {
         }
     }
     
+    init(bookId: String) {
+        self.bookId = bookId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     @objc private func resignTextField() {
         textField.resignFirstResponder()
     }
@@ -104,7 +114,7 @@ class GTEidtCommentViewController: GTBaseViewController {
         GTNet.shared.addCommentList(success: {(json) in
             NotificationCenter.default.post(name: NotiReflashCommentContent, object: self)
             self.view.removeFromSuperview()
-        }, pageNum: pageNum, parentId: parentId, timeStamp: String(timeStamp), commentContent: textField.text ?? "")
+        }, bookId: self.bookId, pageNum: pageNum, parentId: parentId, timeStamp: String(timeStamp), commentContent: textField.text ?? "")
     }
 
     @objc private func closeButtonDidClicked() {

@@ -47,7 +47,6 @@ class GTAnalyseViewController: GTBaseViewController {
         header.setTitle("正在刷新...", for: .refreshing)
         header.setRefreshingTarget(self, refreshingAction: #selector(refresh(refreshControl:)))
         analyseScrollView.mj_header = header
-        analyseScrollView.mj_header?.beginRefreshing()
         self.view.addSubview(analyseScrollView)
         analyseScrollView.snp.makeConstraints { (make) in
             make.top.equalTo(75)
@@ -121,38 +120,97 @@ class GTAnalyseViewController: GTBaseViewController {
             make.top.equalTo(thisReadSpeedView.snp.top)
         }
         
-        self.analyseScrollView.updateContentView()
+        // 判断用户上次是否登录
+        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) != nil {
+            self.loadAnalyseData()
+        } else {
+            self.showNotLoginAlertController("有身份的人才能查看阅读数据哟", handler: {action in
+                self.tabBarController?.selectedIndex = 2
+            })
+        }
+        
+        // 响应登录成功通知
+        NotificationCenter.default.addObserver(self, selector: #selector(loadAnalyseData), name: .GTLoginEvent, object: nil)
+        // 响应退出登录通知
+        NotificationCenter.default.addObserver(self, selector: #selector(clearAnalyseData), name: .GTExitAccount, object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         self.analyseScrollView.updateContentView()
     }
     
-    // 下拉刷新操作
-    @objc func refresh(refreshControl: UIRefreshControl) {
-        GTNet.shared.getAnalyseData(failure: {json in
-            refreshControl.endRefreshing()
-            self.showNotificationMessageView(message: "获取阅读数据错误")
-        }) { json in
-            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-            let decoder = JSONDecoder()
-            self.dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!)
-            if self.dataModel == nil {
-                self.showNotificationMessageView(message: "服务器数据错误")
-            } else if self.dataModel!.status.code == -1 {
-                self.showNotificationMessageView(message: (self.dataModel!.status.errorRes)!)
-            } else {
-                self.oneDayReadTimeView.updateWithData(model: self.dataModel!)
-                self.thisReadTimeView.updateWithData(text: String(self.dataModel?.thisTimeData?.hour ?? 0) + "时" + String(self.dataModel?.thisTimeData?.min ?? 0) + "分")
-                self.thisReadConcentrationView.updateWithData(text: String(format: "%.2f", (self.dataModel?.thisTimeData?.focus ?? 0) * 100) + "%")
-                self.thisReadLineView.updateWithData(text: String(self.dataModel?.thisTimeData?.rows ?? 0))
-                self.thisReadPageView.updateWithData(text: String(self.dataModel?.thisTimeData?.pages ?? 0))
-                self.thisReadSpeedView.updateWithData(model: self.dataModel!)
-                self.thisReadBehaviourView.updateWithData(model: self.dataModel!)
-            }
-            
-            refreshControl.endRefreshing()
+    // 清空分析数据----退出登录
+    @objc func clearAnalyseData() {
+        self.oneDayReadTimeView.clearData()
+        self.thisReadTimeView.clearData()
+        self.thisReadConcentrationView.clearData()
+        self.thisReadLineView.clearData()
+        self.thisReadPageView.clearData()
+        self.thisReadSpeedView.clearData()
+        self.thisReadBehaviourView.clearData()
+    }
+    
+    // 加载本地缓存
+    @objc func loadAnalyseData() {
+        self.showActivityIndicatorView()
+        if let obj: GTAnalyseDataModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_analyse_view") {
+            self.dataModel = obj
+            self.updateWithData(model: self.dataModel!)
+            self.hideActivityIndicatorView()
+        } else {
+            self.refresh(refreshControl: nil)
         }
+    }
+    
+    // 下拉刷新操作
+    @objc func refresh(refreshControl: UIRefreshControl?) {
+        // 判断用户上次是否登录
+        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) != nil {
+            GTNet.shared.getAnalyseData(failure: {json in
+                refreshControl?.endRefreshing()
+                self.hideActivityIndicatorView()
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
+            }) { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                self.dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!)
+                if self.dataModel == nil {
+                    self.showNotificationMessageView(message: "服务器数据错误")
+                } else if self.dataModel!.status.code == -1 {
+                    self.updateWithData(model: self.dataModel!)
+                    self.showNotificationMessageView(message: (self.dataModel!.status.errorRes)!)
+                } else {
+                    self.updateWithData(model: self.dataModel!)
+                    
+                    // 对阅读数据进行缓存
+                    GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_analyse_view", value: self.dataModel)
+                }
+                
+                self.hideActivityIndicatorView()
+                refreshControl?.endRefreshing()
+            }
+        } else {
+            self.hideActivityIndicatorView()
+            refreshControl?.endRefreshing()
+            self.showNotLoginAlertController("有身份的人才能查看阅读数据哟", handler: {action in
+                self.tabBarController?.selectedIndex = 2
+            })
+        }
+    }
+    
+    // 更新数据
+    func updateWithData(model: GTAnalyseDataModel) {
+        self.oneDayReadTimeView.updateWithData(model: model)
+        self.thisReadTimeView.updateWithData(text: String(model.thisTimeData?.hour ?? 0) + "时" + String(model.thisTimeData?.min ?? 0) + "分")
+        self.thisReadConcentrationView.updateWithData(text: String(format: "%.2f", (model.thisTimeData?.focus ?? 0) * 100) + "%")
+        self.thisReadLineView.updateWithData(text: String(model.thisTimeData?.rows ?? 0))
+        self.thisReadPageView.updateWithData(text: String(model.thisTimeData?.pages ?? 0))
+        self.thisReadSpeedView.updateWithData(model: model)
+        self.thisReadBehaviourView.updateWithData(model: model)
     }
 }
 

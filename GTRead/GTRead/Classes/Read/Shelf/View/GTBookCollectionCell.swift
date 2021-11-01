@@ -47,21 +47,10 @@ class GTBookCollectionCell: UICollectionViewCell {
         return imageView
     }()
     
-    lazy var grayView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.gray
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
-        view.alpha = 0.3
-        view.isHidden = true
-        return view
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
         self.contentView.addSubview(pdfImageView)
-        self.contentView.addSubview(grayView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
         self.contentView.addSubview(titleLabel)
@@ -76,17 +65,21 @@ class GTBookCollectionCell: UICollectionViewCell {
             make.width.equalTo(pdfImageView.snp.width)
             make.centerX.equalToSuperview()
         }
-        grayView.snp.makeConstraints { (make) in
-            make.edges.equalTo(pdfImageView)
-        }
         circleImageView.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-            make.width.height.equalTo(20)
+            make.right.equalTo(pdfImageView.snp.right).offset(15)
+            make.top.equalTo(pdfImageView.snp.top).offset(-15)
+            make.width.height.equalTo(30)
         }
         rightImageView.snp.makeConstraints { (make) in
-            make.center.equalTo(circleImageView)
-            make.width.height.equalTo(10)
+            make.right.equalTo(pdfImageView.snp.right).offset(15)
+            make.top.equalTo(pdfImageView.snp.top).offset(-15)
+            make.width.height.equalTo(30)
         }
+        
+        
+        
+        let longGress = UILongPressGestureRecognizer()
+        longGress.addTarget(self, action: #selector(StartEdit))
     }
     
     required init?(coder: NSCoder) {
@@ -99,14 +92,15 @@ class GTBookCollectionCell: UICollectionViewCell {
     }
     
     // 开启编辑模式
-    func StartEdit() {
+    @objc func StartEdit() {
         selectedStatu = false
-        grayView.isHidden = false
+        circleImageView.zoomInWithEasing()
         circleImageView.isHidden = false
     }
     // 关闭编辑模式
     func endEdit() {
-        grayView.isHidden = true
+        circleImageView.zoomOutWithEasing()
+        rightImageView.zoomOutWithEasing()
         circleImageView.isHidden = true
         rightImageView.isHidden = true
     }
@@ -114,5 +108,13 @@ class GTBookCollectionCell: UICollectionViewCell {
     func hiddenRightImageView(hidden: Bool) {
         selectedStatu = !hidden
         rightImageView.isHidden = hidden
+        
+        if selectedStatu == true {
+            circleImageView.zoomOutWithEasing()
+            rightImageView.zoomInWithEasing()
+        } else {
+            circleImageView.zoomInWithEasing()
+            rightImageView.zoomOutWithEasing()
+        }
     }
 }

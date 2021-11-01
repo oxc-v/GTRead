@@ -28,7 +28,10 @@ enum NetworkStatus {
 }
 
 final class GTNet {
-    private init() {}
+    private init() {
+        // 监听网络状态
+        self.monitorNetworkingStatus()
+    }
     static let shared = GTNet()
     
     private var sessionManager: Session = {
@@ -58,15 +61,20 @@ extension GTNet {
             if reachability?.isReachable ?? false {
                 switch status {
                 case .notReachable:
+                    self?.networkStatus = .notReachable
                     weakSelf.networkStatus = .notReachable
                 case .unknown:
+                    self?.networkStatus = .unknown
                     weakSelf.networkStatus = .unknown
                 case .reachable(.cellular):
+                    self?.networkStatus = .wwan
                     weakSelf.networkStatus = .wwan
                 case .reachable(.ethernetOrWiFi):
+                    self?.networkStatus = .wifi
                     weakSelf.networkStatus = .wifi
                 }
             } else {
+                self?.networkStatus = .notReachable
                 weakSelf.networkStatus = .notReachable
             }
         })
@@ -227,7 +235,13 @@ extension GTNet {
     }
     
     // 删除书架书籍
-    func delShelfBook(bookIds: Array<String>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func delShelfBook(books: Array<GTShelfBookItemModel>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        var bookIds = [String]()
+        print(books.count)
+        for item in books {
+            print(item.bookId)
+            bookIds.append(item.bookId)
+        }
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookIds": bookIds] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
@@ -240,10 +254,13 @@ extension GTNet {
     func downloadBook(path: String, url: String, downloadProgress: @escaping ((Progress)->()?), failure: @escaping ((String)->()), success: @escaping (()->())) -> DownloadRequest {
         let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
         let destination: DownloadRequest.Destination = { _, _ in
-            let folderURL = URL(fileURLWithPath: GTDiskCache.sharedCachePDF.diskCachePath)
-            let fileURL = folderURL.appendingPathComponent(path + ".pdf")
+            let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+            let pdfFolder = "PDFDocument"
+            let path_1 = (GTDiskCache.shared.diskCachePath as NSString).appendingPathComponent(userFolder)
+            let path_2 = (path_1 as NSString).appendingPathComponent(pdfFolder)
+            let path_3 = (path_2 as NSString).appendingPathComponent(path + ".pdf")
 
-            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+            return (URL(fileURLWithPath: path_3), [.removePreviousFile, .createIntermediateDirectories])
         }
         let download = AF.download(url, to: destination)
             .downloadProgress(queue: progressQueue) { progress in
@@ -299,7 +316,7 @@ extension GTNet {
 
 extension GTNet {
     // 上传评论
-    func addCommentList(success: @escaping ((AnyObject)->()), bookId: String = "123", pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
+    func addCommentList(success: @escaping ((AnyObject)->()), bookId: String, pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
         let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/commonService/addCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
@@ -309,7 +326,7 @@ extension GTNet {
     }
 
     // 获得评论
-    func getCommentList(success: @escaping ((AnyObject)->()),error: @escaping ((AnyObject)->()), bookId: String = "123", pageNum: Int = 1) {
+    func getCommentList(success: @escaping ((AnyObject)->()),error: @escaping ((AnyObject)->()), bookId: String, pageNum: Int) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId, "pageNum": pageNum] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/commonService/getCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
@@ -319,7 +336,7 @@ extension GTNet {
     }
     
     // 发送视线数据
-    func commitGazeTrackData(success: @escaping ((AnyObject)->()), startTime: TimeInterval, lists: Array<[String:Any]>, bookId: String = "123", pageNum: Int = 1) {
+    func commitGazeTrackData(success: @escaping ((AnyObject)->()), startTime: TimeInterval, lists: Array<[String:Any]>, bookId: String, pageNum: Int) {
         let date = Date.init()
         let endTime = date.timeIntervalSince1970
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]

@@ -7,181 +7,145 @@
 
 import UIKit
 
-// 在cache下创建目录管理
-enum CacheFor: String{
-    case Object = "GTObject"    // 对象缓存
-    case PDF = "GTPDF"          // PDF文件缓存
-    case Image = "GTImage"      // 图片缓存
-}
-
-// 目录名
-enum CacheFolder: String {
-    case PDFFolder = "PDFDocuments"
-    case ObjectFolder = "UserData"
-    case ImageFolder = "Image"
-}
-
 final class GTDiskCache {
     
     private let ioQueue: DispatchQueue
     private let ioQueueName = "com.GTDisk.Cache.IoQueue."
     private let defualtFolder = "com.gtread.www"
     private var fileManager: FileManager!
-    private var storeType: CacheFor // 存储类型
-    private let cacheFolderName: String // 缓存目录
-    var diskCachePath: String   // 缓存位置
+    private let decoder: JSONDecoder
+    private let encoder: JSONEncoder
+    let diskCachePath: String
     
     
     // 采用单例模式
-    static let sharedCachePDF = GTDiskCache(type: .PDF)
-    static let sharedCacheImage = GTDiskCache(type: .Image)
-    static let sharedCacheObject = GTDiskCache(type: .Object)
+    static let shared = GTDiskCache()
     
-    private init(type: CacheFor) {
-        self.storeType = type
-        switch type {
-        case .Object:
-            cacheFolderName = CacheFolder.ObjectFolder.rawValue
-        case .PDF:
-            cacheFolderName = CacheFolder.PDFFolder.rawValue
-        case .Image:
-            cacheFolderName = CacheFolder.ImageFolder.rawValue
-        }
+    private init() {
+        // 初始化解码器和编码器
+        decoder = JSONDecoder()
+        encoder = JSONEncoder()
+        ioQueue = DispatchQueue(label: ioQueueName, attributes: [])
         
-        ioQueue = DispatchQueue(label: ioQueueName + type.rawValue, attributes: [])
-        
-        //获取缓存目录
+        //获取沙盒 cache 目录路径
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-        
         diskCachePath = (paths.first! as NSString).appendingPathComponent(defualtFolder)
-        diskCachePath = (diskCachePath as NSString).appendingPathComponent(cacheFolderName)
+        self.fileManager = FileManager.default
         
         ioQueue.sync { () -> Void in
-            // 创建对象文件夹
-            self.fileManager = FileManager.default
-            if !self.fileManager.fileExists(atPath: diskCachePath) {
-                do {
-                    try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-                } catch _ {
-                    print("GTDiskCache: 文件创建失败！")
-                }
-            }
+            self.createDirectory(diskCachePath)
         }
     }
     
-    // 存储PDF文件
-    func savePDF(_ data: Data?, path: String, completed: ((Bool)->())? = nil) {
-        ioQueue.async {
-            if let data = data {
-                if self.fileManager.createFile(atPath: self.cachePathForKey(path), contents: data, attributes: nil) {
-                    completed?(true)
-                } else {
-                    completed?(false)
-                }
-            }
-        }
-    }
+//    // 缓存书架对象
+//    func saveShelfBookObject<T: Encodable>(_ key: String, value: T?) {
+//        // 拼接路径
+//        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+//        let shelfFolder = "ShelfBookData"
+//        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+//        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
+//        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+//
+//        ioQueue.async {
+//            self.createDirectory(path_2)
+//            if let data = try? self.encoder.encode(value) {
+//                do {
+//                    try data.write(to: URL(fileURLWithPath: path_3), options: NSData.WritingOptions.atomic)
+//                }catch let err {
+//                    print("saveShelfBookObject error:\(err)")
+//                }
+//            } else {
+//                print("saveShelfBookObject: data is nil")
+//            }
+//        }
+//    }
+//
+//    // 获取书架对象数据
+//    func getShelfBookObject(_ key: String, completed: @escaping (_ obj: GTShelfBookModel?)->()) {
+//        // 拼接路径
+//        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+//        let shelfFolder = "ShelfBookData"
+//        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+//        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
+//        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+//
+//        DispatchQueue.global().async { () -> Void in
+//            if self.fileManager.fileExists(atPath: path_3){
+//                let data = self.fileManager.contents(atPath: path_3)
+//                if let obj = try? self.decoder.decode(GTShelfBookModel.self, from: data!) {
+//                    completed(obj)
+//                } else {
+//                    completed(nil)
+//                    print("getShelfBookObject error: obj is nil")
+//                }
+//            } else{
+//                print("getShelfBookObject error: not found")
+//                completed(nil)
+//            }
+//        }
+//    }
     
-    // 存储Image文件
-    func saveImage(_ data: Data?, path: String, completed: ((Bool)->())? = nil) {
-        ioQueue.async {
-            if let data = data {
-                if self.fileManager.createFile(atPath: self.cachePathForKey(path), contents: data, attributes: nil) {
-                    completed?(true)
-                } else {
-                    completed?(false)
-                }
-            }
-        }
-    }
-    
-    // 存储对象
-    func saveObject(_ key: String, value: Any?, completed: ((Bool)->())? = nil) {
-        ioQueue.async{
-            let coder = NSKeyedArchiver(requiringSecureCoding: true)
-            coder.encode(value, forKey: key)
-            let data = coder.encodedData
-
-            do {
-                try data.write(to: URL(fileURLWithPath: self.cachePathForKey(key)), options: NSData.WritingOptions.atomic)
-                completed?(true)
-            }catch let err {
-                print(err)
-                completed?(false)
-            }
-        }
-    }
-    
-    // 获取对象数据
-    func getObject(_ key: String, completed: ((_ obj: Any?)->())?) {
-        DispatchQueue.global().async { () -> Void in
-            if self.fileManager.fileExists(atPath: self.cachePathForKey(key)){
-                let data = NSMutableData(contentsOfFile: self.cachePathForKey(key))
-                do {
-                    let unArchiver = try NSKeyedUnarchiver(forReadingFrom: data! as Data)
-                    let obj = unArchiver.decodeObject(forKey: key)
-                    completed?(obj)
-                } catch let err {
-                    print("getObject error:\(err)")
-                    completed?(nil)
-                }
-            }else{
-                completed?(nil)
-            }
-        }
-    }
-    
-    // 读取PDF
-    func getPDF(_ path: String, completed: ((_ data: Data?)->())?){
-        DispatchQueue.global().async { () -> Void in
-            if let data = try? Data(contentsOf: URL(fileURLWithPath: self.cachePathForKey(path))){
-                completed?(data)
-            } else {
-                completed?(nil)
-            }
-        }
-    }
-    
-    // 读取Image
-    func getImage(_ path: String, completed: ((_ data: Data?)->())?){
-        DispatchQueue.global().async { () -> Void in
-            if let data = try? Data(contentsOf: URL(fileURLWithPath: self.cachePathForKey(path))){
-                completed?(data)
-            } else {
-                completed?(nil)
-            }
-        }
-    }
-}
-
-extension GTDiskCache {
-    func cachePathForKey(_ key: String) -> String {
-        var fileName: String = ""
-        if self.storeType == CacheFor.PDF {
-            fileName = key + ".pdf"
-        } else if self.storeType == CacheFor.Image {
-            fileName = key + ".png"
-        } else {
-            fileName = key
-        }
+    // 缓存不同的界面数据
+    func saveViewObject<T: Encodable>(_ key: String, value: T?) {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let viewFolder = "ViewData"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(viewFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
         
-        return (diskCachePath as NSString).appendingPathComponent(fileName)
-    }
-}
-
-extension GTDiskCache {
-    // 判断文件是否已经存在
-    func isExist(_ fileName: String) -> Bool {
-        if self.fileManager.fileExists(atPath: self.cachePathForKey(fileName)) {
-            return true
-        } else {
-            return false
+        ioQueue.async {
+            self.createDirectory(path_2)
+            if let data = try? self.encoder.encode(value) {
+                do {
+                    try data.write(to: URL(fileURLWithPath: path_3), options: NSData.WritingOptions.atomic)
+                }catch let err {
+                    print("saveViewObject error:\(err)")
+                }
+            } else {
+                print("saveViewObject: data is nil")
+            }
         }
     }
     
-    // 获取文件完整的URL
-    func getFileURL(_ fileName: String) -> String {
-        return self.cachePathForKey(fileName)
+    // 获取界面对象数据
+    func getViewObject<T: Decodable>(_ key: String) -> T? {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let shelfFolder = "ViewData"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+        
+        if self.fileManager.fileExists(atPath: path_3){
+            let data = self.fileManager.contents(atPath: path_3)
+            if let obj = try? self.decoder.decode(T.self, from: data!) {
+                return obj
+            } else {
+                print("getViewObject error: obj is nil")
+                return nil
+            }
+        } else {
+            print("getViewObject error: not found")
+            return nil
+        }
+    }
+    
+    // 获取PDF URL
+    func getPDF(_ fileName: String) -> URL? {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let pdfFolder = "PDFDocument"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(pdfFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(fileName + ".pdf")
+        
+        // 判断文件是否存在
+        if self.fileManager.fileExists(atPath: path_3) {
+            return URL(fileURLWithPath: path_3)
+        } else {
+            return nil
+        }
     }
 }
 
@@ -234,6 +198,17 @@ extension GTDiskCache {
             }
         } catch let error as NSError {
             print(error.localizedDescription)
+        }
+    }
+    
+    // 创建目录
+    func createDirectory(_ path: String) {
+        if !self.fileManager.fileExists(atPath: path) {
+            do {
+                try self.fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            } catch _ {
+                print("GTDiskCache: 创建目录失败！")
+            }
         }
     }
 }

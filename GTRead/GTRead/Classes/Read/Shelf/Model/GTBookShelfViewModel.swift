@@ -17,16 +17,14 @@ class GTBookShelfViewModel: NSObject {
     let KGTScreenHeight = UIScreen.main.bounds.height
     let itemMargin: CGFloat = 32
     let itemCountInRow = 4;
-    var imageURLs = [String]()
     var itemWidth: CGFloat = 0
     var itemHeight: CGFloat = 0
     var isEditing: Bool = false
     var isSeletedAll: Bool = false
-    var seletedImageURLs = [String]()
-    var selectedBookId = [String]()
     var seletedEvent: ((_ count: Int)->())?
     var dataModel: GTShelfBookModel?
-    
+    var books = [GTShelfBookItemModel]()
+    var selectedBooks = [GTShelfBookItemModel]()
     
     init(viewController: GTBaseViewController,collectionView: UICollectionView) {
         self.collectionView = collectionView
@@ -34,90 +32,136 @@ class GTBookShelfViewModel: NSObject {
         super.init()
         collectionView.delegate = self
         collectionView.dataSource = self
+        
+        itemWidth = floor((kGTScreenWidth - 16 * 6 - (CGFloat(itemCountInRow - 1) * itemMargin)) / CGFloat(itemCountInRow))
+        itemHeight = floor(itemWidth * 1.45)
+        
+        // 响应退出登录通知
+        NotificationCenter.default.addObserver(self, selector: #selector(clearShelfBook), name: .GTExitAccount, object: nil)
     }
     
+    // 清空书架----退出登录
+    @objc func clearShelfBook() {
+        self.dataModel = nil
+        self.books.removeAll()
+        self.collectionView.reloadData()
+    }
     
-    func createBookShelfData(refreshControl: UIRefreshControl) {
-        
-        var width = kGTScreenWidth - 16 * 6 - (CGFloat(itemCountInRow - 1) * itemMargin)
-        
-        width = floor(width/CGFloat(itemCountInRow))
-        
-        let height = floor(width * 1.45)
-        
-        itemWidth = width
-        itemHeight = height
-        
-        GTNet.shared.getShelfBook(failure: { json in
-            refreshControl.endRefreshing()
-            self.viewController.showNotificationMessageView(message: "获取书架数据失败")
-        }, success: { json in
-            refreshControl.endRefreshing()
-            self.imageURLs.removeAll()
-            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-            let decoder = JSONDecoder()
-            let dataModel = try! decoder.decode(GTShelfBookModel.self, from: data!)
-            self.dataModel = dataModel
-            if dataModel.count != -1 {
-                for item in dataModel.lists! {
-                    self.imageURLs.append(item.bookHeadUrl)
+    // 加载本地缓存
+    func loadBookShelfData() {
+        if let obj: GTShelfBookModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view") {
+            self.dataModel = obj
+            self.books.removeAll()
+            if self.dataModel!.count != -1 {
+                for item in self.dataModel!.lists! {
+                    self.books.append(item)
                 }
                 self.collectionView.reloadData()
+            }
+            self.viewController.hideActivityIndicatorView()
+        } else {
+            self.createBookShelfData(refreshControl: nil)
+        }
+    }
+    
+    // 请求书架数据
+    func createBookShelfData(refreshControl: UIRefreshControl?) {
+        GTNet.shared.getShelfBook(failure: { json in
+            refreshControl?.endRefreshing()
+            self.viewController.hideActivityIndicatorView()
+            if GTNet.shared.networkAvailable() {
+                self.viewController.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.viewController.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            refreshControl?.endRefreshing()
+            self.viewController.hideActivityIndicatorView()
+            self.books.removeAll()
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTShelfBookModel.self, from: data!) {
+                self.dataModel = dataModel
+                if dataModel.count != -1 {
+                    for item in dataModel.lists! {
+                        self.books.append(item)
+                    }
+                    
+                    // 对书架数据进行缓存
+                    GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view", value: self.dataModel)
+                }
+                self.collectionView.reloadData()
+            } else {
+                self.viewController.showNotificationMessageView(message: "服务器数据错误")
             }
         })
     }
     
     // 开启编辑
     func startEditing(isEditIng: Bool) {
+        selectedBooks.removeAll()
         self.isEditing = isEditIng
         self.collectionView.reloadData()
     }
     // 取消选中
     func cancelEditing() {
-        seletedImageURLs.removeAll()
-        selectedBookId.removeAll()
         self.isEditing = false
         self.isSeletedAll = false
         self.collectionView.reloadData()
     }
     // 选中全部
     func seletedAll() {
-        seletedImageURLs.removeAll()
-        seletedImageURLs = imageURLs
-        
-        for i in 0..<(self.dataModel?.lists?.count ?? 0) {
-            selectedBookId.append(self.dataModel?.lists?[i].bookId ?? "")
-        }
+        selectedBooks.removeAll()
+        selectedBooks = books
         
         self.isEditing = true
         self.isSeletedAll = true
         self.collectionView.reloadData()
-        seletedEvent?(seletedImageURLs.count)
+        seletedEvent?(selectedBooks.count)
     }
     
     // 删除
     func deleteImages() {
-        imageURLs = imageURLs.filter({!seletedImageURLs.contains($0)})
         self.cancelEditing()
         self.collectionView.reloadData()
         
-        GTNet.shared.delShelfBook(bookIds: self.selectedBookId, failure: {json in }) { json in
+        // 请求删除书架书籍
+        GTNet.shared.delShelfBook(books: self.selectedBooks, failure: {json in
+            if GTNet.shared.networkAvailable() {
+                self.viewController.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.viewController.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            let dataModel = try? decoder.decode(GTDelShelfBookModel.self, from: data!)
             
-        }
+            if dataModel == nil {
+                self.viewController.showNotificationMessageView(message: "服务器数据错误")
+            } else if dataModel?.FailBookIds == nil {
+                self.viewController.showNotificationMessageView(message: "书籍删除成功")
+                self.viewController.showActivityIndicatorView()
+                self.createBookShelfData(refreshControl: nil)
+            } else {
+                self.viewController.showNotificationMessageView(message: "个别书籍删除失败")
+            }
+        })
     }
     
 }
 
 extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.imageURLs.count
+        return self.books.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "bookCollectioncell", for: indexPath) as! GTBookCollectionCell
-        if self.imageURLs.count > indexPath.row {
-            let imageURL = self.imageURLs[indexPath.row]
-            cell.updateData(imageURL: imageURL, title: (self.dataModel?.lists?[indexPath.row].bookName) ?? "")
+
+        if self.books.count > indexPath.row {
+            let book = self.books[indexPath.row]
+            cell.updateData(imageURL: book.bookHeadUrl, title: book.bookName)
             if isEditing {
                 cell.StartEdit()
                 if isSeletedAll {
@@ -137,21 +181,18 @@ extension GTBookShelfViewModel: UICollectionViewDelegate, UICollectionViewDataSo
             cell.hiddenRightImageView(hidden: cell.selectedStatu)
             if cell.selectedStatu {
                 // 选中
-                seletedImageURLs.append(imageURLs[indexPath.row])
-                selectedBookId.append(self.dataModel?.lists?[indexPath.row].bookId ?? "")
+                selectedBooks.append((self.dataModel?.lists?[indexPath.row])!)
             }else{
                 // 取消选中
-                let image = imageURLs[indexPath.row]
-                let bookId = self.dataModel?.lists?[indexPath.row].bookId ?? ""
-                seletedImageURLs.removeAll(where: {$0 == image})
-                selectedBookId.removeAll(where: {$0 == bookId})
+                let book = self.dataModel?.lists?[indexPath.row]
+                selectedBooks.removeAll(where: {$0.bookId == book?.bookId})
             }
-            seletedEvent?(seletedImageURLs.count)
+            seletedEvent?(selectedBooks.count)
         } else{
             // 读取缓存
             let fileName = self.dataModel?.lists?[indexPath.row].bookId ?? ""
-            if GTDiskCache.sharedCachePDF.isExist(fileName) {
-                let vc = GTReadViewController(path: URL(fileURLWithPath: GTDiskCache.sharedCachePDF.getFileURL(fileName)))
+            if let url = GTDiskCache.shared.getPDF(fileName) {
+                let vc = GTReadViewController(path: url, bookId: fileName)
                 vc.hidesBottomBarWhenPushed = true;
                 self.viewController.navigationController?.pushViewController(vc, animated: true)
             } else {

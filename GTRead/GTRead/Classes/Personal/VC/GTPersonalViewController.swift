@@ -7,7 +7,6 @@
 
 import UIKit
 import MJRefresh
-import PKHUD
 
 class GTPersonalViewController: GTBaseViewController {
     
@@ -16,7 +15,7 @@ class GTPersonalViewController: GTBaseViewController {
     var cellOtherRowHeight = 70
     let cellInfo = [["登录"], ["消息", "最近浏览"], ["换肤", "夜间模式"], ["设置"]]
     let cellImg = [["profile"], ["info", "browse"], ["skin", "night"], ["setting"]]
-    var personalInfoDataModel: GTPersonalInfoModel?
+    var dataModel: GTPersonalInfoModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,58 +33,81 @@ class GTPersonalViewController: GTBaseViewController {
         header.setTitle("下拉刷新", for: .idle)
         header.setTitle("释放更新", for: .pulling)
         header.setTitle("正在刷新...", for: .refreshing)
-        header.setRefreshingTarget(self, refreshingAction: #selector(refresh))
+        header.setRefreshingTarget(self, refreshingAction: #selector(refresh(refreshControl:)))
         tableView.mj_header = header
-//        tableView.mj_header?.beginRefreshing()
-        self.refresh()
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.top.equalTo(70)
             make.left.right.bottom.equalToSuperview()
         }
+
+        // 加载用户信息
+        self.showActivityIndicatorView()
+        self.loadAccountData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
+            self.showActionSheetController()
+        }
+    }
+    
+    // 加载本地缓存
+    func loadAccountData() {
+        if let obj: GTPersonalInfoModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view") {
+            self.dataModel = obj
+            self.tableView.reloadData()
+            self.hideActivityIndicatorView()
+        } else {
+            self.refresh(refreshControl: nil)
+        }
     }
 
     // 下拉刷新操作
-    @objc func refresh() {
+    @objc func refresh(refreshControl: UIRefreshControl?) {
+        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) != nil {
+            // 获取用户信息
+            GTNet.shared.getPersonalInfo(failure: { json in
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
+                refreshControl?.endRefreshing()
+                self.hideActivityIndicatorView()
+            }, success: { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                let dataModel = try? decoder.decode(GTPersonalInfoModel.self, from: data!)
+                if dataModel != nil && dataModel?.userId != "404" {
+                    self.dataModel = dataModel
+                    
+                    // 对个人信息进行缓存
+                    GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view", value: self.dataModel)
+                } else {
+                    self.showNotificationMessageView(message: "账号信息错误")
+                }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
 
-        // 获取用户个人信息
-        GTNet.shared.getPersonalInfo(failure: { json in
-            self.showNotificationMessageView(message: "获取个人信息失败")
-            self.tableView.mj_header?.endRefreshing()
-        }, success: { json in
-            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-            let decoder = JSONDecoder()
-            let dataModel = try? decoder.decode(GTPersonalInfoModel.self, from: data!)
-            if dataModel != nil && dataModel?.userId != "404" {
-                self.personalInfoDataModel = dataModel
-                // 更新cell
-                let indexPath = IndexPath(item: 0, section: 0)
-                let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
-                cell.nicknameLabel.text = dataModel?.nickName
-                cell.nicknameLabel.textColor = .black
-                cell.headImgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.cellImg[0][0]))
-                cell.detailTxtLabel.text = dataModel?.profile
-                self.tableView.rectForRow(at: indexPath)
-
-                // 保存数据
-                UserDefaults.standard.set(dataModel?.nickName, forKey: UserDefaultKeys.AccountInfo.nickname)
-                LoginStatus.isLogin = true
-            }
-
-            self.tableView.mj_header?.endRefreshing()
-        })
+                refreshControl?.endRefreshing()
+                self.hideActivityIndicatorView()
+            })
+        } else {
+            refreshControl?.endRefreshing()
+            self.hideActivityIndicatorView()
+            self.showActionSheetController()
+        }
     }
     
     // 退出登录重置信息
     func resetPersonalInfo() {
-        // 更新cell
-        let indexPath = IndexPath(item: 0, section: 0)
-        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalViewCell
-        cell.nicknameLabel.text = cellInfo[0][0]
-        cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
-        cell.headImgView.image = UIImage(named: self.cellImg[0][0])
-        cell.detailTxtLabel.text = ""
-        self.tableView.rectForRow(at: indexPath)
+        self.dataModel = nil
+        self.tableView.reloadData()
         
         // 删除配置信息
         let userDefaults = UserDefaults.standard
@@ -93,14 +115,11 @@ class GTPersonalViewController: GTBaseViewController {
             userDefaults.removeObject(forKey: key.key)
         }
         userDefaults.synchronize()
-        LoginStatus.isLogin = false
     }
-
-    
 
     // 显示按钮弹窗
     func showActionSheetController() {
-        let alertController = UIAlertController(title: "账号", message: "登录或注册一个账号", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "咱要做一个有身份的人哟", message: nil, preferredStyle: .alert)
         let loginAction = UIAlertAction(title: "登录", style: .default) {
                     (action: UIAlertAction!) -> Void in
             self.showLoginAlertController()
@@ -129,29 +148,36 @@ class GTPersonalViewController: GTBaseViewController {
             textField.isSecureTextEntry = true
         }
         let okAction = UIAlertAction(title: "登录", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
-            // 加载动画
-            HUD.show(.labeledProgress(title: "登录中...", subtitle: ""))
+            self.showActivityIndicatorView()
             
             let account = alertController.textFields!.first!
             let password = alertController.textFields!.last!
             GTNet.shared.requestLogin(userId: account.text ?? "", userPwd: password.text ?? "", failure: {json in
-                HUD.hide()
-                self.showWarningAlertController(message: "请求登录失败")
+                self.hideActivityIndicatorView()
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
             }, success: { (json) in
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
-                let dataModel = try! decoder.decode(GTPersonalRegisterModel.self, from: data!)
-
-                if dataModel.code == -1 {
-                    self.showLoginAlertController(message: dataModel.errorRes!)
+                if let dataModel = try? decoder.decode(GTPersonalRegisterModel.self, from: data!) {
+                    if dataModel.code == -1 {
+                        self.hideActivityIndicatorView()
+                        self.showLoginAlertController(message: dataModel.errorRes!)
+                    } else {
+                        UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
+                        UserDefaults.standard.set(password.text, forKey: UserDefaultKeys.AccountInfo.password)
+                        self.refresh(refreshControl: nil)
+                        
+                        // 登录成功通知
+                        NotificationCenter.default.post(name: .GTLoginEvent, object: self)
+                    }
                 } else {
-                    UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
-                    UserDefaults.standard.set(password.text, forKey: UserDefaultKeys.AccountInfo.password)
-                    LoginStatus.isLogin = true
-                    self.tableView.mj_header?.beginRefreshing()
+                    self.hideActivityIndicatorView()
+                    self.showNotificationMessageView(message: "服务器数据错误")
                 }
-                
-                HUD.hide()
             })
         }
         let cancelAction = UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel, handler: nil)
@@ -188,28 +214,33 @@ class GTPersonalViewController: GTBaseViewController {
             if password_1.text != password_2.text {
                 self.showRegisterAlertController(message: "两次输入的密码不一致")
             } else {
-                // 加载动画
-                HUD.show(.labeledProgress(title: "注册中...", subtitle: ""))
+                self.showActivityIndicatorView()
 
                 // 注册请求
                 GTNet.shared.requestRegister(userId: account.text ?? "", userPwd: password_2.text ?? "", failure: { json in
-                    HUD.hide()
-                    self.showWarningAlertController(message: "请求注册失败")
+                    self.hideActivityIndicatorView()
+                    if GTNet.shared.networkAvailable() {
+                        self.showNotificationMessageView(message: "服务器连接中断")
+                    } else {
+                        self.showNotificationMessageView(message: "网络连接不可用")
+                    }
                 }, success: { json in
                     // 提取数据
                     let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                     let decoder = JSONDecoder()
-                    let dataModel = try! decoder.decode(GTPersonalRegisterModel.self, from: data!)
-                    if dataModel.code == -1 {
-                        self.showRegisterAlertController(message: dataModel.errorRes!)
+                    if let dataModel = try? decoder.decode(GTPersonalRegisterModel.self, from: data!) {
+                        if dataModel.code == -1 {
+                            self.hideActivityIndicatorView()
+                            self.showRegisterAlertController(message: dataModel.errorRes!)
+                        } else {
+                            UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
+                            UserDefaults.standard.set(password_2.text, forKey: UserDefaultKeys.AccountInfo.password)
+                            self.refresh(refreshControl: nil)
+                        }
                     } else {
-                        UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
-                        UserDefaults.standard.set(password_2.text, forKey: UserDefaultKeys.AccountInfo.password)
-                        LoginStatus.isLogin = true
-                        self.tableView.mj_header?.beginRefreshing()
+                        self.hideActivityIndicatorView()
+                        self.showNotificationMessageView(message: "服务器数据错误")
                     }
-
-                    HUD.hide()
                 })
             }
         }
@@ -249,13 +280,19 @@ extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
         cell.selectionStyle = .none
-
+        
         if indexPath.section == 0 {
-            cell.nicknameLabel.text = cellInfo[indexPath.section][indexPath.row]
+            cell.nicknameLabel.text = self.dataModel?.nickName ?? cellInfo[indexPath.section][indexPath.row]
+            cell.detailTxtLabel.text = self.dataModel?.profile ?? ""
             cell.accessoryType = .none
-            cell.headImgView.image = UIImage(named: cellImg[0][0])
-            cell.nicknameLabel.textColor = UIColor(hexString: "#157efb")
+            cell.headImgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.cellImg[0][0]))
+            cell.nicknameLabel.textColor = self.dataModel == nil ? UIColor(hexString: "#157efb") : .black
+            cell.textLabel?.text = ""
+            cell.imageView?.image = UIImage()
         } else {
+            cell.nicknameLabel.text = ""
+            cell.detailTxtLabel.text = ""
+            cell.headImgView.image = UIImage()
             cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .disclosureIndicator
             cell.imageView?.image = UIImage(named: cellImg[indexPath.section][indexPath.row])
@@ -266,15 +303,15 @@ extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            if LoginStatus.isLogin == false {
+            if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
                 showActionSheetController()
             } else {
                 self.hidesBottomBarWhenPushed = true
-                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.personalInfoDataModel!), animated: true)
+                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.dataModel!), animated: true)
                 self.hidesBottomBarWhenPushed = false
             }
         } else if indexPath.section == 3 {
-            if LoginStatus.isLogin == false {
+            if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
                 showActionSheetController()
             } else {
                 self.hidesBottomBarWhenPushed = true

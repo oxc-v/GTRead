@@ -25,6 +25,7 @@ class GTCommentViewController: GTBaseViewController {
     var pageNum: Int = -1
     var isExpandCell: Bool = false
     var cellRowIndex: Int = -1
+    var bookId: String
     var emptyView: UIImageView = {
         let imageview = UIImageView()
         imageview.isUserInteractionEnabled = false
@@ -143,6 +144,15 @@ class GTCommentViewController: GTBaseViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(changedCellFoldState), name: NotiCommentContentFoldStateChanged, object: nil)
     }
     
+    init(bookId: String) {
+        self.bookId = bookId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("OpenEditCommentView"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NotiReflashCommentContent, object: nil)
@@ -169,12 +179,12 @@ class GTCommentViewController: GTBaseViewController {
         }, error: { (error) in
             self.tableView.isHidden = true
             self.emptyView.isHidden = false
-        }, bookId: "123", pageNum: self.pageNum)
+        }, bookId: self.bookId, pageNum: self.pageNum)
     }
     
     // 打开评论编辑视图
     @objc private func openEditCommentView(noti: Notification) {
-        let commentVC = GTEidtCommentViewController()
+        let commentVC = GTEidtCommentViewController(bookId: self.bookId)
         let userInfo = noti.userInfo
         commentVC.parentId = userInfo?["parentId"] as? Int
         commentVC.pageNum = pageNum
@@ -198,7 +208,7 @@ class GTCommentViewController: GTBaseViewController {
         GTNet.shared.addCommentList(success: {(json) in
             self.requestCommentContent()
             self.textField.text = ""
-        }, pageNum: pageNum, timeStamp: String(timeStamp), commentContent: textField.text ?? "")
+        }, bookId: self.bookId, pageNum: pageNum, timeStamp: String(timeStamp), commentContent: textField.text ?? "")
     }
     
     @objc private func resignTextField() {

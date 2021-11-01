@@ -7,13 +7,27 @@
 
 import UIKit
 import SwiftEntryKit
-
+import NVActivityIndicatorView
 class GTBaseViewController: UIViewController {
+    
+    private var activityIndicatorView: NVActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: UIScreen.main.bounds.midX - 60, y: UIScreen.main.bounds.midY - 35, width: 120, height: 70), type: .lineScalePulseOut, color: UIColor(hexString: "#6581fb"), padding: 10)
+        activityIndicatorView.layer.zPosition = 100
+        self.view.addSubview(activityIndicatorView)
+    }
+    
+    // 显示loading view
+    func showActivityIndicatorView() {
+        activityIndicatorView.startAnimating()
+    }
+    
+    // 隐藏loading view
+    func hideActivityIndicatorView() {
+        activityIndicatorView.stopAnimating()
     }
     
     // 显示通知
@@ -47,6 +61,16 @@ class GTBaseViewController: UIViewController {
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    // 未登录提示框
+    func showNotLoginAlertController(_ title: String, handler: ((UIAlertAction)->Void)?) {
+        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        let canncelAction = UIAlertAction(title: "取消", style: .default)
+        let okAction = UIAlertAction(title: "登录/注册", style: .default, handler: handler)
+        alertController.addAction(canncelAction)
+        alertController.addAction(okAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension UIColor {
@@ -67,4 +91,74 @@ extension UIColor {
         }
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
+}
+
+extension UIView {
+
+    /**
+     Simply zooming in of a view: set view scale to 0 and zoom to Identity on 'duration' time interval.
+     
+     - parameter duration: animation duration
+     */
+    func zoomIn(duration: TimeInterval = 0.2) {
+        self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
+        UIView.animate(withDuration: duration, delay: 0.0, options: [.curveLinear], animations: { () -> Void in
+            self.transform = .identity
+        }) { (animationCompleted: Bool) -> Void in
+        }
+    }
+    
+    /**
+     Simply zooming out of a view: set view scale to Identity and zoom out to 0 on 'duration' time interval.
+     
+     - parameter duration: animation duration
+     */
+    func zoomOut(duration : TimeInterval = 0.2) {
+        self.transform = .identity
+        UIView.animate(withDuration: duration, delay: 0.0, options: [.curveLinear], animations: { () -> Void in
+            self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
+        }) { (animationCompleted: Bool) -> Void in
+        }
+    }
+    
+    /**
+     Zoom in any view with specified offset magnification.
+     
+     - parameter duration:     animation duration.
+     - parameter easingOffset: easing offset.
+     */
+    func zoomInWithEasing(duration: TimeInterval = 0.2, easingOffset: CGFloat = 0.2) {
+        let easeScale = 1.0 + easingOffset
+        let easingDuration = TimeInterval(easingOffset) * duration / TimeInterval(easeScale)
+        let scalingDuration = duration - easingDuration
+        UIView.animate(withDuration: scalingDuration, delay: 0.0, options: .curveEaseIn, animations: { () -> Void in
+            self.transform = CGAffineTransform(scaleX: easeScale, y: easeScale)
+        }, completion: { (completed: Bool) -> Void in
+            UIView.animate(withDuration: easingDuration, delay: 0.0, options: .curveEaseOut, animations: { () -> Void in
+                self.transform = .identity
+                }, completion: { (completed: Bool) -> Void in
+                })
+        })
+    }
+    
+    /**
+     Zoom out any view with specified offset magnification.
+     
+     - parameter duration:     animation duration.
+     - parameter easingOffset: easing offset.
+     */
+    func zoomOutWithEasing(duration: TimeInterval = 0.2, easingOffset: CGFloat = 0.2) {
+        let easeScale = 1.0 + easingOffset
+        let easingDuration = TimeInterval(easingOffset) * duration / TimeInterval(easeScale)
+        let scalingDuration = duration - easingDuration
+        UIView.animate(withDuration: easingDuration, delay: 0.0, options: .curveEaseOut, animations: { () -> Void in
+            self.transform = CGAffineTransform(scaleX: easeScale, y: easeScale)
+        }, completion: { (completed: Bool) -> Void in
+            UIView.animate(withDuration: scalingDuration, delay: 0.0, options: .curveEaseOut, animations: { () -> Void in
+                self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
+                }, completion: { (completed: Bool) -> Void in
+                })
+        })
+    }
+
 }

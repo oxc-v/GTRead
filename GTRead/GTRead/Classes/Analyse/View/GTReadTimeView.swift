@@ -75,6 +75,12 @@ class GTReadTimeView: UIView {
         }
     }
     
+    // 清空数据
+    func clearData() {
+        chartView.clear()
+        timeLabel.text = "0:00"
+    }
+    
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
         

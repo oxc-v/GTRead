@@ -13,8 +13,8 @@ target 'GTRead' do
   pod 'MJRefresh', '~> 3.5.0'
   pod 'SDWebImage', '~> 5.0'
   pod 'Charts'
-  pod 'PKHUD', '~> 5.0'
   pod 'SwiftEntryKit', '~> 2.0.0'
+  pod 'NVActivityIndicatorView'
 
   target 'GTReadTests' do
     inherit! :search_paths

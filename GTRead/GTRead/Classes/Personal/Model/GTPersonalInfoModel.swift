@@ -14,6 +14,7 @@ struct GTPersonalInfoModel: Codable{
     var profile: String
     var male: Bool
     var age: Int
+    var userPwd: String?
     enum CodingKeys: String, CodingKey {
         case userId
         case nickName
@@ -21,6 +22,7 @@ struct GTPersonalInfoModel: Codable{
         case profile
         case male
         case age
+        case userPwd
     }
 }
 

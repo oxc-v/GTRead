@@ -44,10 +44,12 @@ class GTReadViewController: EyeTrackViewController {
     var currentDate: TimeInterval!
     var getSightDataTimer: Timer!
     var sightDataModel = GTTrackCorrectModel()
-    var bookShelfDataModel: GTShelfBookItemModel?
+    var bookId: String
     
-    init(path: URL) {
+    init(path: URL, bookId: String) {
+        
         pdfURL = path
+        self.bookId = bookId
         super.init(nibName: nil, bundle: nil)
         GTBook.shared.currentPdfView = pdfView
         GTBook.shared.pdfURL = pdfURL
@@ -74,7 +76,7 @@ class GTReadViewController: EyeTrackViewController {
                 // 发送视线数据
                 GTNet.shared.commitGazeTrackData(success: { (json) in
                     self.sightDatas.removeAll()
-                }, startTime: currentDate, lists: sightDatas, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
+                }, startTime: currentDate, lists: sightDatas, bookId: self.bookId, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
             }
         }
     }
@@ -310,7 +312,7 @@ class GTReadViewController: EyeTrackViewController {
     //MARK: -评论
     @objc private func commentButtonDidClicked() {
         navgationBarHiddenStatu = true
-        let commentVC = GTCommentViewController()
+        let commentVC = GTCommentViewController(bookId: self.bookId)
         commentVC.pageNum = ((pdfdocument?.index(for: pdfView.currentPage!) ?? -1 ) + 1)
         self.addChild(commentVC)
         self.view.addSubview(commentVC.view)
@@ -339,7 +341,7 @@ class GTReadViewController: EyeTrackViewController {
 
         GTNet.shared.commitGazeTrackData(success: { (json) in
             self.sightDatas.removeAll()
-        }, startTime: currentDate, lists: sightDatas, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
+        }, startTime: currentDate, lists: sightDatas, bookId: self.bookId, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
     }
     
     // 视线校准

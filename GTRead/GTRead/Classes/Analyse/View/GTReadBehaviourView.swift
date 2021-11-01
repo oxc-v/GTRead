@@ -38,6 +38,11 @@ class GTReadBehaviourView: UIView {
         }
     }
     
+    // 清空数据
+    func clearData() {
+        chartView.clear()
+    }
+    
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
         if model.scatterDiagram != nil {
@@ -63,6 +68,8 @@ class GTReadBehaviourView: UIView {
             }
             // 设置散点图数据
             chartView.data = chartData
+        } else {
+            chartView.clear()
         }
     }
     

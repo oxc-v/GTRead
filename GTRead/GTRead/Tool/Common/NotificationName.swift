@@ -12,3 +12,10 @@ let NotiReflashCommentContent = Notification.Name(rawValue: "NotiReflashCommentC
 
 // 评论内容折叠状态改变通知
 let NotiCommentContentFoldStateChanged = Notification.Name(rawValue: "NotiCommentContentFoldStateChanged")
+
+extension Notification.Name {
+    // 登录成功
+    static let GTLoginEvent = Notification.Name("GTLoginEvent")
+    // 退出登录
+    static let GTExitAccount = Notification.Name("GTExitAccount")
+}
