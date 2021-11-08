@@ -41,26 +41,22 @@ class GTBookShelfViewController: GTBaseViewController {
         button.setTitleColor(UIColor.red, for: .normal)
         return button
     }()
-    
-    lazy var customTitleView: UIView = {
-        var view = UIView()
-        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2.0, height: 44)
-        view.frame = frame
-        view.layer.masksToBounds = true
+    var customTitleView: UIView = {
+        let view = UIView()
+        view.frame = CGRect(x: 0, y: 0, width: 300, height: 44)
+        let titleLabel = UILabel()
+        titleLabel.textAlignment = .center
+        titleLabel.text = "让阅读成为一种习惯"
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        view.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+        }
         return view
     }()
 
-    lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "搜索书架"
-        searchBar.autocapitalizationType = .none
-        searchBar.backgroundColor = .white
-        searchBar.delegate = self
-        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2, height: 44)
-        searchBar.frame = frame
-        return searchBar
-    }()
-
+    var searchController: UISearchController!
+    
     var viewModel: GTBookShelfViewModel?
     
     var isEdit: Bool = false
@@ -74,7 +70,6 @@ class GTBookShelfViewController: GTBaseViewController {
     func setupView() {
         self.view.resignFirstResponder()
         self.view.backgroundColor = UIColor.white
-        self.navigationItem.titleView = customTitleView
         self.navigationItem.title = ""
         
         self.setupNavigation()
@@ -84,14 +79,14 @@ class GTBookShelfViewController: GTBaseViewController {
         header.setTitle("释放更新", for: .pulling)
         header.setTitle("正在刷新...", for: .refreshing)
         header.setRefreshingTarget(self, refreshingAction: #selector(refresh(refreshControl:)))
+        header.lastUpdatedTimeLabel?.isHidden = true
+        header.stateLabel?.isHidden = true
         bookCollectionView.mj_header = header
         self.view.addSubview(bookCollectionView)
         bookCollectionView.snp.makeConstraints { (make) in
-            make.top.equalTo(70)
+            make.top.equalTo(112)
             make.bottom.right.left.equalToSuperview()
         }
-        
-        self.customTitleView.addSubview(searchBar)
         
         self.viewModel = GTBookShelfViewModel(viewController: self,collectionView: self.bookCollectionView)
         self.viewModel?.seletedEvent = { [weak self] count in
@@ -107,9 +102,12 @@ class GTBookShelfViewController: GTBaseViewController {
             self.loadData()
         } else {
             self.showNotLoginAlertController("有身份的人才能查看书架哟", handler: {action in
+                NotificationCenter.default.post(name: .GTGoLogin, object: self)
                 self.tabBarController?.selectedIndex = 2
             })
         }
+        
+        self.setupSearchBar()
         
         // 响应登录成功通知
         NotificationCenter.default.addObserver(self, selector: #selector(loadData), name: .GTLoginEvent, object: nil)
@@ -120,6 +118,21 @@ class GTBookShelfViewController: GTBaseViewController {
         // 刷新书架
         self.showActivityIndicatorView()
         self.viewModel?.loadBookShelfData()
+        self.setupSearchBar()
+    }
+    
+    // 搜索条
+    func setupSearchBar() {
+        let vc = GTBookShelfSearchViewController(model: self.viewModel?.dataModel)
+        searchController = UISearchController(searchResultsController: vc)
+        searchController.loadViewIfNeeded()
+        searchController.searchBar.placeholder = "搜索书架"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.sizeToFit()
+        searchController.searchResultsUpdater = vc
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "取消"
+        definesPresentationContext = true
+        self.navigationItem.searchController = searchController
     }
     
     // 导航条
@@ -130,6 +143,7 @@ class GTBookShelfViewController: GTBaseViewController {
         rightButton.addTarget(self, action: #selector(StartEditEvent), for: .touchUpInside)
         let rightItems = [UIBarButtonItem(customView: rightButton),UIBarButtonItem(customView: deleteButton)]
         self.navigationItem.rightBarButtonItems = rightItems
+        self.navigationItem.titleView = customTitleView
     }
     
     @objc func refresh(refreshControl: UIRefreshControl?) {
@@ -140,6 +154,7 @@ class GTBookShelfViewController: GTBaseViewController {
         } else {
             refreshControl?.endRefreshing()
             self.showNotLoginAlertController("有身份的人才能查看书架哟", handler: {action in
+                NotificationCenter.default.post(name: .GTGoLogin, object: self)
                 self.tabBarController?.selectedIndex = 2
             })
         }
@@ -178,10 +193,10 @@ class GTBookShelfViewController: GTBaseViewController {
 }
 
 extension GTBookShelfViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("oxcdf")
-    }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        print("hhhhh")
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.tabBarController?.tabBar.isHidden = false
     }
 }

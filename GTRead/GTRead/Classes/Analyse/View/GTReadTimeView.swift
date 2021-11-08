@@ -10,9 +10,13 @@ import Charts
 
 class GTReadTimeView: UIView {
 
-    var txtLabel: UILabel!
-    var timeLabel: UILabel! // 时间
-    var chartView: BarChartView! // 柱状图
+    var titleLabel: UILabel!
+    var subTitleLabel: UILabel!
+    var titleTwoLabel: UILabel!
+    var subTitleTowLabel: UILabel!
+    var timeLabel: UILabel!
+    var progressView: GTCircleProgressView!
+    var chartView: BarChartView!
 
     // 重新父类的init方法
     // 指定初始化器
@@ -20,32 +24,62 @@ class GTReadTimeView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = UIColor.white
-        self.layer.shadowRadius = 5
-        self.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
-        self.layer.shadowOpacity = 0.1
+//        self.layer.shadowRadius = 5
+//        self.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
+//        self.layer.shadowOpacity = 0.1
         
-        // 提示语
-        txtLabel = UILabel()
-        txtLabel.textAlignment = .center
-        txtLabel.textColor = UIColor.black
-        txtLabel.text = "今日阅读进度"
-        txtLabel.font = txtLabel.font.withSize(25)
-        self.addSubview(txtLabel)
-        txtLabel.snp.makeConstraints { make in
+        titleLabel = UILabel()
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = UIColor.black
+        titleLabel.text = "阅读目标"
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 23)
+        self.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(50)
+            make.top.equalToSuperview().offset(60)
+        }
+        
+        subTitleLabel = UILabel()
+        subTitleLabel.textAlignment = .center
+        subTitleLabel.textColor = UIColor(hexString: "#b4b4b4")
+        subTitleLabel.text = "找一本好书，设定一个目标，养成每天阅读的习惯。"
+        subTitleLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        self.addSubview(subTitleLabel)
+        subTitleLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+        }
+        
+        titleTwoLabel = UILabel()
+        titleTwoLabel.textAlignment = .center
+        titleTwoLabel.textColor = UIColor.black
+        titleTwoLabel.text = "今日阅读进度"
+        titleTwoLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        self.addSubview(titleTwoLabel)
+        titleTwoLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(100)
         }
         
         // 时间
         timeLabel = UILabel()
         timeLabel.textAlignment = .center
-        timeLabel.font = timeLabel.font.withSize(100)
+        timeLabel.font = UIFont.systemFont(ofSize: 80)
         timeLabel.textColor = UIColor.black
-        timeLabel.text = "0:00"
+        timeLabel.text = "00:00"
         self.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.top.equalTo(txtLabel.snp.top).offset(20)
+            make.top.equalTo(titleTwoLabel.snp.top).offset(20)
+        }
+
+        progressView = GTCircleProgressView()
+        self.addSubview(progressView)
+        progressView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.equalTo(460)
+            make.height.equalTo(230)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
         }
 
         // 柱状图
@@ -70,7 +104,7 @@ class GTReadTimeView: UIView {
         chartView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
-            make.top.equalTo(timeLabel.snp.bottom).offset(16)
+            make.top.equalTo(progressView.snp.bottom).offset(16)
             make.bottom.equalToSuperview()
         }
     }
@@ -78,7 +112,7 @@ class GTReadTimeView: UIView {
     // 清空数据
     func clearData() {
         chartView.clear()
-        timeLabel.text = "0:00"
+        timeLabel.text = "00:00"
     }
     
     // 更新数据

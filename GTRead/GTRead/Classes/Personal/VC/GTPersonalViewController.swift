@@ -16,11 +16,12 @@ class GTPersonalViewController: GTBaseViewController {
     let cellInfo = [["登录"], ["消息", "最近浏览"], ["换肤", "夜间模式"], ["设置"]]
     let cellImg = [["profile"], ["info", "browse"], ["skin", "night"], ["setting"]]
     var dataModel: GTPersonalInfoModel?
+    var personalInfoViewContrller: GTPersonalInfoViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = "个人"
+        self.navigationItem.title = "个人"
         self.view.backgroundColor = UIColor(hexString: "#f2f2f7")
 
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
@@ -42,20 +43,21 @@ class GTPersonalViewController: GTBaseViewController {
         }
 
         // 加载用户信息
-        self.showActivityIndicatorView()
         self.loadAccountData()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
-            self.showActionSheetController()
-        }
+        // 响应退出登录通知
+        NotificationCenter.default.addObserver(self, selector: #selector(resetPersonalInfo), name: .GTExitAccount, object: nil)
+        
+        // 跳转登录界面
+        NotificationCenter.default.addObserver(self, selector: #selector(showActionSheetController), name: .GTGoLogin, object: nil)
+        
+        // 账户信息更改
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationForAccountInfChanged), name: .GTAccountInfoChanged, object: nil)
     }
     
     // 加载本地缓存
     func loadAccountData() {
+        self.showActivityIndicatorView()
         if let obj: GTPersonalInfoModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view") {
             self.dataModel = obj
             self.tableView.reloadData()
@@ -84,10 +86,14 @@ class GTPersonalViewController: GTBaseViewController {
                 if dataModel != nil && dataModel?.userId != "404" {
                     self.dataModel = dataModel
                     
+                    // 刷新个人信息页的数据
+                    self.personalInfoViewContrller?.dataModel = dataModel
+                    self.personalInfoViewContrller?.tableView.reloadData()
+                    
                     // 对个人信息进行缓存
                     GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view", value: self.dataModel)
                 } else {
-                    self.showNotificationMessageView(message: "账号信息错误")
+                    self.showNotificationMessageView(message: "服务器数据错误")
                 }
                 
                 DispatchQueue.main.async {
@@ -105,7 +111,7 @@ class GTPersonalViewController: GTBaseViewController {
     }
     
     // 退出登录重置信息
-    func resetPersonalInfo() {
+    @objc func resetPersonalInfo() {
         self.dataModel = nil
         self.tableView.reloadData()
         
@@ -116,9 +122,14 @@ class GTPersonalViewController: GTBaseViewController {
         }
         userDefaults.synchronize()
     }
+    
+    // 用与响应GTAccountInfoChanged通知
+    @objc func notificationForAccountInfChanged() {
+        self.refresh(refreshControl: nil)
+    }
 
     // 显示按钮弹窗
-    func showActionSheetController() {
+    @objc func showActionSheetController() {
         let alertController = UIAlertController(title: "咱要做一个有身份的人哟", message: nil, preferredStyle: .alert)
         let loginAction = UIAlertAction(title: "登录", style: .default) {
                     (action: UIAlertAction!) -> Void in
@@ -306,8 +317,9 @@ extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
             if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
                 showActionSheetController()
             } else {
+                self.personalInfoViewContrller = GTPersonalInfoViewController(dataModel: self.dataModel!)
                 self.hidesBottomBarWhenPushed = true
-                self.navigationController?.pushViewController(GTPersonalInfoViewController(dataModel: self.dataModel!), animated: true)
+                self.navigationController?.pushViewController(self.personalInfoViewContrller!, animated: true)
                 self.hidesBottomBarWhenPushed = false
             }
         } else if indexPath.section == 3 {

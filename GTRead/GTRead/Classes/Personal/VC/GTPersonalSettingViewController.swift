@@ -17,8 +17,8 @@ class GTPersonalSettingViewController: GTBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "设置"
-        self.view.backgroundColor = UIColor.white
+        self.navigationItem.title = "设置"
+        self.view.backgroundColor = .white
         
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.register(GTPersonalSettingViewCell.self, forCellReuseIdentifier: "GTPersonalSettingViewCell")
@@ -26,7 +26,8 @@ class GTPersonalSettingViewController: GTBaseViewController {
         tableView.dataSource = self
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.left.right.bottom.top.equalToSuperview()
+            make.top.equalTo(80)
+            make.left.right.bottom.equalToSuperview()
         }
         
     }
@@ -102,10 +103,9 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
 
             let loginAction = UIAlertAction(title: "退出登录", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
-                // 登录成功通知
+                // 退出登录通知
                 NotificationCenter.default.post(name: .GTExitAccount, object: self)
 
-                self.viewController.resetPersonalInfo()
                 self.navigationController?.popViewController(animated: true)
             }
             let registerAction = UIAlertAction(title: "切换账号", style: .default) {

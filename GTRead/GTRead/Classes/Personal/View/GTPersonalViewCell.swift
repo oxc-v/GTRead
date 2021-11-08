@@ -29,7 +29,7 @@ class GTPersonalViewCell: UITableViewCell {
         }
         
         nicknameLabel = UILabel()
-        nicknameLabel.font = nicknameLabel.font.withSize(23)
+        nicknameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         nicknameLabel.textAlignment = .left
         nicknameLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         self.contentView.addSubview(nicknameLabel)
@@ -39,7 +39,7 @@ class GTPersonalViewCell: UITableViewCell {
         }
         
         detailTxtLabel = UILabel()
-        detailTxtLabel.font = detailTxtLabel.font.withSize(12)
+        detailTxtLabel.font = UIFont.systemFont(ofSize: 15)
         detailTxtLabel.textAlignment = .left
         detailTxtLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         self.contentView.addSubview(detailTxtLabel)

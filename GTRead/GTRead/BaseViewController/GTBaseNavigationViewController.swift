@@ -7,14 +7,19 @@
 
 import UIKit
 
-class GTBaseNavigationViewController: UINavigationController {
+class GTBaseNavigationViewController: UINavigationController, UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.delegate = self
         // Do any additional setup after loading the view.
     }
     
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        let item = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
+        viewController.navigationItem.backBarButtonItem = item
+    }
 
     /*
     // MARK: - Navigation

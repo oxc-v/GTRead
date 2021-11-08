@@ -16,7 +16,7 @@ class GTAccountSecurityViewController: GTBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "账号安全"
+        self.navigationItem.title = "账户安全"
         self.view.backgroundColor = UIColor.white
         
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
@@ -25,7 +25,8 @@ class GTAccountSecurityViewController: GTBaseViewController {
         tableView.dataSource = self
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.left.right.bottom.top.equalToSuperview()
+            make.top.equalTo(80)
+            make.left.right.bottom.equalToSuperview()
         }
     }
     
@@ -54,12 +55,38 @@ class GTAccountSecurityViewController: GTBaseViewController {
         let new_pwd2 = alertController.textFields![2]
 
         let changeAction = UIAlertAction(title: "修改", style: .default) { (action: UIAlertAction!) -> Void in
+            self.showActivityIndicatorView()
             if old_pwd.text != UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.password) {
+                self.hideActivityIndicatorView()
                 self.showChangePasswordAlertController(message: "当前密码输入错误")
-            } else if new_pwd1 != new_pwd2 {
+            } else if new_pwd1.text != new_pwd2.text {
+                self.hideActivityIndicatorView()
                 self.showChangePasswordAlertController(message: "两次输入的新密码不一致")
             } else {
-                
+                GTNet.shared.updatePassword(pwd: new_pwd1.text ?? "", failure: {json in
+                    if GTNet.shared.networkAvailable() {
+                        self.showNotificationMessageView(message: "服务器连接中断")
+                    } else {
+                        self.showNotificationMessageView(message: "网络连接不可用")
+                    }
+                    self.hideActivityIndicatorView()
+                }, success: {json in
+                    let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                    let decoder = JSONDecoder()
+                    if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
+                        if dataModel.code == -1 {
+                            self.showNotificationMessageView(message: dataModel.errorRes!)
+                        } else {
+                            // 退出登录通知--修改密码成功需重新登录
+                            NotificationCenter.default.post(name: .GTExitAccount, object: self)
+                            
+                            self.navigationController?.popToRootViewController(animated: true)
+                        }
+                    } else {
+                        self.showNotificationMessageView(message: "服务器数据错误")
+                    }
+                    self.hideActivityIndicatorView()
+                })
             }
         }
         let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)

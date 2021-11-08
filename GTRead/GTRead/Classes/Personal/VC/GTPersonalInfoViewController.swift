@@ -7,6 +7,7 @@
 
 import UIKit
 import PhotosUI
+import SwiftUI
 
 class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationControllerDelegate {
 
@@ -24,8 +25,8 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "个人信息"
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = .white
+        self.navigationItem.title = "个人信息"
         
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.register(GTPersonalInfoViewCell.self, forCellReuseIdentifier: "GTPersonalInfoViewCell")
@@ -35,7 +36,8 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.left.right.bottom.top.equalToSuperview()
+            make.top.equalTo(80)
+            make.left.right.bottom.equalToSuperview()
         }
         
         pickerView = UIPickerView(frame: CGRect.zero)
@@ -50,7 +52,7 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
         pickerOkBtn = UIButton(type: .custom)
         pickerOkBtn.setTitle("确定", for: .normal)
         pickerOkBtn.setTitleColor(UIColor(hexString: "#157efb"), for: .normal)
-        pickerOkBtn.addTarget(self, action: #selector(pickerToolBarButtonDidClicked), for: .touchUpInside)
+        pickerOkBtn.addTarget(self, action: #selector(pickerToolBarOkButtonDidClicked), for: .touchUpInside)
         self.pickerToolBar.addSubview(pickerOkBtn)
         pickerOkBtn.snp.makeConstraints { (make) in
             make.right.equalTo(-16)
@@ -60,7 +62,7 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
         pickerCancelBtn = UIButton(type: .custom)
         pickerCancelBtn.setTitle("取消", for: .normal)
         pickerCancelBtn.setTitleColor(UIColor(hexString: "#157efb"), for: .normal)
-        pickerCancelBtn.addTarget(self, action: #selector(pickerToolBarButtonDidClicked), for: .touchUpInside)
+        pickerCancelBtn.addTarget(self, action: #selector(pickerToolBarCanncelButtonDidClicked), for: .touchUpInside)
         self.pickerToolBar.addSubview(pickerCancelBtn)
         pickerCancelBtn.snp.makeConstraints { (make) in
             make.left.equalTo(16)
@@ -132,10 +134,45 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
         }
     }
     
-    // 性别选择器
-    @objc private func pickerToolBarButtonDidClicked() {
+    @objc private func pickerToolBarOkButtonDidClicked() {
+        self.view.endEditing(true)
+        let pickerIndex = pickerView.selectedRow(inComponent: 0)
+        self.uploadAccountInfo(imgData: nil, male: pickerIndex == 0 ? true : false)
+    }
+    
+    @objc private func pickerToolBarCanncelButtonDidClicked() {
         self.view.endEditing(true)
     }
+    
+    // 上传信息
+    func uploadAccountInfo(imgData: Data?, male: Bool?) {
+        GTNet.shared.updateAccountInfo(headImgData: imgData, nickName: nil, profile: nil, male: male, age: nil, failure: {e in
+            if GTNet.shared.networkAvailable() {
+                self.hideActivityIndicatorView()
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: {json in
+            // 提取数据
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
+                if dataModel.code == 1 {
+                    // 账户信息修改通知
+                    NotificationCenter.default.post(name: .GTAccountInfoChanged, object: self)
+                    self.dismiss(animated: true, completion: nil)
+                    self.showNotificationMessageView(message: male == nil ? "头像上传成功" : "修改成功")
+                } else {
+                    self.showNotificationMessageView(message: male == nil ? "头像上传失败" : "修改失败")
+                }
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+            self.hideActivityIndicatorView()
+        })
+    }
+    
 }
 
 // UITableView
@@ -158,6 +195,8 @@ extension GTPersonalInfoViewController: UITableViewDelegate, UITableViewDataSour
         cell.accessoryType = .disclosureIndicator
         cell.titleTxtLabel.text = cellInfo[indexPath.section][indexPath.row]
         cell.selectionStyle = .none
+        cell.imgView.image = UIImage()
+        cell.detailTextField.placeholder = ""
 
         if indexPath.section == 0 {
             cell.imgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: "profile"))
@@ -174,6 +213,10 @@ extension GTPersonalInfoViewController: UITableViewDelegate, UITableViewDataSour
                 // 隐藏键盘工具栏
                 cell.detailTextField.inputAssistantItem.leadingBarButtonGroups = []
                 cell.detailTextField.inputAssistantItem.trailingBarButtonGroups = []
+            } else {
+                // 禁用编辑
+                cell.detailTextField.isEnabled = false
+                cell.detailTextField.isUserInteractionEnabled = false
             }
         }
         
@@ -186,8 +229,16 @@ extension GTPersonalInfoViewController: UITableViewDelegate, UITableViewDataSour
         if indexPath.section == 0 {
             showPopoverPresentationController(cell: cell)
         } else if indexPath.section == 1 {
-            self.view.endEditing(true)
-            cell.detailTextField.becomeFirstResponder()
+            if indexPath.row == 1 {
+                self.view.endEditing(true)
+                cell.detailTextField.becomeFirstResponder()
+            } else {
+                self.view.endEditing(false)
+                self.hidesBottomBarWhenPushed = true
+                // editType: 0表示编辑昵称、1表示编辑个性签名
+                let vc = GTInfoEditViewController(title: cell.titleTxtLabel.text ?? "", text: cell.detailTextField.placeholder ?? "", editType: indexPath.row == 0 ? 0 : 1)
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
     
@@ -241,18 +292,18 @@ extension GTPersonalInfoViewController: UIPickerViewDelegate, UIPickerViewDataSo
 extension GTPersonalInfoViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
-
+        self.showActivityIndicatorView()
         guard let image = info[.editedImage] as? UIImage else {
             print("No image found")
             return
         }
+        if let imageData = image.pngData() {
+            self.uploadAccountInfo(imgData: imageData, male: nil)
+        } else {
+            self.hideActivityIndicatorView()
+            self.showNotificationMessageView(message: "暂不支持该文件格式")
+        }
 
-        let indexPath = IndexPath(row: 0, section: 0)
-        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
-        cell.imgView.image = image
-        self.tableView.rectForRow(at: indexPath)
-        
-        self.dismiss(animated: true, completion: nil)
     }
 }
 
@@ -261,15 +312,15 @@ extension GTPersonalInfoViewController: PHPickerViewControllerDelegate {
     @available(iOS 14, *)
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true, completion: nil)
-           
+        self.showActivityIndicatorView()
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
                 if let image = object as? UIImage {
-                    DispatchQueue.main.async {
-                        let indexPath = IndexPath(row: 0, section: 0)
-                        let cell = self.tableView.cellForRow(at: indexPath) as! GTPersonalInfoViewCell
-                        cell.imgView.image = image
-                        self.tableView.rectForRow(at: indexPath)
+                    if let imageData = image.pngData() {
+                        self.uploadAccountInfo(imgData: imageData, male: nil)
+                    } else {
+                        self.hideActivityIndicatorView()
+                        self.showNotificationMessageView(message: "暂不支持该文件格式")
                     }
                 }
             })

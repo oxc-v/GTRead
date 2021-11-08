@@ -172,19 +172,18 @@ extension GTNet {
 
 /// 数据请求
 extension GTNet {
-    func requestWith(url: String, httpMethod: RequestType, params: [String: Any]?, success: @escaping Success, error: @escaping Failure) {
+    func requestWith(url: String, httpMethod: RequestType, params: [String: Any]?, headers: HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"], success: @escaping Success, error: @escaping Failure) {
         switch httpMethod {
         case .get:
-            manageGet(url: url, params: params, success: success, error: error)
+            manageGet(url: url, params: params, headers: headers, success: success, error: error)
         case .post:
-            managePost(url: url, params: params, success: success, error: error)
+            managePost(url: url, params: params, headers: headers, success: success, error: error)
         default:
             break
         }
     }
-    private func manageGet(url: String, params: [String: Any]?, success: @escaping Success, error: @escaping Failure) {
+    private func manageGet(url: String, params: [String: Any]?, headers: HTTPHeaders, success: @escaping Success, error: @escaping Failure) {
         let urlPath:URL = URL(string: url)!
-        let headers:HTTPHeaders = ["Content-Type":"application/json;charset=utf-8"]
         let request = AF.request(urlPath,method: .get,parameters: params,encoding: JSONEncoding.default, headers: headers)
         request.responseJSON { (response) in
             DispatchQueue.global().async(execute: {
@@ -203,10 +202,10 @@ extension GTNet {
     // 字典参数 ["id":"1","value":""]
     private func managePost(url: String,
                             params: [String: Any]?,
+                            headers: HTTPHeaders,
                             success: @escaping Success,
                             error: @escaping Failure) {
         let urlPath:URL = URL(string: url)!
-        let headers:HTTPHeaders = ["Content-Type":"application/json;charset=UTF-8"]
         let request = AF.request(urlPath,method: .post,parameters: params,encoding: JSONEncoding.default, headers: headers)
         request.responseJSON { (response) in
             DispatchQueue.main.async(execute: {
@@ -281,8 +280,9 @@ extension GTNet {
     }
 }
 
-// 个人管理
+// 个人信息管理
 extension GTNet {
+    
     // 获取个人信息
     func getPersonalInfo(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
@@ -307,6 +307,43 @@ extension GTNet {
     func requestLogin(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8000/accountService/loginFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (e) in
+            failure(e)
+        }
+    }
+    
+    // 更改密码
+    func updatePassword(pwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "newPassword": pwd] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8000/accountService/updatePasswdFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (e) in
+            failure(e)
+        }
+    }
+    
+    // 修改用户信息
+    func updateAccountInfo(headImgData: Data?, nickName: String?, profile: String?, male: Bool?, age: Int?, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        var params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "userPwd": (UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.password) ?? "")] as [String : Any]
+        if nickName != nil {
+            params.updateValue(nickName as Any, forKey: "nickName")
+        }
+        if profile != nil {
+            params.updateValue(profile as Any, forKey: "profile")
+        }
+        if male != nil {
+            params.updateValue(male as Any, forKey: "male")
+        }
+        if age != nil {
+            params.updateValue(age as Any, forKey: "age")
+        }
+        if headImgData != nil {
+            let imageBase64String = headImgData?.base64EncodedString()
+            params.updateValue(imageBase64String as Any, forKey: "headImgData")
+        }
+        
+        self.requestWith(url: "http://39.105.217.90:8000/accountService/setUserInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             failure(e)

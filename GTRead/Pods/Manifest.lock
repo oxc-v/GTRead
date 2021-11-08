@@ -4,6 +4,7 @@ PODS:
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
+  - Fuse (1.4.0)
   - MJRefresh (3.5.0)
   - NVActivityIndicatorView (5.1.1):
     - NVActivityIndicatorView/Base (= 5.1.1)
@@ -19,6 +20,7 @@ DEPENDENCIES:
   - Alamofire (~> 5.2)
   - ARVideoKit (~> 1.5.51)
   - Charts
+  - Fuse
   - MJRefresh (~> 3.5.0)
   - NVActivityIndicatorView
   - SDWebImage (~> 5.0)
@@ -31,6 +33,7 @@ SPEC REPOS:
     - Alamofire
     - ARVideoKit
     - Charts
+    - Fuse
     - MJRefresh
     - NVActivityIndicatorView
     - SDWebImage
@@ -42,6 +45,7 @@ SPEC CHECKSUMS:
   Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
   ARVideoKit: cd70e1e49e042ed4a88fb59964c17520e34f7f5b
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
+  Fuse: 48eaf66d0c407c7f8b0ddb168888dc4637e87f14
   MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
   NVActivityIndicatorView: 1f6c5687f1171810aa27a3296814dc2d7dec3667
   SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
@@ -49,6 +53,6 @@ SPEC CHECKSUMS:
   SwiftEntryKit: 61b5fa36f34a97dd8013e48a7345bc4c4720be9a
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: b2fe1dc3ce01ded82297e7fad9f60f0c65c23883
+PODFILE CHECKSUM: 00abd53842b05e731cbc2d657df698e867fc1256
 
 COCOAPODS: 1.11.2

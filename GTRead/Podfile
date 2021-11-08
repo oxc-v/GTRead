@@ -15,6 +15,7 @@ target 'GTRead' do
   pod 'Charts'
   pod 'SwiftEntryKit', '~> 2.0.0'
   pod 'NVActivityIndicatorView'
+  pod "Fuse"
 
   target 'GTReadTests' do
     inherit! :search_paths

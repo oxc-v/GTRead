@@ -19,7 +19,8 @@ class GTBookCollectionCell: UICollectionViewCell {
         imageView.layer.shadowRadius = 5
         imageView.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
         imageView.layer.shadowOpacity = 0.1
-        imageView.layer.masksToBounds = true
+        imageView.layer.masksToBounds = false
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -56,7 +57,6 @@ class GTBookCollectionCell: UICollectionViewCell {
         self.contentView.addSubview(titleLabel)
         
         pdfImageView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.9)
         }
@@ -75,7 +75,6 @@ class GTBookCollectionCell: UICollectionViewCell {
             make.top.equalTo(pdfImageView.snp.top).offset(-15)
             make.width.height.equalTo(30)
         }
-        
         
         
         let longGress = UILongPressGestureRecognizer()

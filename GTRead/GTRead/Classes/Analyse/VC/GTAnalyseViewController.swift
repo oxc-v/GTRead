@@ -38,8 +38,7 @@ class GTAnalyseViewController: GTBaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "分析"
-        self.view.backgroundColor = UIColor(hexString: "#f2f2f7")
+        self.view.backgroundColor = .white
         
         let header = MJRefreshNormalHeader()
         header.setTitle("下拉刷新", for: .idle)
@@ -49,21 +48,17 @@ class GTAnalyseViewController: GTBaseViewController {
         analyseScrollView.mj_header = header
         self.view.addSubview(analyseScrollView)
         analyseScrollView.snp.makeConstraints { (make) in
-            make.top.equalTo(75)
+            make.top.equalTo(-72)
             make.left.equalToSuperview()
             make.right.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         
         oneDayReadTimeView = GTReadTimeView()
-        oneDayReadTimeView.layer.cornerRadius = viewCornerRadius
         self.analyseScrollView.addSubview(oneDayReadTimeView)
         oneDayReadTimeView.snp.makeConstraints { (make) in
-            make.top.equalTo(5)
-            make.left.equalTo(16)
-            make.right.equalTo(-16)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(400)
+            make.centerX.left.right.top.equalToSuperview()
+            make.height.equalTo(600)
         }
         
         thisReadTimeView = GTThisReadDataView(titleTxt: "本次阅读时间", dataTxt: "0时0分", imgName: "this_time")
@@ -106,7 +101,7 @@ class GTAnalyseViewController: GTBaseViewController {
         thisReadSpeedView.layer.cornerRadius = viewCornerRadius
         self.analyseScrollView.addSubview(thisReadSpeedView)
         thisReadSpeedView.snp.makeConstraints { (make) in
-            make.left.equalTo(oneDayReadTimeView.snp.left)
+            make.left.equalTo(16)
             make.width.height.equalTo((kGTScreenWidth - 2.0 * 16 -  32) / 2.0)
             make.top.equalTo(thisReadTimeView.snp.bottom).offset(32)
         }
@@ -125,6 +120,7 @@ class GTAnalyseViewController: GTBaseViewController {
             self.loadAnalyseData()
         } else {
             self.showNotLoginAlertController("有身份的人才能查看阅读数据哟", handler: {action in
+                NotificationCenter.default.post(name: .GTGoLogin, object: self)
                 self.tabBarController?.selectedIndex = 2
             })
         }
@@ -182,7 +178,6 @@ class GTAnalyseViewController: GTBaseViewController {
                     self.showNotificationMessageView(message: "服务器数据错误")
                 } else if self.dataModel!.status.code == -1 {
                     self.updateWithData(model: self.dataModel!)
-                    self.showNotificationMessageView(message: (self.dataModel!.status.errorRes)!)
                 } else {
                     self.updateWithData(model: self.dataModel!)
                     
@@ -197,6 +192,7 @@ class GTAnalyseViewController: GTBaseViewController {
             self.hideActivityIndicatorView()
             refreshControl?.endRefreshing()
             self.showNotLoginAlertController("有身份的人才能查看阅读数据哟", handler: {action in
+                NotificationCenter.default.post(name: .GTGoLogin, object: self)
                 self.tabBarController?.selectedIndex = 2
             })
         }

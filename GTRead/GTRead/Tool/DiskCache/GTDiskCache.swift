@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class GTDiskCache {
     
@@ -37,53 +38,60 @@ final class GTDiskCache {
         }
     }
     
-//    // 缓存书架对象
-//    func saveShelfBookObject<T: Encodable>(_ key: String, value: T?) {
-//        // 拼接路径
-//        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
-//        let shelfFolder = "ShelfBookData"
-//        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
-//        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
-//        let path_3 = (path_2 as NSString).appendingPathComponent(key)
-//
-//        ioQueue.async {
-//            self.createDirectory(path_2)
-//            if let data = try? self.encoder.encode(value) {
-//                do {
-//                    try data.write(to: URL(fileURLWithPath: path_3), options: NSData.WritingOptions.atomic)
-//                }catch let err {
-//                    print("saveShelfBookObject error:\(err)")
-//                }
-//            } else {
-//                print("saveShelfBookObject: data is nil")
-//            }
-//        }
-//    }
-//
-//    // 获取书架对象数据
-//    func getShelfBookObject(_ key: String, completed: @escaping (_ obj: GTShelfBookModel?)->()) {
-//        // 拼接路径
-//        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
-//        let shelfFolder = "ShelfBookData"
-//        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
-//        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
-//        let path_3 = (path_2 as NSString).appendingPathComponent(key)
-//
-//        DispatchQueue.global().async { () -> Void in
-//            if self.fileManager.fileExists(atPath: path_3){
-//                let data = self.fileManager.contents(atPath: path_3)
-//                if let obj = try? self.decoder.decode(GTShelfBookModel.self, from: data!) {
-//                    completed(obj)
-//                } else {
-//                    completed(nil)
-//                    print("getShelfBookObject error: obj is nil")
-//                }
-//            } else{
-//                print("getShelfBookObject error: not found")
-//                completed(nil)
-//            }
-//        }
-//    }
+    // 缓存图片
+    func saveImageWithData(_ key: String, _ data: Data) {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let imageFolder = "Image"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(imageFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+        
+        ioQueue.async {
+            self.createDirectory(path_2)
+            let ok = self.fileManager.createFile(atPath: path_3, contents: data, attributes: nil)
+            if ok == false {
+                print("saveImageWithData error: Save image failure")
+            }
+        }
+    }
+    
+    // 获取图片
+    func getImageWithData(_ key: String, completed: (Data?)->()) {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let imageFolder = "Image"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(imageFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+        
+        if self.fileManager.fileExists(atPath: path_3) {
+            if let data = self.fileManager.contents(atPath: path_3) {
+                completed(data)
+            } else {
+                completed(nil)
+                print("getImageWithData error: data is nil")
+            }
+        } else {
+            completed(nil)
+            print("getImageWithData error: not found file")
+        }
+    }
+     
+    func getImageWithPath(_ key: String) -> String? {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let imageFolder = "Image"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(imageFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+        
+        if self.fileManager.fileExists(atPath: path_3) {
+            return path_3
+        } else {
+            return nil
+        }
+    }
     
     // 缓存不同的界面数据
     func saveViewObject<T: Encodable>(_ key: String, value: T?) {
