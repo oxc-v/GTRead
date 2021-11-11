@@ -44,9 +44,6 @@ class GTBookShelfSearchViewController: GTBaseViewController {
         resultLabel.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
         }
-        
-        // 响应退出登录通知
-        NotificationCenter.default.addObserver(self, selector: #selector(clearData), name: .GTExitAccount, object: nil)
     }
 
     init(model: GTShelfBookModel?) {
@@ -58,10 +55,6 @@ class GTBookShelfSearchViewController: GTBaseViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    @objc func clearData() {
-        self.dataModel = nil
     }
 }
 

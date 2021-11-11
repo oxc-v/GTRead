@@ -17,12 +17,11 @@ class GTReadBehaviourView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = .white
-//        self.layer.shadowRadius = 5
-//        self.layer.shadowOffset = CGSize(width: 3.0, height: -3.0)
-//        self.layer.shadowOpacity = 0.1
         
         chartView = ScatterChartView()
         chartView.xAxis.drawGridLinesEnabled = false
+        chartView.leftAxis.drawGridLinesEnabled = false
+        chartView.leftAxis.drawZeroLineEnabled = true
         chartView.rightAxis.enabled = false
         chartView.xAxis.labelPosition = .bottom
         chartView.dragEnabled = false
@@ -36,11 +35,6 @@ class GTReadBehaviourView: UIView {
         chartView.snp.makeConstraints { make in
             make.size.equalToSuperview()
         }
-    }
-    
-    // 清空数据
-    func clearData() {
-        chartView.clear()
     }
     
     // 更新数据

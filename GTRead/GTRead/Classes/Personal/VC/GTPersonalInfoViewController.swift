@@ -7,7 +7,8 @@
 
 import UIKit
 import PhotosUI
-import SwiftUI
+import SDWebImage
+
 
 class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationControllerDelegate {
 
@@ -159,9 +160,13 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
             let decoder = JSONDecoder()
             if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
                 if dataModel.code == 1 {
+                    if imgData != nil {
+                        // 删除头像图片缓存
+                        SDImageCache.shared.removeImage(forKey: self.dataModel?.headImgUrl, withCompletion: nil)
+                    }
                     // 账户信息修改通知
                     NotificationCenter.default.post(name: .GTAccountInfoChanged, object: self)
-                    self.dismiss(animated: true, completion: nil)
+                    
                     self.showNotificationMessageView(message: male == nil ? "头像上传成功" : "修改成功")
                 } else {
                     self.showNotificationMessageView(message: male == nil ? "头像上传失败" : "修改失败")
@@ -230,10 +235,8 @@ extension GTPersonalInfoViewController: UITableViewDelegate, UITableViewDataSour
             showPopoverPresentationController(cell: cell)
         } else if indexPath.section == 1 {
             if indexPath.row == 1 {
-                self.view.endEditing(true)
                 cell.detailTextField.becomeFirstResponder()
             } else {
-                self.view.endEditing(false)
                 self.hidesBottomBarWhenPushed = true
                 // editType: 0表示编辑昵称、1表示编辑个性签名
                 let vc = GTInfoEditViewController(title: cell.titleTxtLabel.text ?? "", text: cell.detailTextField.placeholder ?? "", editType: indexPath.row == 0 ? 0 : 1)

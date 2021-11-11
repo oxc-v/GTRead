@@ -21,9 +21,6 @@ class GTThisReadDataView: UIView {
         super.init(frame: CGRect())
         
         self.backgroundColor = UIColor.white
-//        self.layer.shadowRadius = 5
-//        self.layer.shadowOffset = CGSize(width: 3.0, height: -3.0)
-//        self.layer.shadowOpacity = 0.1
         
         imgView = UIImageView()
         imgView.contentMode = .scaleAspectFill
@@ -56,11 +53,6 @@ class GTThisReadDataView: UIView {
         
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // 清空数据
-    func clearData() {
-        dataLabel.text = ""
     }
     
     // 更新数据

@@ -226,7 +226,7 @@ extension GTNet {
     // 获取书架书籍
     func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
            failure(e)
@@ -242,7 +242,7 @@ extension GTNet {
             bookIds.append(item.bookId)
         }
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookIds": bookIds] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
            failure(e)
@@ -286,7 +286,7 @@ extension GTNet {
     // 获取个人信息
     func getPersonalInfo(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
-        GTNet.shared.requestWith(url: "http://39.105.217.90:8000/accountService/userInfoFun", httpMethod: .post, params: params) { (json) in
+        GTNet.shared.requestWith(url: "http://39.105.217.90:8007/accountService/userInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)
@@ -296,7 +296,7 @@ extension GTNet {
     // 注册请求
     func requestRegister(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/accountService/registerFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8007/accountService/registerFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             failure(e)
@@ -306,7 +306,7 @@ extension GTNet {
     // 登录请求
     func requestLogin(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/accountService/loginFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8007/accountService/loginFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             failure(e)
@@ -316,7 +316,7 @@ extension GTNet {
     // 更改密码
     func updatePassword(pwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "newPassword": pwd] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/accountService/updatePasswdFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8007/accountService/updatePasswdFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             failure(e)
@@ -343,7 +343,7 @@ extension GTNet {
             params.updateValue(imageBase64String as Any, forKey: "headImgData")
         }
         
-        self.requestWith(url: "http://39.105.217.90:8000/accountService/setUserInfoFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8007/accountService/setUserInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             failure(e)
@@ -355,7 +355,7 @@ extension GTNet {
     // 上传评论
     func addCommentList(success: @escaping ((AnyObject)->()), bookId: String, pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
         let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/commonService/addCommentFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8005/commonService/addCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             debugPrint(e)
@@ -365,7 +365,7 @@ extension GTNet {
     // 获得评论
     func getCommentList(success: @escaping ((AnyObject)->()),error: @escaping ((AnyObject)->()), bookId: String, pageNum: Int) {
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId, "pageNum": pageNum] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/commonService/getCommentFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8005/commonService/getCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
             error(e)
@@ -377,10 +377,33 @@ extension GTNet {
         let date = Date.init()
         let endTime = date.timeIntervalSince1970
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/collectService/collectReadDataFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8004/collectService/collectReadDataFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             debugPrint(error)
+        }
+    }
+}
+
+extension GTNet {
+    
+    // 获取每日阅读目标
+    func getReadTarget(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8004/collectService/getTargetMinuteFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 上传每日目标
+    func setReadTarget(minute: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "minute": minute] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8004/collectService/setTargetMinuteFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
         }
     }
     
@@ -390,7 +413,7 @@ extension GTNet {
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let dayTime = dateFormatter.string(from: Date())
         let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "dayTime": dayTime] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8000/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8004/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)

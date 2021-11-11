@@ -14,6 +14,7 @@ class GTTabBarViewController: UITabBarController {
         super.viewDidLoad()
         
         self.tabBar.backgroundColor = .white
+        self.tabBar.tintColor = .black
         
         self.createControllers()
     }

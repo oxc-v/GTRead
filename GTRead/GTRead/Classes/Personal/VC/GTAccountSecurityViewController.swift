@@ -77,9 +77,12 @@ class GTAccountSecurityViewController: GTBaseViewController {
                         if dataModel.code == -1 {
                             self.showNotificationMessageView(message: dataModel.errorRes!)
                         } else {
-                            // 退出登录通知--修改密码成功需重新登录
-                            NotificationCenter.default.post(name: .GTExitAccount, object: self)
-                            
+                            // 删除用户配置信息
+                            let userDefaults = UserDefaults.standard
+                            for key in userDefaults.dictionaryRepresentation() {
+                                userDefaults.removeObject(forKey: key.key)
+                            }
+                            userDefaults.synchronize()
                             self.navigationController?.popToRootViewController(animated: true)
                         }
                     } else {

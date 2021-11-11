@@ -46,8 +46,8 @@ class GTBookShelfViewController: GTBaseViewController {
         view.frame = CGRect(x: 0, y: 0, width: 300, height: 44)
         let titleLabel = UILabel()
         titleLabel.textAlignment = .center
-        titleLabel.text = "让阅读成为一种习惯"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        titleLabel.text = "让阅读成为习惯"
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
@@ -56,6 +56,7 @@ class GTBookShelfViewController: GTBaseViewController {
     }()
 
     var searchController: UISearchController!
+    var goLoginAndRegisterView: GTGoLoginAndRegisterView!
     
     var viewModel: GTBookShelfViewModel?
     
@@ -67,6 +68,19 @@ class GTBookShelfViewController: GTBaseViewController {
         self.setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
+            self.goLoginAndRegisterView.isHidden = false
+            self.bookCollectionView.isHidden = true
+        } else {
+            self.goLoginAndRegisterView.isHidden = true
+            self.bookCollectionView.isHidden = false
+            self.getShelfBookData()
+        }
+    }
+    
     func setupView() {
         self.view.resignFirstResponder()
         self.view.backgroundColor = UIColor.white
@@ -74,6 +88,15 @@ class GTBookShelfViewController: GTBaseViewController {
         
         self.setupNavigation()
         
+        goLoginAndRegisterView = GTGoLoginAndRegisterView()
+        goLoginAndRegisterView.isHidden = true
+        self.view.addSubview(goLoginAndRegisterView)
+        goLoginAndRegisterView.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.height.width.equalTo(320)
+        }
+        
+        bookCollectionView.isHidden = true
         let header = MJRefreshNormalHeader()
         header.setTitle("下拉刷新", for: .idle)
         header.setTitle("释放更新", for: .pulling)
@@ -97,24 +120,11 @@ class GTBookShelfViewController: GTBaseViewController {
             }
         }
         
-        // 判断用户上次是否登录
-        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) != nil {
-            self.loadData()
-        } else {
-            self.showNotLoginAlertController("有身份的人才能查看书架哟", handler: {action in
-                NotificationCenter.default.post(name: .GTGoLogin, object: self)
-                self.tabBarController?.selectedIndex = 2
-            })
-        }
-        
         self.setupSearchBar()
-        
-        // 响应登录成功通知
-        NotificationCenter.default.addObserver(self, selector: #selector(loadData), name: .GTLoginEvent, object: nil)
     }
     
-    // 加载数据
-    @objc func loadData() {
+    // 加载书架数据
+    @objc func getShelfBookData() {
         // 刷新书架
         self.showActivityIndicatorView()
         self.viewModel?.loadBookShelfData()
@@ -130,6 +140,7 @@ class GTBookShelfViewController: GTBaseViewController {
         searchController.searchBar.delegate = self
         searchController.searchBar.sizeToFit()
         searchController.searchResultsUpdater = vc
+        UIBarButtonItem.appearance(whenContainedInInstancesOf:[UISearchBar.self]).tintColor = .black
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "取消"
         definesPresentationContext = true
         self.navigationItem.searchController = searchController
@@ -147,17 +158,7 @@ class GTBookShelfViewController: GTBaseViewController {
     }
     
     @objc func refresh(refreshControl: UIRefreshControl?) {
-        // 判断用户上次是否登录
-        if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) != nil {
-            // 模拟请求
-            self.viewModel?.createBookShelfData(refreshControl: refreshControl)
-        } else {
-            refreshControl?.endRefreshing()
-            self.showNotLoginAlertController("有身份的人才能查看书架哟", handler: {action in
-                NotificationCenter.default.post(name: .GTGoLogin, object: self)
-                self.tabBarController?.selectedIndex = 2
-            })
-        }
+        self.viewModel?.createBookShelfData(refreshControl: refreshControl)
     }
     
     @objc func StartEditEvent() {

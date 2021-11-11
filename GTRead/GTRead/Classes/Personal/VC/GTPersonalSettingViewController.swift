@@ -103,9 +103,13 @@ extension GTPersonalSettingViewController: UITableViewDelegate, UITableViewDataS
 
             let loginAction = UIAlertAction(title: "退出登录", style: .destructive) {
                         (action: UIAlertAction!) -> Void in
-                // 退出登录通知
-                NotificationCenter.default.post(name: .GTExitAccount, object: self)
-
+                // 删除用户配置信息
+                let userDefaults = UserDefaults.standard
+                for key in userDefaults.dictionaryRepresentation() {
+                    userDefaults.removeObject(forKey: key.key)
+                }
+                userDefaults.synchronize()
+                
                 self.navigationController?.popViewController(animated: true)
             }
             let registerAction = UIAlertAction(title: "切换账号", style: .default) {

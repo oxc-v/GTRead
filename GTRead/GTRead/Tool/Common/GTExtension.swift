@@ -9,17 +9,17 @@ import Foundation
 import UIKit
 
 extension Notification.Name {
-    // 登录成功
-    static let GTLoginEvent = Notification.Name("GTLoginEvent")
-    
-    // 退出登录
-    static let GTExitAccount = Notification.Name("GTExitAccount")
-    
-    // 跳转登录界面
-    static let GTGoLogin = Notification.Name("GTGoLogin")
-    
     // 修改用户信息
     static let GTAccountInfoChanged = Notification.Name("GTAccountInfoChanged")
+    
+    // 每日目标改变
+    static let GTReadTargetChanged = Notification.Name("GTReadTargetChanged")
+    
+    // 重新加载网络
+    static let GTLoadNetwork = Notification.Name("GTLoadNetwork")
+    
+    // 跳转个人主页
+    static let GTGoPersonalViewController = Notification.Name("GTGoPersonalViewController")
 }
 
 extension UIColor {

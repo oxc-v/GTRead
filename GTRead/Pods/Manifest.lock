@@ -15,6 +15,7 @@ PODS:
   - SnapKit (5.0.1)
   - SwiftEntryKit (2.0.0)
   - SwiftyJSON (4.3.0)
+  - SwiftyPickerPopover (6.6.6)
 
 DEPENDENCIES:
   - Alamofire (~> 5.2)
@@ -27,6 +28,7 @@ DEPENDENCIES:
   - SnapKit (~> 5.0.0)
   - SwiftEntryKit (~> 2.0.0)
   - SwiftyJSON (~> 4.0)
+  - SwiftyPickerPopover
 
 SPEC REPOS:
   trunk:
@@ -40,6 +42,7 @@ SPEC REPOS:
     - SnapKit
     - SwiftEntryKit
     - SwiftyJSON
+    - SwiftyPickerPopover
 
 SPEC CHECKSUMS:
   Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
@@ -52,7 +55,8 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftEntryKit: 61b5fa36f34a97dd8013e48a7345bc4c4720be9a
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
+  SwiftyPickerPopover: a402960a6687c911ffcb4e9fb282a1bc61186ab4
 
-PODFILE CHECKSUM: 00abd53842b05e731cbc2d657df698e867fc1256
+PODFILE CHECKSUM: 0cdd3304ed90c58d49f60e569da6a9b6ce9c9a5b
 
 COCOAPODS: 1.11.2

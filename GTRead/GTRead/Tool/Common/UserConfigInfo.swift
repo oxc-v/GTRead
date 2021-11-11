@@ -14,4 +14,9 @@ struct UserDefaultKeys {
         static let password = "password"
         static let account = "account"
     }
+    
+    // 每日目标
+    struct EveryDayReadTarget {
+        static let target = "target"
+    }
 }

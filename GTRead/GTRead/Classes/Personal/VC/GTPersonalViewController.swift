@@ -7,6 +7,7 @@
 
 import UIKit
 import MJRefresh
+import SDWebImage
 
 class GTPersonalViewController: GTBaseViewController {
     
@@ -41,30 +42,15 @@ class GTPersonalViewController: GTBaseViewController {
             make.top.equalTo(70)
             make.left.right.bottom.equalToSuperview()
         }
-
-        // 加载用户信息
-        self.loadAccountData()
-        
-        // 响应退出登录通知
-        NotificationCenter.default.addObserver(self, selector: #selector(resetPersonalInfo), name: .GTExitAccount, object: nil)
-        
-        // 跳转登录界面
-        NotificationCenter.default.addObserver(self, selector: #selector(showActionSheetController), name: .GTGoLogin, object: nil)
         
         // 账户信息更改
         NotificationCenter.default.addObserver(self, selector: #selector(notificationForAccountInfChanged), name: .GTAccountInfoChanged, object: nil)
     }
     
-    // 加载本地缓存
-    func loadAccountData() {
-        self.showActivityIndicatorView()
-        if let obj: GTPersonalInfoModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view") {
-            self.dataModel = obj
-            self.tableView.reloadData()
-            self.hideActivityIndicatorView()
-        } else {
-            self.refresh(refreshControl: nil)
-        }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.refresh(refreshControl: nil)
     }
 
     // 下拉刷新操作
@@ -79,24 +65,30 @@ class GTPersonalViewController: GTBaseViewController {
                 }
                 refreshControl?.endRefreshing()
                 self.hideActivityIndicatorView()
-            }, success: { json in
+            }, success: { [self] json in
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
-                let dataModel = try? decoder.decode(GTPersonalInfoModel.self, from: data!)
-                if dataModel != nil && dataModel?.userId != "404" {
-                    self.dataModel = dataModel
-                    
-                    // 刷新个人信息页的数据
-                    self.personalInfoViewContrller?.dataModel = dataModel
-                    self.personalInfoViewContrller?.tableView.reloadData()
-                    
-                    // 对个人信息进行缓存
-                    GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_personal_view", value: self.dataModel)
-                } else {
+                self.dataModel = try? decoder.decode(GTPersonalInfoModel.self, from: data!)
+                if self.dataModel == nil {
                     self.showNotificationMessageView(message: "服务器数据错误")
                 }
                 
                 DispatchQueue.main.async {
+                    // 刷新个人信息页的数据
+                    // 不使用reloadData是因为要保持detailTextField始终可以获取焦点
+                    if self.personalInfoViewContrller != nil {
+                        self.personalInfoViewContrller?.dataModel = dataModel
+                        let cellHeadImgView = self.personalInfoViewContrller?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! GTPersonalInfoViewCell
+                        cellHeadImgView.imgView.sd_setImage(with: URL(string: dataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: "profile"))
+                        let cellNicknameLabel = self.personalInfoViewContrller?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! GTPersonalInfoViewCell
+                        cellNicknameLabel.detailTextField.placeholder = dataModel?.nickName
+                        let cellMaleLabel = self.personalInfoViewContrller?.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as! GTPersonalInfoViewCell
+                        cellMaleLabel.detailTextField.placeholder = dataModel?.male == true ? "男" : "女"
+                        let cellProfileLabel = self.personalInfoViewContrller?.tableView.cellForRow(at: IndexPath(row: 2, section: 1)) as! GTPersonalInfoViewCell
+                        cellProfileLabel.detailTextField.placeholder = dataModel?.profile
+                    }
+                    
+                    
                     self.tableView.reloadData()
                 }
 
@@ -106,21 +98,9 @@ class GTPersonalViewController: GTBaseViewController {
         } else {
             refreshControl?.endRefreshing()
             self.hideActivityIndicatorView()
-            self.showActionSheetController()
+            self.dataModel = nil
+            self.tableView.reloadData()
         }
-    }
-    
-    // 退出登录重置信息
-    @objc func resetPersonalInfo() {
-        self.dataModel = nil
-        self.tableView.reloadData()
-        
-        // 删除配置信息
-        let userDefaults = UserDefaults.standard
-        for key in userDefaults.dictionaryRepresentation() {
-            userDefaults.removeObject(forKey: key.key)
-        }
-        userDefaults.synchronize()
     }
     
     // 用与响应GTAccountInfoChanged通知
@@ -181,9 +161,6 @@ class GTPersonalViewController: GTBaseViewController {
                         UserDefaults.standard.set(account.text, forKey: UserDefaultKeys.AccountInfo.account)
                         UserDefaults.standard.set(password.text, forKey: UserDefaultKeys.AccountInfo.password)
                         self.refresh(refreshControl: nil)
-                        
-                        // 登录成功通知
-                        NotificationCenter.default.post(name: .GTLoginEvent, object: self)
                     }
                 } else {
                     self.hideActivityIndicatorView()
@@ -291,6 +268,9 @@ extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTPersonalViewCell", for: indexPath) as! GTPersonalViewCell
         cell.selectionStyle = .none
+        cell.nicknameLabel.text = ""
+        cell.detailTxtLabel.text = ""
+        cell.headImgView.image = UIImage()
         
         if indexPath.section == 0 {
             cell.nicknameLabel.text = self.dataModel?.nickName ?? cellInfo[indexPath.section][indexPath.row]
@@ -301,9 +281,6 @@ extension GTPersonalViewController: UITableViewDelegate, UITableViewDataSource {
             cell.textLabel?.text = ""
             cell.imageView?.image = UIImage()
         } else {
-            cell.nicknameLabel.text = ""
-            cell.detailTxtLabel.text = ""
-            cell.headImgView.image = UIImage()
             cell.textLabel?.text = cellInfo[indexPath.section][indexPath.row]
             cell.accessoryType = .disclosureIndicator
             cell.imageView?.image = UIImage(named: cellImg[indexPath.section][indexPath.row])

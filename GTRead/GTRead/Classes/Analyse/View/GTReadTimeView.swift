@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Charts
 
 class GTReadTimeView: UIView {
 
@@ -15,18 +14,18 @@ class GTReadTimeView: UIView {
     var titleTwoLabel: UILabel!
     var subTitleTowLabel: UILabel!
     var timeLabel: UILabel!
+    var targetButton: UIButton!
+    var goStoreButton: UIButton!
     var progressView: GTCircleProgressView!
-    var chartView: BarChartView!
+    var totalMinTime = 0
+    var minute = UserDefaults.standard.integer(forKey: UserDefaultKeys.EveryDayReadTarget.target) == 0 ? 60 : UserDefaults.standard.integer(forKey: UserDefaultKeys.EveryDayReadTarget.target)
 
     // 重新父类的init方法
     // 指定初始化器
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.white
-//        self.layer.shadowRadius = 5
-//        self.layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
-//        self.layer.shadowOpacity = 0.1
+        self.backgroundColor = .white
         
         titleLabel = UILabel()
         titleLabel.textAlignment = .center
@@ -36,7 +35,7 @@ class GTReadTimeView: UIView {
         self.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(60)
+            make.top.equalToSuperview().offset(65)
         }
         
         subTitleLabel = UILabel()
@@ -50,6 +49,15 @@ class GTReadTimeView: UIView {
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
         }
         
+        progressView = GTCircleProgressView()
+        self.addSubview(progressView)
+        progressView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.equalTo(580)
+            make.height.equalTo(290)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(30)
+        }
+        
         titleTwoLabel = UILabel()
         titleTwoLabel.textAlignment = .center
         titleTwoLabel.textColor = UIColor.black
@@ -58,81 +66,80 @@ class GTReadTimeView: UIView {
         self.addSubview(titleTwoLabel)
         titleTwoLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(100)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(80)
         }
         
-        // 时间
+        subTitleTowLabel = UILabel()
+        subTitleTowLabel.textAlignment = .center
+        subTitleTowLabel.textColor = UIColor(hexString: "#199dd7")
+        subTitleTowLabel.text = "还需" + String(minute - totalMinTime <= 0 ? 0 : minute - totalMinTime) + "分钟"
+        subTitleTowLabel.font = UIFont.systemFont(ofSize: 23)
+        self.addSubview(subTitleTowLabel)
+        subTitleTowLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(titleTwoLabel.snp.bottom).offset(10)
+        }
+        
         timeLabel = UILabel()
         timeLabel.textAlignment = .center
-        timeLabel.font = UIFont.systemFont(ofSize: 80)
+        timeLabel.font = UIFont.systemFont(ofSize: 75)
         timeLabel.textColor = UIColor.black
-        timeLabel.text = "00:00"
+        timeLabel.text = "0:00"
         self.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.top.equalTo(titleTwoLabel.snp.top).offset(20)
+            make.top.equalTo(subTitleTowLabel.snp.bottom).offset(10)
         }
-
-        progressView = GTCircleProgressView()
-        self.addSubview(progressView)
-        progressView.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview()
-            make.width.equalTo(460)
-            make.height.equalTo(230)
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
-        }
-
-        // 柱状图
-        chartView = BarChartView()
-        chartView.xAxis.drawGridLinesEnabled = false
-        chartView.leftAxis.enabled = false
-        chartView.rightAxis.enabled = false
-        chartView.xAxis.labelCount = 12
-        let xValues = ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"]
-        chartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: xValues)
-        chartView.xAxis.drawAxisLineEnabled = false
-        chartView.xAxis.labelPosition = .bottom
-        chartView.legend.enabled = false
-        chartView.dragEnabled = false
-        chartView.scaleXEnabled = false
-        chartView.scaleYEnabled = false
-        chartView.doubleTapToZoomEnabled = false
-        chartView.animate(xAxisDuration: 1, yAxisDuration: 1)
-        chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
         
-        self.addSubview(chartView)
-        chartView.snp.makeConstraints { (make) in
+        targetButton = UIButton()
+        targetButton.backgroundColor = .clear
+        targetButton.setTitle("（目标" + String(minute) + "分钟）>", for: .normal)
+        targetButton.setTitleColor(.black, for: .normal)
+        targetButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        targetButton.titleLabel?.textAlignment = .center
+        self.addSubview(targetButton)
+        targetButton.snp.makeConstraints { (make) in
+            make.width.equalTo(200)
+            make.height.equalTo(20)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview()
-            make.top.equalTo(progressView.snp.bottom).offset(16)
-            make.bottom.equalToSuperview()
+            make.top.equalTo(timeLabel.snp.bottom).offset(10)
         }
+        
+        goStoreButton = UIButton()
+        goStoreButton.backgroundColor = .clear
+        goStoreButton.setTitle("搜索图书商店", for: .normal)
+        goStoreButton.setTitleColor(.white, for: .normal)
+        goStoreButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        goStoreButton.backgroundColor = .black
+        goStoreButton.layer.cornerRadius = 25
+        self.addSubview(goStoreButton)
+        goStoreButton.snp.makeConstraints { (make) in
+            make.width.equalTo(300)
+            make.height.equalTo(50)
+            make.centerX.equalToSuperview()
+            make.top.equalTo(targetButton.snp.bottom).offset(20)
+        }
+        
+        // 每日阅读目标改变通知
+        NotificationCenter.default.addObserver(self, selector: #selector(targetChanged), name: .GTReadTargetChanged, object: nil)
     }
     
-    // 清空数据
-    func clearData() {
-        chartView.clear()
-        timeLabel.text = "00:00"
+    @objc func targetChanged() {
+        minute = UserDefaults.standard.integer(forKey: UserDefaultKeys.EveryDayReadTarget.target)
+        let finishMinute = minute - totalMinTime
+        targetButton.setTitle("（目标" + String(minute) + "分钟）>", for: .normal)
+        subTitleTowLabel.text = "还需" + String(finishMinute <= 0 ? 0 : finishMinute) + "分钟"
+        progressView.setProgress(CGFloat(totalMinTime >= minute ? minute : totalMinTime) / CGFloat(minute))
     }
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        
-        var totalMinTime = 0
+        totalMinTime = 0
         
         if model.lists != nil {
-            let chartData = BarChartData()
-            var dataEntries = [BarChartDataEntry]()
             for index in 0..<model.lists!.count {
-                let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists![index].min))
-                dataEntries.append(entry)
                 totalMinTime += model.lists![index].min
             }
-            let chartDataSet = BarChartDataSet(entries: dataEntries)
-            chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-            chartDataSet.drawValuesEnabled = false
-            chartData.dataSets.append(chartDataSet)
-            chartView.data = chartData
         }
         
         // 设置时间格式
@@ -145,12 +152,11 @@ class GTReadTimeView: UIView {
             minTxt = String(min)
         }
         let hour = (totalMinTime - min) / 60 % 60
-        if hour < 10 {
-            hourTxt = "0" + String(hour)
-        } else {
-            hourTxt = String(hour)
-        }
+        hourTxt = String(hour)
+
         timeLabel.text = hourTxt + ":" + minTxt
+        
+        targetChanged()
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -81,17 +81,17 @@ class GTLoadPDFViewContrlloer: GTBaseViewController {
         
         button = UIButton()
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.layer.cornerRadius = 10
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        button.layer.cornerRadius = 25
         button.layer.shadowRadius = 5
         button.layer.shadowOffset = CGSize(width: 0.0, height: -3.0)
         button.layer.shadowOpacity = 0.1
         button.addTarget(self, action: #selector(buttonDidClicked), for: .touchUpInside)
-        button.backgroundColor = UIColor(hexString: "#687ce3")
+        button.backgroundColor = .black
         self.view.addSubview(button)
         button.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.width.equalTo(120)
+            make.width.equalTo(170)
             make.height.equalTo(50)
             make.bottom.equalToSuperview().offset(-100)
         }

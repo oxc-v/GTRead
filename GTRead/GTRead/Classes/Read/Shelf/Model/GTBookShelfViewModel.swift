@@ -37,30 +37,32 @@ class GTBookShelfViewModel: NSObject {
         itemHeight = floor(itemWidth * 1.45)
         
         // 响应退出登录通知
-        NotificationCenter.default.addObserver(self, selector: #selector(clearShelfBook), name: .GTExitAccount, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(clearShelfBook), name: .GTExitAccount, object: nil)
     }
     
     // 清空书架----退出登录
-    @objc func clearShelfBook() {
-        self.dataModel = nil
-        self.books.removeAll()
-        self.collectionView.reloadData()
-    }
+//    @objc func clearShelfBook() {
+//        self.dataModel = nil
+//        self.books.removeAll()
+//        self.collectionView.reloadData()
+//    }
     
     // 加载本地缓存
     func loadBookShelfData() {
-        if let obj: GTShelfBookModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view") {
-            self.dataModel = obj
-            self.books.removeAll()
-            if self.dataModel!.count != -1 {
-                for item in self.dataModel!.lists! {
-                    self.books.append(item)
-                }
-                self.collectionView.reloadData()
-            }
-            self.viewController.hideActivityIndicatorView()
-        } else {
+        if GTNet.shared.networkAvailable() {
             self.createBookShelfData(refreshControl: nil)
+        } else {
+            if let obj: GTShelfBookModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view") {
+                self.dataModel = obj
+                self.books.removeAll()
+                if self.dataModel!.count != -1 {
+                    for item in self.dataModel!.lists! {
+                        self.books.append(item)
+                    }
+                    self.collectionView.reloadData()
+                }
+                self.viewController.hideActivityIndicatorView()
+            }
         }
     }
     
@@ -90,7 +92,9 @@ class GTBookShelfViewModel: NSObject {
                     // 对书架数据进行缓存
                     GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view", value: self.dataModel)
                 }
-                self.collectionView.reloadData()
+                DispatchQueue.main .async {
+                    self.collectionView.reloadData()
+                }
             } else {
                 self.viewController.showNotificationMessageView(message: "服务器数据错误")
             }

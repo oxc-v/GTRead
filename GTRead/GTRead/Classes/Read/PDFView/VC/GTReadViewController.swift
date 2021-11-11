@@ -179,7 +179,7 @@ class GTReadViewController: EyeTrackViewController {
         pdfView.addGestureRecognizer(tap)
     }
     
-    func setupGateTrackView(){
+    func setupGateTrackView() {
         trackView = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
         trackView.contentMode = .scaleAspectFill
         trackView.image = UIImage(named: "track_icon")
