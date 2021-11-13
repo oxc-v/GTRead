@@ -20,6 +20,33 @@ extension Notification.Name {
     
     // 跳转个人主页
     static let GTGoPersonalViewController = Notification.Name("GTGoPersonalViewController")
+    
+    // 跳转到指定PDF页码
+    static let GTGoPDFViewForPage = Notification.Name("GTGoPDFViewForPage")
+}
+
+extension Array where Element == CGPoint {
+    func medianX() -> Double {
+        let sortedArray = sorted { a, b in
+            return a.x < b.x
+        }
+        if count % 2 != 0 {
+            return Double(sortedArray[count / 2].x)
+        } else {
+            return Double(sortedArray[count / 2].x + sortedArray[count / 2 - 1].x) / 2.0
+        }
+    }
+    
+    func medianY() -> Double {
+        let sortedArray = sorted { a, b in
+            return a.y < b.y
+        }
+        if count % 2 != 0 {
+            return Double(sortedArray[count / 2].y)
+        } else {
+            return Double(sortedArray[count / 2].y + sortedArray[count / 2 - 1].y) / 2.0
+        }
+    }
 }
 
 extension UIColor {

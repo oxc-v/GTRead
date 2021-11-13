@@ -14,11 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        // 导航条按钮的间隔
+        let stackViewAppearance = UIStackView.appearance(whenContainedInInstancesOf: [UINavigationBar.self])
+        stackViewAppearance.spacing = 10
+        
         return true
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        GTBook.shared.cacheData()
+
     }
     // MARK: UISceneSession Lifecycle
 

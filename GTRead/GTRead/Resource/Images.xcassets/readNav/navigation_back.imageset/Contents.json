@@ -5,11 +5,11 @@
       "scale" : "1x"
     },
     {
+      "filename" : "左箭头.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "back@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -156,7 +156,6 @@ class GTAnalyseViewController: GTBaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.analyseScrollView.updateContentView()
 
         if UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) == nil {
             self.goLoginAndRegisterView.isHidden = false
@@ -169,6 +168,11 @@ class GTAnalyseViewController: GTBaseViewController {
         } else {
             self.getReadData()
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.analyseScrollView.updateContentView()
     }
     
     @objc func targetButtonDidClicked(sender: UIButton) {

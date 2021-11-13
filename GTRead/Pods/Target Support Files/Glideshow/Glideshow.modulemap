@@ -1,0 +1,6 @@
+framework module Glideshow {
+  umbrella header "Glideshow-umbrella.h"
+
+  export *
+  module * { export * }
+}

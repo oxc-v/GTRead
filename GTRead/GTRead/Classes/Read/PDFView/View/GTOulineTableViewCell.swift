@@ -10,36 +10,28 @@ import UIKit
 class GTOulineTableViewCell: UITableViewCell {
     var openBtn: UIButton!
     var textLab: UILabel!
-    var pageLab: UILabel!
     var openBtnEvent:((_ sender: UIButton) -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         openBtn = UIButton(type: .custom)
         openBtn.addTarget(self, action: #selector(openButtontnClick(sender:)), for: .touchUpInside)
+        openBtn.setImage(UIImage(named: "arrow_right"), for: .normal)
         self.contentView.addSubview(openBtn)
-        let leftOffset = indentationWidth * CGFloat(indentationLevel)
         openBtn.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(leftOffset)
+            make.right.equalTo(-16)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(30)
         }
         
-        pageLab = UILabel()
-        pageLab.textAlignment = .left
-        self.contentView.addSubview(pageLab)
-        self.pageLab .setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        pageLab.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().offset(-16)
-            make.centerY.equalToSuperview()
-        }
-        
         textLab = UILabel()
         textLab.textAlignment = .left
+        textLab.font = UIFont.boldSystemFont(ofSize: 17)
+        textLab.textColor = UIColor(hexString: "#4b4b4b")
         self.contentView.addSubview(textLab)
         textLab.snp.makeConstraints { (make) in
-            make.left.equalTo(self.openBtn.snp.right).offset(4)
-            make.right.lessThanOrEqualTo(self.pageLab.snp.left).offset(4)
+            make.left.equalTo(16)
+            make.right.lessThanOrEqualTo(openBtn.snp.left).offset(5)
             make.centerY.equalToSuperview()
         }
     }

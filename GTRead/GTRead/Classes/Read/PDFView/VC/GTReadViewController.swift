@@ -13,16 +13,17 @@ import ARKit
 class GTReadViewController: EyeTrackViewController {
     
     //MARK: - 导航条
-    var navgationBarHiddenStatu: Bool = true
+    var navgationBarHiddenStatu: Bool = false
     var thumbBtn: UIButton!     // 缩略图
-    var outlineBtn: UIButton!   // 目录按钮
+    var oulineBtn: UIButton!   // 目录按钮
     var commentBtn: UIButton!   // 评论按钮
-    var adjustSwitch: UISwitch! // 视线校准按钮
+    var adjustBtn: UIButton! // 视线校准按钮
     var eyeBtn: UIButton!   // 视线图标按钮
     
     //MARK: -PDF 相关
     private var pdfdocument: PDFDocument?
     let pdfURL: URL // pdf路径
+    var currentPage = 0
     lazy var pdfView: PDFView = {
         let pdfView = PDFView()
         pdfView.autoScales = true
@@ -36,6 +37,7 @@ class GTReadViewController: EyeTrackViewController {
     var eyeTrackController: EyeTrackController!
     var correctPoints = [CGPoint]()
     var trackView: UIImageView!
+    var trackPointLabel: UILabel!
     var trackCorrectView: UIImageView!
     var trackCorrectViewPoints = [CGPoint]()
     var correctPointsSet = [[CGPoint]]()
@@ -51,8 +53,6 @@ class GTReadViewController: EyeTrackViewController {
         pdfURL = path
         self.bookId = bookId
         super.init(nibName: nil, bundle: nil)
-        GTBook.shared.currentPdfView = pdfView
-        GTBook.shared.pdfURL = pdfURL
 
         // 定时收集视线数据
         getSightDataTimer = Timer(timeInterval:0.1, repeats: true) { timer in
@@ -70,15 +70,23 @@ class GTReadViewController: EyeTrackViewController {
         super.viewWillDisappear(animated)
         
         if self.isMovingFromParent {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
             getSightDataTimer.invalidate()
-            
+            // 发送视线数据
             if sightDatas.isEmpty == false {
-                // 发送视线数据
                 GTNet.shared.commitGazeTrackData(success: { (json) in
                     self.sightDatas.removeAll()
                 }, startTime: currentDate, lists: sightDatas, bookId: self.bookId, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
             }
+            
+            // 缓存PDF当前页码
+            GTBookCache.shared.cacheBookPage(page: self.currentPage)
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(self.navgationBarHiddenStatu, animated: false)
     }
 
     required init?(coder: NSCoder) {
@@ -96,16 +104,9 @@ class GTReadViewController: EyeTrackViewController {
         
         // 记录进入时间
         currentDate = Date.init().timeIntervalSince1970
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        // 跳转PDF
+        NotificationCenter.default.addObserver(self, selector: #selector(goPDFViewForOuline(notification:)), name: .GTGoPDFViewForPage, object: nil)
     }
     
     // 自定义页面退出操作
@@ -120,14 +121,14 @@ class GTReadViewController: EyeTrackViewController {
     }
     
     func setupView() {
-        // 导航条
-        self.setupNavgationBar()
-        
         // 视线
         self.setupGateTrackView()
         
         // pdf
         self.setupPdfView()
+        
+        // 导航条
+        self.setupNavgationBar()
                 
         self.view.bringSubviewToFront(trackView)
         self.view.bringSubviewToFront(trackCorrectView)
@@ -139,26 +140,32 @@ class GTReadViewController: EyeTrackViewController {
         eyeBtn.backgroundColor = .clear
         eyeBtn.addTarget(self, action: #selector(eyeButtonDidClicked), for: .touchUpInside)
         
-        adjustSwitch = UISwitch()
-        adjustSwitch.isOn = false
-        adjustSwitch.addTarget(self, action: #selector(switchChangedValue), for: .valueChanged)
+        adjustBtn = UIButton()
+        adjustBtn.backgroundColor = .clear
+        adjustBtn.setImage(UIImage(named: "adjust_btn"), for: .normal)
+        adjustBtn.addTarget(self, action: #selector(adjustButtonDidClicked), for: .touchUpInside)
         
         thumbBtn = UIButton(type: .custom)
         thumbBtn.setImage(UIImage(named: "thumbnails"), for: .normal)
         thumbBtn.backgroundColor = UIColor.clear
         thumbBtn.addTarget(self, action: #selector(thumbButtonDidClicked), for: .touchUpInside)
 
-        outlineBtn = UIButton(type: .custom)
-        outlineBtn.setImage(UIImage(named: "outline"), for: .normal)
-        outlineBtn.backgroundColor = UIColor.clear
-        outlineBtn.addTarget(self, action: #selector(outlineButtonDidClicked), for: .touchUpInside)
+        oulineBtn = UIButton(type: .custom)
+        oulineBtn.setImage(UIImage(named: "ouline"), for: .normal)
+        oulineBtn.backgroundColor = UIColor.clear
+        oulineBtn.addTarget(self, action: #selector(outlineButtonDidClicked(sender:)), for: .touchUpInside)
 
         commentBtn = UIButton(type: .custom)
         commentBtn.setImage(UIImage(named: "comment"), for: .normal)
         commentBtn.backgroundColor = UIColor.clear
         commentBtn.addTarget(self, action: #selector(commentButtonDidClicked), for: .touchUpInside)
         
-        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: commentBtn), UIBarButtonItem(customView: outlineBtn),UIBarButtonItem(customView: thumbBtn), UIBarButtonItem(customView: adjustSwitch), UIBarButtonItem(customView: eyeBtn)]
+        // 判断PDF是否有目录
+        if self.pdfdocument?.outlineRoot == nil {
+            self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: adjustBtn), UIBarButtonItem(customView: eyeBtn), UIBarButtonItem(customView: commentBtn), UIBarButtonItem(customView: thumbBtn)]
+        } else {
+            self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: adjustBtn), UIBarButtonItem(customView: eyeBtn), UIBarButtonItem(customView: commentBtn), UIBarButtonItem(customView: thumbBtn), UIBarButtonItem(customView: oulineBtn)]
+        }
     }
     
     func setupPdfView() {
@@ -169,22 +176,31 @@ class GTReadViewController: EyeTrackViewController {
         let document = PDFDocument(url: pdfURL)
         pdfView.document = document
         self.pdfdocument = document
-        let page = document?.page(at: GTBook.shared.getCacheData())
-        if let lastPage = page {
-            pdfView.go(to: lastPage)
-        }
-        
+        self.currentPage = GTBookCache.shared.getCacheBookPage(bookId: self.bookId)
+        let page = document?.page(at: self.currentPage)
+        pdfView.go(to: page!)
+
         NotificationCenter.default.addObserver(self,selector: #selector(handlePageChange(notification:)), name: Notification.Name.PDFViewPageChanged, object: nil)
         let tap = UITapGestureRecognizer(target: self, action: #selector(pdfViewTapEvent))
         pdfView.addGestureRecognizer(tap)
     }
     
     func setupGateTrackView() {
-        trackView = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
+        trackView = UIImageView(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
         trackView.contentMode = .scaleAspectFill
         trackView.image = UIImage(named: "track_icon")
         trackView.isHidden = false
         self.view.addSubview(trackView)
+        
+        trackPointLabel = UILabel()
+        trackPointLabel.textAlignment = .center
+        trackPointLabel.font = UIFont.systemFont(ofSize: 15)
+        self.trackView.addSubview(trackPointLabel)
+        trackPointLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().offset(10)
+            make.width.equalTo(200)
+        }
         
         trackCorrectView = UIImageView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
         trackCorrectView.contentMode = .scaleToFill
@@ -203,12 +219,25 @@ class GTReadViewController: EyeTrackViewController {
             let correctPoint = self?.sightDataModel.getCorrectSightData(p: self?.sightPoint ?? CGPoint())
             if self?.sightDataModel.isCorrect == true {
                 self?.trackView.center = correctPoint ?? CGPoint()
+                self?.trackPointLabel.text = String(format: "%.2f", Double(correctPoint!.x)) + "，" + String(format: "%.2f", Double(correctPoint!.y))
             } else {
                 self?.trackView.center = point
+                self?.trackPointLabel.text = String(format: "%.2f", Double(point.x)) + "，" + String(format: "%.2f", Double(point.y))
             }
         }
         self.initialize(eyeTrack: eyeTrackController.eyeTrack)
         self.show()
+    }
+    
+    // 跳转PDF
+    @objc private func goPDFViewForOuline(notification: Notification) {
+        self.dismiss(animated: true)
+        if let ouline = notification.userInfo?["ouline"] as? PDFOutline {
+            let action = ouline.action
+            if let actiongoto = action as? PDFActionGoTo {
+                pdfView.go(to: actiongoto.destination)
+            }
+        }
     }
     
     // 视线校准提示框
@@ -219,10 +248,12 @@ class GTReadViewController: EyeTrackViewController {
         self.correctPointsSet.removeAll()
         
         self.trackCorrectViewPoints = [CGPoint(x: 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: UIScreen.main.bounds.height - 24), CGPoint(x: 24, y: UIScreen.main.bounds.height - 24)]
-        let alertController = UIAlertController(title: "视线校准", message: "分别注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
-        let okAction = UIAlertAction(title: "校准", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
+        let alertController = UIAlertController(title: "视线校准", message: "依次注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
+        let canncelAction = UIAlertAction(title: "取消", style: .cancel, handler: {_ in
+            self.adjustBtn.isEnabled = true
+        })
+        let okAction = UIAlertAction(title: "校准", style: .default) { (action: UIAlertAction!) -> Void in
             self.navigationController?.setNavigationBarHidden(true, animated: true)
-            self.adjustSwitch.isEnabled = false
             
             let timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer_1 in
                 if isFirstRunning == false {
@@ -230,12 +261,11 @@ class GTReadViewController: EyeTrackViewController {
                 }
                 if (self.trackCorrectViewPoints.isEmpty == true) {
                     timer_1.invalidate()
-                    self.adjustSwitch.setOn(false, animated: true)
                     self.trackCorrectView.isHidden = true
                     let alertController = UIAlertController(title: "视线校准完毕", message: "", preferredStyle:UIAlertController.Style.alert)
                     let okAction = UIAlertAction(title: "确定", style: UIAlertAction.Style.default) { (action: UIAlertAction!) -> Void in
                         
-                        self.adjustSwitch.isEnabled = true
+                        self.adjustBtn.isEnabled = true
                         
                         var points = [CGPoint]()
                         for i in 0..<self.correctPointsSet.count {
@@ -268,6 +298,7 @@ class GTReadViewController: EyeTrackViewController {
             timer.fire()
         }
         
+        alertController.addAction(canncelAction)
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -294,18 +325,25 @@ class GTReadViewController: EyeTrackViewController {
         let thumbnailGridViewController = GTThumbnailGridViewController(collectionViewLayout: layout)
         thumbnailGridViewController.pdfDocument = self.pdfdocument
         thumbnailGridViewController.delegate = self
-        self.navigationController?.pushViewController(thumbnailGridViewController, animated: true)
+        self.present(thumbnailGridViewController, animated: true)
     }
 
     //MARK: -目录
-    @objc private func outlineButtonDidClicked() {
-        navgationBarHiddenStatu = true
+    @objc private func outlineButtonDidClicked(sender: UIButton) {
         if let pdfoutline = self.pdfdocument?.outlineRoot {
             let oulineViewController = GTOulineTableviewController(style: UITableView.Style.plain)
+            oulineViewController.navigationTitle = "书签"
             oulineViewController.pdfOutlineRoot = pdfoutline
-            oulineViewController.delegate = self
-
-            self.navigationController?.pushViewController(oulineViewController, animated: true)
+            let nav = GTBaseNavigationViewController(rootViewController: oulineViewController)
+            nav.modalPresentationStyle = .popover
+            nav.preferredContentSize = CGSize(width: 300, height: 500)
+            if let popoverController = nav.popoverPresentationController {
+                popoverController.sourceView = sender
+                popoverController.sourceRect = CGRect(x: sender.frame.size.width / 2.0, y: sender.frame.size.height, width: 0, height: 0)
+                popoverController.permittedArrowDirections = .up
+                popoverController.delegate = self
+            }
+            self.present(nav, animated: true)
         }
     }
     
@@ -334,75 +372,33 @@ class GTReadViewController: EyeTrackViewController {
     
     // 翻页回调
     @objc private func handlePageChange(notification: Notification) {
+        let pdfPage = pdfdocument?.index(for: pdfView.currentPage!) ?? 0
+        
         // 每一次翻页都保存一次进度
-        GTBook.shared.cacheData()
+        self.currentPage = pdfPage
+        
         // 记录进入时间
         currentDate = Date.init().timeIntervalSince1970
 
         GTNet.shared.commitGazeTrackData(success: { (json) in
             self.sightDatas.removeAll()
-        }, startTime: currentDate, lists: sightDatas, bookId: self.bookId, pageNum: pdfdocument?.index(for: pdfView.currentPage!) ?? 0)
+        }, startTime: currentDate, lists: sightDatas, bookId: self.bookId, pageNum: pdfPage)
     }
     
     // 视线校准
-    @objc private func switchChangedValue() {
-        if adjustSwitch.isOn == true {
-            showTrackAlertController()
-        }
+    @objc private func adjustButtonDidClicked() {
+        self.adjustBtn.isEnabled = false
+        showTrackAlertController()
     }
 }
 
 extension GTReadViewController: GTThumbnailGridViewControllerDelegate {
     func thumbnailGridViewController(_ thumbnailGridViewController: GTThumbnailGridViewController, didSelectPage page: PDFPage) {
         pdfView.go(to: page)
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
-extension GTReadViewController: GTOulineTableviewControllerDelegate {
-    func oulineTableviewController(_ oulineTableviewController: GTOulineTableviewController, didSelectOutline outline: PDFOutline) {
-        let action = outline.action
-        if let actiongoto = action as? PDFActionGoTo {
-            pdfView.go(to: actiongoto.destination)
-        }
-    }
-}
-
-extension Array where Element == CGPoint {
-    func medianX() -> Double {
-        let sortedArray = sorted { a, b in
-            return a.x < b.x
-        }
-        if count % 2 != 0 {
-            return Double(sortedArray[count / 2].x)
-        } else {
-            return Double(sortedArray[count / 2].x + sortedArray[count / 2 - 1].x) / 2.0
-        }
-    }
-    
-    func medianY() -> Double {
-        let sortedArray = sorted { a, b in
-            return a.y < b.y
-        }
-        if count % 2 != 0 {
-            return Double(sortedArray[count / 2].y)
-        } else {
-            return Double(sortedArray[count / 2].y + sortedArray[count / 2 - 1].y) / 2.0
-        }
-    }
-}
-
-extension PDFDocument {
-    
-    func addPages(from document: PDFDocument) {
-        let pageCountAddition = document.pageCount
-
-        for pageIndex in 0..<pageCountAddition {
-            guard let addPage = document.page(at: pageIndex) else {
-                break
-            }
-
-            self.insert(addPage, at: self.pageCount) // unfortunately this is very very confusing. The index is the page*after* the insertion. Every normal programmer would assume insert at self.pageCount-1
-        }
-    }
+extension GTReadViewController: UIPopoverPresentationControllerDelegate {
     
 }

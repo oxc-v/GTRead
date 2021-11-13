@@ -385,6 +385,20 @@ extension GTNet {
     }
 }
 
+// 书店
+extension GTNet {
+    
+    // 书店轮播书籍
+    func getBookStoreADBooks(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getBookADSFun", httpMethod: .post, params: nil) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+}
+
+// 分析
 extension GTNet {
     
     // 获取每日阅读目标

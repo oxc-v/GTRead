@@ -83,7 +83,7 @@ class GTBookShelfViewController: GTBaseViewController {
     
     func setupView() {
         self.view.resignFirstResponder()
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = .white
         self.navigationItem.title = ""
         
         self.setupNavigation()

@@ -25,6 +25,11 @@ class GTTabBarViewController: UITabBarController {
         let bookItem = UITabBarItem(title: "书架", image: UIImage(named: "shelf"), selectedImage: UIImage(named: "shelf"))
         bookNav.tabBarItem = bookItem
         
+        // 书店
+        let bookStoreNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
+        let bookStoreItem = UITabBarItem(title: "书店", image: UIImage(named: "bookStore"), selectedImage: UIImage(named: "bookStore"))
+        bookStoreNav.tabBarItem = bookStoreItem
+        
         // 分析
         let analyseNav = GTBaseNavigationViewController(rootViewController: GTAnalyseViewController())
         let analyseItem = UITabBarItem(title: "分析", image: UIImage(named: "analyse"), selectedImage: UIImage(named: "analyse"))
@@ -35,7 +40,7 @@ class GTTabBarViewController: UITabBarController {
         let personalItem = UITabBarItem(title: "个人", image: UIImage(named: "mine"), selectedImage: UIImage(named: "mine"))
         personalNav.tabBarItem = personalItem
         
-        self.viewControllers = [bookNav, analyseNav, personalNav]
+        self.viewControllers = [bookNav, bookStoreNav, analyseNav, personalNav]
     }
 }
 

@@ -20,14 +20,17 @@ class GTThumbnailCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         imageView = UIImageView()
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
         self.contentView.addSubview(imageView)
         imageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
         
-        
         pageLab = UILabel()
         pageLab.textAlignment = .center
+        pageLab.textColor = UIColor(hexString: "#4b4b4b")
+        pageLab.font = UIFont.boldSystemFont(ofSize: 15)
         self.contentView.addSubview(pageLab)
         pageLab.snp.makeConstraints { (make) in
             make.left.right.centerX.equalToSuperview()

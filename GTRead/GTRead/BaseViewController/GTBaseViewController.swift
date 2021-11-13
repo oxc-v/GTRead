@@ -61,14 +61,4 @@ class GTBaseViewController: UIViewController {
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
-    
-    // 未登录提示框
-    func showNotLoginAlertController(_ title: String, handler: ((UIAlertAction)->Void)?) {
-        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        let canncelAction = UIAlertAction(title: "取消", style: .default)
-        let okAction = UIAlertAction(title: "登录/注册", style: .default, handler: handler)
-        alertController.addAction(canncelAction)
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
 }

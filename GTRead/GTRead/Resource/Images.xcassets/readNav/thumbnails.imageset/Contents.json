@@ -1,16 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "thumbnails.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "thumbnails@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "大缩略图列表 (1).png",
       "idiom" : "universal",
       "scale" : "3x"
     }
