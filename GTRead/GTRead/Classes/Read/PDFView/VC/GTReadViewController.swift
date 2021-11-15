@@ -86,6 +86,7 @@ class GTReadViewController: EyeTrackViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.showTrackAlertController()
         self.navigationController?.setNavigationBarHidden(self.navgationBarHiddenStatu, animated: false)
     }
 
@@ -243,15 +244,13 @@ class GTReadViewController: EyeTrackViewController {
     // 视线校准提示框
     func showTrackAlertController() {
         var isFirstRunning = true
+        self.adjustBtn.isEnabled = false
         self.getSightDataTimer.fireDate = Date.distantFuture
         self.correctPoints.removeAll()
         self.correctPointsSet.removeAll()
         
         self.trackCorrectViewPoints = [CGPoint(x: 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: 24), CGPoint(x: UIScreen.main.bounds.width - 24, y: UIScreen.main.bounds.height - 24), CGPoint(x: 24, y: UIScreen.main.bounds.height - 24)]
         let alertController = UIAlertController(title: "视线校准", message: "依次注视屏幕四个角的图标3秒", preferredStyle: UIAlertController.Style.alert)
-        let canncelAction = UIAlertAction(title: "取消", style: .cancel, handler: {_ in
-            self.adjustBtn.isEnabled = true
-        })
         let okAction = UIAlertAction(title: "校准", style: .default) { (action: UIAlertAction!) -> Void in
             self.navigationController?.setNavigationBarHidden(true, animated: true)
             
@@ -298,7 +297,6 @@ class GTReadViewController: EyeTrackViewController {
             timer.fire()
         }
         
-        alertController.addAction(canncelAction)
         alertController.addAction(okAction)
         self.present(alertController, animated: true, completion: nil)
     }
@@ -387,7 +385,6 @@ class GTReadViewController: EyeTrackViewController {
     
     // 视线校准
     @objc private func adjustButtonDidClicked() {
-        self.adjustBtn.isEnabled = false
         showTrackAlertController()
     }
 }

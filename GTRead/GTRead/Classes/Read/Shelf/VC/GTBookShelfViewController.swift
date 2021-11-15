@@ -197,6 +197,12 @@ extension GTBookShelfViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.tabBarController?.tabBar.isHidden = true
     }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        self.searchController.isActive = false
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.tabBarController?.tabBar.isHidden = false
     }

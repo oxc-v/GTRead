@@ -75,10 +75,6 @@ class GTBookCollectionCell: UICollectionViewCell {
             make.top.equalTo(pdfImageView.snp.top).offset(-15)
             make.width.height.equalTo(30)
         }
-        
-        
-        let longGress = UILongPressGestureRecognizer()
-        longGress.addTarget(self, action: #selector(StartEdit))
     }
     
     required init?(coder: NSCoder) {

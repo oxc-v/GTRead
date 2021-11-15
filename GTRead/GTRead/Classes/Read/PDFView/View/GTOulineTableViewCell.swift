@@ -21,7 +21,7 @@ class GTOulineTableViewCell: UITableViewCell {
         openBtn.snp.makeConstraints { (make) in
             make.right.equalTo(-16)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(30)
+            make.height.width.equalTo(30)
         }
         
         textLab = UILabel()

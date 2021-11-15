@@ -70,7 +70,6 @@ public class Glideshow: UIView {
     /// Slideshow data
     public var items : [GlideItem]? {
         didSet{
-            print("reload")
             setPageIndicatorIfNeeded()
             layoutSubviews()
             setPagesForIndicator()

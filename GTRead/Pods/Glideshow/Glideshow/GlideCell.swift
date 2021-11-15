@@ -170,6 +170,7 @@ class GlideCell: UICollectionViewCell {
     /// lazy property to prevent initialization if provided image is empty
     public lazy var imageView : UIImageView = {
        let imgView = UIImageView()
+        imgView.backgroundColor = .white
         imgView.contentMode = .scaleAspectFill
         return imgView
     }()
