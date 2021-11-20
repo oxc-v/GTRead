@@ -14,7 +14,7 @@ let cellName = "bookCollectioncell"
 class GTBookShelfViewController: GTBaseViewController {
     lazy var bookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
+//        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.register(GTBookCollectionCell.self, forCellWithReuseIdentifier: cellName)
@@ -108,7 +108,9 @@ class GTBookShelfViewController: GTBaseViewController {
         self.view.addSubview(bookCollectionView)
         bookCollectionView.snp.makeConstraints { (make) in
             make.top.equalTo(112)
-            make.bottom.right.left.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.left.equalTo(20)
+            make.right.equalTo(-20)
         }
         
         self.viewModel = GTBookShelfViewModel(viewController: self,collectionView: self.bookCollectionView)
@@ -121,6 +123,9 @@ class GTBookShelfViewController: GTBaseViewController {
         }
         
         self.setupSearchBar()
+        
+        // 跳转个人主页
+        NotificationCenter.default.addObserver(self, selector: #selector(goPersonalViewController), name: .GTGoPersonalViewController, object: nil)
     }
     
     // 加载书架数据
@@ -133,7 +138,7 @@ class GTBookShelfViewController: GTBaseViewController {
     
     // 搜索条
     func setupSearchBar() {
-        let vc = GTBookShelfSearchViewController(model: self.viewModel?.dataModel)
+        let vc = GTBookShelfSearchResultsViewController(model: self.viewModel?.dataModel)
         searchController = UISearchController(searchResultsController: vc)
         searchController.loadViewIfNeeded()
         searchController.searchBar.placeholder = "搜索书架"
@@ -191,6 +196,11 @@ class GTBookShelfViewController: GTBaseViewController {
         rightButton.setTitle("编辑", for: .normal)
         self.viewModel?.deleteImages()
     }
+    
+    // 跳转个人主页
+    @objc private func goPersonalViewController() {
+        self.tabBarController?.selectedIndex = 4
+    }
 }
 
 extension GTBookShelfViewController: UISearchBarDelegate {
@@ -199,7 +209,6 @@ extension GTBookShelfViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        self.searchController.isActive = false
         self.tabBarController?.tabBar.isHidden = false
     }
     

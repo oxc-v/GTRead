@@ -21,14 +21,19 @@ class GTTabBarViewController: UITabBarController {
     
     func createControllers() {
         // 书架
-        let bookNav = GTBaseNavigationViewController(rootViewController: GTBookShelfViewController())
-        let bookItem = UITabBarItem(title: "书架", image: UIImage(named: "shelf"), selectedImage: UIImage(named: "shelf"))
-        bookNav.tabBarItem = bookItem
+        let bookShelfNav = GTBaseNavigationViewController(rootViewController: GTBookShelfViewController())
+        let bookShelfItem = UITabBarItem(title: "书架", image: UIImage(named: "shelf"), selectedImage: UIImage(named: "shelf"))
+        bookShelfNav.tabBarItem = bookShelfItem
         
         // 书店
-        let bookStoreNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
-        let bookStoreItem = UITabBarItem(title: "书店", image: UIImage(named: "bookStore"), selectedImage: UIImage(named: "bookStore"))
-        bookStoreNav.tabBarItem = bookStoreItem
+        let storeNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
+        let storeItem = UITabBarItem(title: "书店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
+        storeNav.tabBarItem = storeItem
+        
+        // 搜索
+        let searchNav = GTBaseNavigationViewController(rootViewController: GTSearchViewController())
+        let searchItem = UITabBarItem(title: "搜索", image: UIImage(named: "search"), selectedImage: UIImage(named: "search"))
+        searchNav.tabBarItem = searchItem
         
         // 分析
         let analyseNav = GTBaseNavigationViewController(rootViewController: GTAnalyseViewController())
@@ -40,7 +45,7 @@ class GTTabBarViewController: UITabBarController {
         let personalItem = UITabBarItem(title: "个人", image: UIImage(named: "mine"), selectedImage: UIImage(named: "mine"))
         personalNav.tabBarItem = personalItem
         
-        self.viewControllers = [bookNav, bookStoreNav, analyseNav, personalNav]
+        self.viewControllers = [bookShelfNav, storeNav, searchNav, analyseNav, personalNav]
     }
 }
 

@@ -15,7 +15,7 @@ class GTBookShelfViewModel: NSObject {
     let viewController: GTBaseViewController
     let kGTScreenWidth = UIScreen.main.bounds.width
     let KGTScreenHeight = UIScreen.main.bounds.height
-    let itemMargin: CGFloat = 32
+    let itemMargin: CGFloat = 60
     let itemCountInRow = 4;
     var itemWidth: CGFloat = 0
     var itemHeight: CGFloat = 0
@@ -34,18 +34,8 @@ class GTBookShelfViewModel: NSObject {
         collectionView.dataSource = self
         
         itemWidth = floor((kGTScreenWidth - 16 * 6 - (CGFloat(itemCountInRow - 1) * itemMargin)) / CGFloat(itemCountInRow))
-        itemHeight = floor(itemWidth * 1.45)
-        
-        // 响应退出登录通知
-//        NotificationCenter.default.addObserver(self, selector: #selector(clearShelfBook), name: .GTExitAccount, object: nil)
+        itemHeight = floor(itemWidth * 1.55)
     }
-    
-    // 清空书架----退出登录
-//    @objc func clearShelfBook() {
-//        self.dataModel = nil
-//        self.books.removeAll()
-//        self.collectionView.reloadData()
-//    }
     
     // 加载本地缓存
     func loadBookShelfData() {

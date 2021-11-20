@@ -12,6 +12,13 @@ class GTBookCollectionCell: UICollectionViewCell {
     
     lazy var selectedStatu: Bool = false
     
+    lazy var baseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.2)
+        return view
+    }()
+    
     lazy var pdfImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -51,14 +58,21 @@ class GTBookCollectionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
-        self.contentView.addSubview(pdfImageView)
+        self.contentView.addSubview(baseView)
+        baseView.addSubview(pdfImageView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
         self.contentView.addSubview(titleLabel)
         
+        baseView.snp.makeConstraints { make in
+            make.left.equalTo(10)
+            make.width.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.9)
+        }
         pdfImageView.snp.makeConstraints { (make) in
             make.width.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.9)
+            make.centerX.equalTo(self.contentView.snp.centerX)
         }
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(pdfImageView.snp.bottom).offset(10)

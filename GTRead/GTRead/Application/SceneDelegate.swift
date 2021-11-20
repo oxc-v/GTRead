@@ -19,6 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = GTTabBarViewController()
         self.window = window
+        self.window?.backgroundColor = UIColor.white
         window.makeKeyAndVisible()
     }
 

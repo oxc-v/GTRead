@@ -78,6 +78,7 @@ class GTAnalyseViewController: GTBaseViewController {
         
         oneDayReadTimeView = GTReadTimeView()
         oneDayReadTimeView.targetButton.addTarget(self, action: #selector(targetButtonDidClicked), for: .touchUpInside)
+        oneDayReadTimeView.goStoreButton.addTarget(self, action: #selector(goSearchViewController), for: .touchUpInside)
         self.analyseScrollView.addSubview(oneDayReadTimeView)
         oneDayReadTimeView.snp.makeConstraints { (make) in
             make.centerX.left.right.top.equalToSuperview()
@@ -191,6 +192,11 @@ class GTAnalyseViewController: GTBaseViewController {
     
     // 跳转个人主页
     @objc private func goPersonalViewController() {
+        self.tabBarController?.selectedIndex = 4
+    }
+    
+    // 搜索页
+    @objc private func goSearchViewController() {
         self.tabBarController?.selectedIndex = 2
     }
     

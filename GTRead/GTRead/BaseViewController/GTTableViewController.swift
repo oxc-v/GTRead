@@ -1,26 +1,25 @@
 //
-//  GTBaseViewController.swift
+//  GTTableViewController.swift
 //  GTRead
 //
-//  Created by YangJie on 2021/2/20.
+//  Created by Dev on 2021/11/20.
 //
 
+import Foundation
 import UIKit
 import SwiftEntryKit
 import NVActivityIndicatorView
 
-class GTBaseViewController: UIViewController {
+class GTTableViewController: UITableViewController {
     
     private var activityIndicatorView: NVActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        UIColor(hexString: "#6581fb")
+        
         activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: UIScreen.main.bounds.midX - 40, y: UIScreen.main.bounds.midY - 25, width: 80, height: 50), type: .lineScalePulseOut, color: .black, padding: 10)
         activityIndicatorView.layer.zPosition = 100
         self.view.addSubview(activityIndicatorView)
-        
-        
     }
     
     // 显示loading view
@@ -55,13 +54,5 @@ class GTBaseViewController: UIViewController {
         let contentView = EKNotificationMessageView(with: notificationMessage)
        
         SwiftEntryKit.display(entry: contentView, using: attributes)
-    }
-    
-    // 提示框
-    func showWarningAlertController(message: String) {
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "确定", style: .default)
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
     }
 }

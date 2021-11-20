@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GTBookShelfSearchViewCell: UITableViewCell {
+class GTBookSearchResultsViewCell: UITableViewCell {
     
     var imgView: UIImageView!
     var titleLabel: UILabel!
@@ -24,8 +24,8 @@ class GTBookShelfSearchViewCell: UITableViewCell {
         imgView.clipsToBounds = true
         self.contentView.addSubview(imgView)
         imgView.snp.makeConstraints { (make) in
-            make.height.equalTo(170)
-            make.width.equalTo(130)
+            make.height.equalTo(120)
+            make.width.equalTo(100)
             make.left.equalTo(16)
             make.centerY.equalToSuperview()
         }
@@ -36,20 +36,21 @@ class GTBookShelfSearchViewCell: UITableViewCell {
         titleLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
-            make.width.equalTo(UIScreen.main.bounds.width * 0.6)
+            make.width.lessThanOrEqualTo(300)
             make.left.equalTo(imgView.snp.right).offset(16)
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-15)
         }
         
         detailLabel = UILabel()
-        detailLabel.font = UIFont.systemFont(ofSize: 15)
+        detailLabel.textColor = UIColor(hexString: "#b4b4b4")
+        detailLabel.font = UIFont.systemFont(ofSize: 13)
         detailLabel.textAlignment = .left
         detailLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(detailLabel)
         detailLabel.snp.makeConstraints { (make) in
-            make.width.equalTo(120)
-            make.left.equalTo(titleLabel.snp.left)
-            make.top.equalTo(titleLabel.snp.bottom).offset(5)
+            make.width.lessThanOrEqualTo(300)
+            make.left.equalTo(imgView.snp.right).offset(16)
+            make.centerY.equalToSuperview().offset(15)
         }
     }
     

@@ -8,7 +8,6 @@
 import Alamofire
 import CryptoKit
 
-
 typealias Success = (_ response: AnyObject) -> Void
 typealias Failure = (_ error: AnyObject) -> Void
 
@@ -387,10 +386,51 @@ extension GTNet {
 
 // 书店
 extension GTNet {
-    
     // 书店轮播书籍
     func getBookStoreADBooks(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getBookADSFun", httpMethod: .post, params: nil) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+}
+
+// 搜索
+extension GTNet {
+    // 获取热搜书籍
+    func getPopularSearchFun(count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        let dayTime = dateFormatter.string(from: Date())
+        let params = ["count" : count, "dayTime": dayTime] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getPopularSearchFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 获取热搜词
+    func getMostlySearchFun(count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        let dayTime = dateFormatter.string(from: Date())
+        let params = ["count" : count, "dayTime": dayTime] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getMostlySearchFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 查询书籍
+    func searchBookInfoFun(count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        let dayTime = dateFormatter.string(from: Date())
+        let params = ["count" : count, "dayTime": dayTime] as [String : Any]
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/searchBookInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)

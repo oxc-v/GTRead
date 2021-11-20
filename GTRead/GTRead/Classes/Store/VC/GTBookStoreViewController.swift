@@ -94,7 +94,7 @@ class GTBookStoreViewController: GTBaseViewController {
     // 搜索按钮点击事件
     @objc private func selectedButtonDidClicked() {
         self.tabBarController?.tabBar.isHidden = true
-        let vc = GTSearchStoreViewController()
+        let vc = GTSearchViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

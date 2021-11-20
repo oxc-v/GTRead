@@ -8,14 +8,14 @@
 import UIKit
 import Fuse
 
-class GTBookShelfSearchViewController: GTBaseViewController {
+class GTBookShelfSearchResultsViewController: GTBaseViewController {
 
     var tableView: UITableView!
     var resultLabel: UILabel!
     var dataModel: GTShelfBookModel?
     var searchModel: GTShelfBookModel?
     var resultModel = Array<(score: Double, book: GTShelfBookItemModel)>()
-    var cellHeight: CGFloat = 200
+    var cellHeight: CGFloat = 150
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ class GTBookShelfSearchViewController: GTBaseViewController {
         self.view.backgroundColor = .white
 
         tableView = UITableView(frame: CGRect.zero, style: .plain)
-        tableView.register(GTBookShelfSearchViewCell.self, forCellReuseIdentifier: "GTBookShelfSearchViewCell")
+        tableView.register(GTBookSearchResultsViewCell.self, forCellReuseIdentifier: "GTBookSearchResultsViewCell")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -58,7 +58,7 @@ class GTBookShelfSearchViewController: GTBaseViewController {
     }
 }
 
-extension GTBookShelfSearchViewController: UISearchResultsUpdating {
+extension GTBookShelfSearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         self.resultModel.removeAll()
         self.searchModel?.lists?.removeAll()
@@ -92,7 +92,7 @@ extension GTBookShelfSearchViewController: UISearchResultsUpdating {
     }
 }
 
-extension GTBookShelfSearchViewController: UITableViewDataSource, UITableViewDelegate {
+extension GTBookShelfSearchResultsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.searchModel?.lists?.count ?? 0
     }
@@ -102,7 +102,7 @@ extension GTBookShelfSearchViewController: UITableViewDataSource, UITableViewDel
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GTBookShelfSearchViewCell", for: indexPath) as! GTBookShelfSearchViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GTBookSearchResultsViewCell", for: indexPath) as! GTBookSearchResultsViewCell
         
         cell.imgView.sd_setImage(with: URL(string: self.searchModel?.lists?[indexPath.row].bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
         cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].bookName
