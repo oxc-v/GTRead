@@ -10,15 +10,19 @@ import UIKit
 
 class GTHotSearchWordCell: UITableViewCell {
 
-    private let itemMargin = 20.0
-    private let itemWidth = (UIScreen.main.bounds.width - 40 - 20) / 2.0
-    private let itemHeight = GTCustomPlainCellHeight
+    private let itemMargin = 30.0
+    private let itemWidth: CGFloat
+    private let itemHeight = 55.0
     private let cellWidth: CGFloat
+    
     var collectionView: UICollectionView!
     var dataModel: GTCustomPlainTableViewCellDataModel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        cellWidth = UIScreen.main.bounds.width - 40
+        
+        cellWidth = UIScreen.main.bounds.width - GTViewMargin * 2
+        itemWidth = (cellWidth - itemMargin) / 2.0
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         collectionView = GTDynamicCollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -30,7 +34,6 @@ class GTHotSearchWordCell: UITableViewCell {
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.width.equalTo(cellWidth)
-            make.left.equalTo(20)
         }
     }
     
@@ -50,6 +53,20 @@ class GTHotSearchWordCell: UITableViewCell {
         super.prepareForReuse()
         
         self.dataModel = nil
+    }
+    
+    override var frame: CGRect {
+        get {
+            return super.frame
+        }
+        set(newFrame) {
+            var frame = newFrame
+            let newWidth = UIScreen.main.bounds.width - GTViewMargin * 2
+            let space = (frame.width - newWidth) / 2
+            frame.size.width = newWidth
+            frame.origin.x += space
+            super.frame = frame
+        }
     }
 }
 

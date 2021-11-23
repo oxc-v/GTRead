@@ -1,15 +1,16 @@
 //
-//  GTBaseViewController.swift
+//  GTCollectionViewController.swift
 //  GTRead
 //
-//  Created by YangJie on 2021/2/20.
+//  Created by Dev on 2021/11/22.
 //
 
+import Foundation
 import UIKit
 import SwiftEntryKit
 
-class GTBaseViewController: UIViewController {
-
+class GTCollectionViewController: UICollectionViewController {
+    
     private var loadingView: GTLoadingView!
     
     override func viewDidLoad() {
@@ -57,13 +58,5 @@ class GTBaseViewController: UIViewController {
         let contentView = EKNotificationMessageView(with: notificationMessage)
        
         SwiftEntryKit.display(entry: contentView, using: attributes)
-    }
-    
-    // 提示框
-    func showWarningAlertController(message: String) {
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "确定", style: .default)
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
     }
 }

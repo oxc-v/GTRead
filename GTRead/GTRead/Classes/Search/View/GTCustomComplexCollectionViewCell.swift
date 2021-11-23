@@ -8,13 +8,12 @@
 import Foundation
 import UIKit
 
-var GTCustomCellHeight = 120.0
-
 class GTCustomComplexCollectionViewCell: UICollectionViewCell {
     
     var tableView: UITableView!
     var isHideLine = false
-    var dataModel: GTBookDataModel?
+    var dataModel: GTCustomComplexTableViewCellDataModelItem?
+    var cellIndex: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,8 +27,7 @@ class GTCustomComplexCollectionViewCell: UICollectionViewCell {
         tableView.separatorStyle = .singleLine
         self.contentView.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.width.equalTo((UIScreen.main.bounds.width - 40 - 20) / 2.0)
-            make.height.equalTo(GTCustomCellHeight)
+            make.width.height.equalToSuperview()
         }
     }
     
@@ -48,14 +46,17 @@ extension GTCustomComplexCollectionViewCell: UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return GTCustomCellHeight
+        return tableView.frame.size.height
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GTCustomComplexTableViewCell", for: indexPath) as! GTCustomComplexTableViewCell
-        cell.imgView.sd_setImage(with: URL(string: dataModel?.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
-        cell.titleLabel.text = dataModel?.bookName ?? "error"
-        cell.detailLabel.text = dataModel?.authorName ?? "error"
+        cell.imgView.sd_setImage(with: URL(string: dataModel?.imgUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
+        cell.titleLabel.text = dataModel?.titleText ?? "error"
+        cell.detailLabel.text = dataModel?.detailText ?? "error"
+        cell.buttonClickedEvent = dataModel?.buttonClickedEvent
+        cell.button.isHidden = dataModel?.buttonClickedEvent == nil ? true : false
+        cell.button.tag = cellIndex
         cell.selectionStyle = .none
         cell.separatorInset = UIEdgeInsets(top: 0, left: 86, bottom: 0, right: 0)
         if isHideLine {
@@ -66,11 +67,10 @@ extension GTCustomComplexCollectionViewCell: UITableViewDelegate, UITableViewDat
         return cell
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        UIView.animate(withDuration: 0.2) {
-            cell.transform = CGAffineTransform.identity
-        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! GTCustomComplexTableViewCell
+        cell.clickedAnimation(withDuration: 0.1, completion: {_ in
+        })
     }
 }
 

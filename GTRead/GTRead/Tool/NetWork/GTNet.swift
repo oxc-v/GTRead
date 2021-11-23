@@ -233,11 +233,9 @@ extension GTNet {
     }
     
     // 删除书架书籍
-    func delShelfBook(books: Array<GTShelfBookItemModel>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func delShelfBook(books: Array<GTShelfDataModelItem>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         var bookIds = [String]()
-        print(books.count)
         for item in books {
-            print(item.bookId)
             bookIds.append(item.bookId)
         }
         let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookIds": bookIds] as [String : Any]
@@ -265,17 +263,36 @@ extension GTNet {
                 downloadProgress(progress)
             }
             .response { response in
-                switch response.result {
-                case .success(_):
-                    success()
-                    print("文件下载完毕: \(response)")
-                case .failure(let error):
-                    failure("文件下载失败")
-                    print(error)
+                if let code = response.response?.statusCode {
+                    switch code {
+                    case 404:
+                        // 删除缓存
+                        GTDiskCache.shared.deletePDF(path)
+                        failure("文件下载失败")
+                    default:
+                        switch response.result {
+                        case .success(_):
+                            success()
+                            print("文件下载完毕: \(response)")
+                        case .failure(let error):
+                            failure("文件下载失败")
+                            print(error)
+                        }
+                    }
                 }
             }
         
         return download
+    }
+    
+    // 添加书籍到书库
+    func addBookToShelfFun(bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId] as [String : Any]
+        GTNet.shared.requestWith(url: "http://39.105.217.90:8003/bookShelfService/addToShelfFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
     }
 }
 

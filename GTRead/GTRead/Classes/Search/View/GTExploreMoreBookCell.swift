@@ -10,15 +10,19 @@ import UIKit
 
 class GTExploreMoreBookCell: UITableViewCell {
     
-    let itemMargin = 20.0
-    let itemWidth = (UIScreen.main.bounds.width - 40 - 20) / 2.0
-    let itemHeight = GTCustomCellHeight
-    let cellWidth: CGFloat
+    private let itemMargin = 30.0
+    private let itemWidth: CGFloat
+    private let itemHeight = 120.0
+    private let cellWidth: CGFloat
+    
     var collectionView: UICollectionView!
-    var dataModel: GTExploreMoreDataModel?
+    var dataModel: GTCustomComplexTableViewCellDataModel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        cellWidth = UIScreen.main.bounds.width - 40
+        
+        cellWidth = UIScreen.main.bounds.width - GTViewMargin * 2
+        itemWidth = (cellWidth - itemMargin) / 2.0
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         collectionView = GTDynamicCollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -29,8 +33,7 @@ class GTExploreMoreBookCell: UITableViewCell {
         collectionView.register(GTCustomComplexCollectionViewCell.self, forCellWithReuseIdentifier: "GTCustomComplexCollectionViewCell")
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
-            make.width.equalTo(cellWidth)
-            make.left.equalTo(20)
+            make.width.equalToSuperview()
         }
     }
     
@@ -45,6 +48,20 @@ class GTExploreMoreBookCell: UITableViewCell {
         
         let size = CGSize(width: cellWidth, height: collectionView.collectionViewLayout.collectionViewContentSize.height)
         return size
+    }
+    
+    override var frame: CGRect {
+        get {
+            return super.frame
+        }
+        set(newFrame) {
+            var frame = newFrame
+            let newWidth = UIScreen.main.bounds.width - GTViewMargin * 2
+            let space = (frame.width - newWidth) / 2
+            frame.size.width = newWidth
+            frame.origin.x += space
+            super.frame = frame
+        }
     }
 }
 
@@ -61,8 +78,9 @@ extension GTExploreMoreBookCell: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTCustomComplexCollectionViewCell", for: indexPath) as! GTCustomComplexCollectionViewCell
-        if let bookDataModel = dataModel?.lists?[indexPath.row] {
-            cell.dataModel = bookDataModel
+        cell.cellIndex = indexPath.row
+        if let itemDataModel = dataModel?.lists?[indexPath.row] {
+            cell.dataModel = itemDataModel
         }
         let itemCount = dataModel?.count ?? 0
         if indexPath.row == itemCount - 1 || indexPath.row == itemCount - 2 {

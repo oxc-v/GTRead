@@ -1,14 +1,14 @@
 //
-//  GTBookStoreSearchResultsViewController.swift
+//  GT.swift
 //  GTRead
 //
-//  Created by Dev on 2021/11/16.
+//  Created by Dev on 2021/11/2.
 //
 
-import Foundation
 import UIKit
+import Fuse
 
-class GTSearchResultsViewController: GTTableViewController {
+class GTShelfSearchResultsViewController: GTTableViewController {
 
     private var resultLabel: UILabel!
     private var dataModel: GTShelfDataModel?
@@ -21,10 +21,8 @@ class GTSearchResultsViewController: GTTableViewController {
         
         self.view.backgroundColor = .white
 
-        tableView = UITableView(frame: CGRect.zero, style: .plain)
         tableView.register(GTCustomComplexTableViewCell.self, forCellReuseIdentifier: "GTCustomComplexTableViewCell")
         tableView.separatorStyle = .singleLine
-        tableView.separatorInset = UIEdgeInsets.zero
         
         resultLabel = UILabel()
         resultLabel.textAlignment = .center
@@ -62,17 +60,55 @@ class GTSearchResultsViewController: GTTableViewController {
         cell.imgView.sd_setImage(with: URL(string: self.searchModel?.lists?[indexPath.row].bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
         cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].bookName
         cell.detailLabel.text = self.searchModel?.lists?[indexPath.row].authorName
+        cell.button.isHidden = true
 
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let fileName = self.searchModel?.lists?[indexPath.row].bookId ?? ""
+        if let url = GTDiskCache.shared.getPDF(fileName) {
+            let vc = GTReadViewController(path: url, bookId: fileName)
+            vc.hidesBottomBarWhenPushed = true;
+            self.presentingViewController?.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let vc = GTDownloadPDFViewContrlloer(model: (self.searchModel?.lists?[indexPath.row])!)
+            vc.hidesBottomBarWhenPushed = true;
+            self.presentingViewController?.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
 
-extension GTSearchResultsViewController: UISearchResultsUpdating {
+extension GTShelfSearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-       
+        self.resultModel.removeAll()
+        self.searchModel?.lists?.removeAll()
+        self.searchModel?.count = 0
+        if self.dataModel != nil && self.dataModel?.count != -1 {
+            let fuse = Fuse()
+            let pattern = fuse.createPattern(from: searchController.searchBar.text ?? "")
+
+            self.dataModel?.lists!.forEach {
+                if let result = fuse.search(pattern, in: $0.bookName) {
+                    self.resultModel.append((result.score, $0))
+                }
+            }
+        } else {
+            self.resultLabel.isHidden = false
+        }
+        
+        // 对搜索结果进行排序
+        self.resultModel.sort(by: {return $0.score < $1.score})
+        self.resultModel.forEach {
+            self.searchModel?.lists?.append($0.book)
+        }
+        
+        if self.searchModel?.lists?.count == 0 {
+            self.resultLabel.isHidden = false
+        } else {
+            self.resultLabel.isHidden = true
+        }
+
+        self.tableView.reloadData()
     }
 }

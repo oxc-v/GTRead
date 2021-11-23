@@ -8,6 +8,9 @@
 import UIKit
 import SwiftUI
 
+// 全局边距
+let GTViewMargin = 40.0
+
 class GTTabBarViewController: UITabBarController {
 
     override func viewDidLoad() {
@@ -20,14 +23,14 @@ class GTTabBarViewController: UITabBarController {
     }
     
     func createControllers() {
-        // 书架
-        let bookShelfNav = GTBaseNavigationViewController(rootViewController: GTBookShelfViewController())
-        let bookShelfItem = UITabBarItem(title: "书架", image: UIImage(named: "shelf"), selectedImage: UIImage(named: "shelf"))
+        // 书库
+        let bookShelfNav = GTBaseNavigationViewController(rootViewController: GTShelfCollectionViewController())
+        let bookShelfItem = UITabBarItem(title: "书库", image: UIImage(named: "shelf"), selectedImage: UIImage(named: "shelf"))
         bookShelfNav.tabBarItem = bookShelfItem
         
-        // 书店
+        // 图书商店
         let storeNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
-        let storeItem = UITabBarItem(title: "书店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
+        let storeItem = UITabBarItem(title: "商店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
         storeNav.tabBarItem = storeItem
         
         // 搜索

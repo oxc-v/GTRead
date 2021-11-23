@@ -118,7 +118,7 @@ class GTInfoEditViewController: GTBaseViewController {
             // 提取数据
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                 if dataModel.code == 1 {
                     // 账户信息修改成功通知
                     NotificationCenter.default.post(name: .GTAccountInfoChanged, object: self)

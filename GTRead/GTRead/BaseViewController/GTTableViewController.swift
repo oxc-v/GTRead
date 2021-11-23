@@ -8,28 +8,32 @@
 import Foundation
 import UIKit
 import SwiftEntryKit
-import NVActivityIndicatorView
 
 class GTTableViewController: UITableViewController {
     
-    private var activityIndicatorView: NVActivityIndicatorView!
+    private var loadingView: GTLoadingView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        activityIndicatorView = NVActivityIndicatorView(frame: CGRect(x: UIScreen.main.bounds.midX - 40, y: UIScreen.main.bounds.midY - 25, width: 80, height: 50), type: .lineScalePulseOut, color: .black, padding: 10)
-        activityIndicatorView.layer.zPosition = 100
-        self.view.addSubview(activityIndicatorView)
+        loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 5)
+        loadingView.layer.zPosition = 100
+        loadingView.isAnimating = false
+        self.view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.height.width.equalTo(40)
+        }
     }
     
     // 显示loading view
     func showActivityIndicatorView() {
-        activityIndicatorView.startAnimating()
+        loadingView.isAnimating = true
     }
     
     // 隐藏loading view
     func hideActivityIndicatorView() {
-        activityIndicatorView.stopAnimating()
+        loadingView.isAnimating = false
     }
     
     // 显示通知

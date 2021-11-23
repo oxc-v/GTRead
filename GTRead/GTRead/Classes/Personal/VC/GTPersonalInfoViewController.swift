@@ -158,7 +158,7 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
             // 提取数据
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                 if dataModel.code == 1 {
                     if imgData != nil {
                         // 删除头像图片缓存

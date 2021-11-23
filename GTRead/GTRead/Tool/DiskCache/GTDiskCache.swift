@@ -139,6 +139,22 @@ final class GTDiskCache {
         }
     }
     
+    // 删除对象文件
+    func delViewObject(_ key: String) {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let shelfFolder = "ViewData"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(shelfFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key)
+        
+        if self.fileManager.fileExists(atPath: path_3){
+            try? self.fileManager.removeItem(atPath: path_3)
+        } else {
+            print("delViewObject error: not found")
+        }
+    }
+    
     // 获取PDF URL
     func getPDF(_ fileName: String) -> URL? {
         // 拼接路径
@@ -153,6 +169,22 @@ final class GTDiskCache {
             return URL(fileURLWithPath: path_3)
         } else {
             return nil
+        }
+    }
+    
+    // 删除PDF
+    func deletePDF(_ key: String) {
+        // 拼接路径
+        let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
+        let pdfFolder = "PDFDocument"
+        let path_1 = (diskCachePath as NSString).appendingPathComponent(userFolder)
+        let path_2 = (path_1 as NSString).appendingPathComponent(pdfFolder)
+        let path_3 = (path_2 as NSString).appendingPathComponent(key + ".pdf")
+        
+        if self.fileManager.fileExists(atPath: path_3){
+            try? self.fileManager.removeItem(atPath: path_3)
+        } else {
+            print("delViewObject error: not found")
         }
     }
 }

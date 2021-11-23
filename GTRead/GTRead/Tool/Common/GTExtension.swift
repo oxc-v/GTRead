@@ -26,6 +26,12 @@ extension Notification.Name {
     
     // 激活UISearchController
     static let GTActivateSearchController = Notification.Name("GTActivateSearchController")
+    
+    // 添加书籍到书库
+    static let GTAddBookToShelf = Notification.Name("GTAddBookToShelf")
+    
+    // 从书库删除书籍
+    static let GTDeleteBookToShelf = Notification.Name("GTDeleteBookToShelf")
 }
 
 extension UIViewController {
@@ -112,11 +118,12 @@ extension UIView {
      
      - parameter duration: animation duration
      */
-    func zoomIn(duration: TimeInterval = 0.2) {
+    func zoomIn(duration: TimeInterval = 0.2, _ completed: (()->Void)? = nil) {
         self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
         UIView.animate(withDuration: duration, delay: 0.0, options: [.curveLinear], animations: { () -> Void in
             self.transform = .identity
         }) { (animationCompleted: Bool) -> Void in
+            completed?()
         }
     }
     
@@ -125,11 +132,12 @@ extension UIView {
      
      - parameter duration: animation duration
      */
-    func zoomOut(duration : TimeInterval = 0.2) {
+    func zoomOut(duration : TimeInterval = 0.2, _ completed: (()->Void)? = nil) {
         self.transform = .identity
         UIView.animate(withDuration: duration, delay: 0.0, options: [.curveLinear], animations: { () -> Void in
             self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
         }) { (animationCompleted: Bool) -> Void in
+            completed?()
         }
     }
     
@@ -170,6 +178,15 @@ extension UIView {
                 self.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
                 }, completion: { (completed: Bool) -> Void in
                 })
+        })
+    }
+    
+    func clickedAnimation(withDuration: TimeInterval, completion: ((Bool) -> Void)? = nil) {
+        self.transform = CGAffineTransform(scaleX: 0.9, y: 1.2)
+        UIView.animate(withDuration: withDuration, delay: 0, usingSpringWithDamping: CGFloat(0.20), initialSpringVelocity: CGFloat(6.0), options: UIView.AnimationOptions.allowUserInteraction, animations: {
+            self.transform = CGAffineTransform.identity
+        }, completion: { ok in
+            completion?(ok)
         })
     }
 }

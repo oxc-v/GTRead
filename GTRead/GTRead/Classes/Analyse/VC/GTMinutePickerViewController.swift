@@ -64,7 +64,7 @@ class GTMinutePickerViewController: GTBaseViewController {
             }) { json in
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
-                let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!)
+                let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!)
                 if dataModel == nil {
                     self.showNotificationMessageView(message: "服务器数据错误")
                 } else if dataModel?.code == 1 {

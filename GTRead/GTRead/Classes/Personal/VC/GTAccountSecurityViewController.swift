@@ -73,7 +73,7 @@ class GTAccountSecurityViewController: GTBaseViewController {
                 }, success: {json in
                     let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                     let decoder = JSONDecoder()
-                    if let dataModel = try? decoder.decode(GTBaseDataModel.self, from: data!) {
+                    if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                         if dataModel.code == -1 {
                             self.showNotificationMessageView(message: dataModel.errorRes!)
                         } else {

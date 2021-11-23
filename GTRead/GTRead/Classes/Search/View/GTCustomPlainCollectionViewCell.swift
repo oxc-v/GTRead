@@ -9,8 +9,6 @@ import Foundation
 import Foundation
 import UIKit
 
-var GTCustomPlainCellHeight = 55.0
-
 class GTCustomPlainCollectionViewCell: UICollectionViewCell {
     
     var tableView: UITableView!
@@ -29,8 +27,7 @@ class GTCustomPlainCollectionViewCell: UICollectionViewCell {
         tableView.separatorStyle = .singleLine
         self.contentView.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
-            make.width.equalTo((UIScreen.main.bounds.width - 40 - 20) / 2.0)
-            make.height.equalTo(GTCustomPlainCellHeight)
+            make.width.height.equalToSuperview()
         }
     }
     
@@ -49,7 +46,7 @@ extension GTCustomPlainCollectionViewCell: UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return GTCustomPlainCellHeight
+        return tableView.frame.size.height
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -68,14 +65,9 @@ extension GTCustomPlainCollectionViewCell: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! GTCustomPlainTableViewCell
         let info: [String : String] = ["searchText" : cell.titleLabel.text ?? ""]
-        // 发送激活UISearchController通知
-        NotificationCenter.default.post(name: .GTActivateSearchController, object: self, userInfo: info)
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        UIView.animate(withDuration: 0.2) {
-            cell.transform = CGAffineTransform.identity
-        }
+        cell.clickedAnimation(withDuration: 0.1, completion: {_ in
+            // 发送激活UISearchController通知
+            NotificationCenter.default.post(name: .GTActivateSearchController, object: self, userInfo: info)
+        })
     }
 }
