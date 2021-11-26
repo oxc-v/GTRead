@@ -69,7 +69,9 @@ extension GTCustomComplexCollectionViewCell: UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! GTCustomComplexTableViewCell
+        let userInfo = ["index": (cell.superview?.superview?.superview?.superview as! UICollectionView).indexPath(for: self)?.row]
         cell.clickedAnimation(withDuration: 0.1, completion: {_ in
+            NotificationCenter.default.post(name: .GTExploreMoreBookCellCollectionViewCellClicked, object: self, userInfo: userInfo)
         })
     }
 }

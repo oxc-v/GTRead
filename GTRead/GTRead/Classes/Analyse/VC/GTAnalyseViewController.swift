@@ -178,7 +178,7 @@ class GTAnalyseViewController: GTBaseViewController {
     
     @objc func targetButtonDidClicked(sender: UIButton) {
         let popoverVC = GTMinutePickerViewController()
-        let nav = UINavigationController(rootViewController: popoverVC)
+        let nav = GTBaseNavigationViewController(rootViewController: popoverVC)
         nav.modalPresentationStyle = .popover
         nav.preferredContentSize = CGSize(width: 220, height: 180)
         if let popoverController = nav.popoverPresentationController {

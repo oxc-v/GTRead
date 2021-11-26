@@ -97,9 +97,9 @@ class GTReadViewController: EyeTrackViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newBackButton = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: self, action: #selector(newBackButtonDidClicked))
-        newBackButton.image = UIImage(named: "navigation_back")
-        self.navigationItem.leftBarButtonItem = newBackButton
+//        let newBackButton = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: self, action: #selector(newBackButtonDidClicked))
+//        newBackButton.image = UIImage(named: "navigation_back")
+//        self.navigationItem.leftBarButtonItem = newBackButton
         
         self.setupView()
         
@@ -111,15 +111,15 @@ class GTReadViewController: EyeTrackViewController {
     }
     
     // 自定义页面退出操作
-    @objc private func newBackButtonDidClicked() {
-        if self.presentationController != nil {
-            self.dismiss(animated: false, completion: {
-                self.navigationController?.popToRootViewController(animated: true)
-            })
-        } else {
-            self.navigationController?.popToRootViewController(animated: true)
-        }
-    }
+//    @objc private func newBackButtonDidClicked() {
+//        if self.presentationController != nil {
+//            self.dismiss(animated: false, completion: {
+//                self.navigationController?.popToRootViewController(animated: true)
+//            })
+//        } else {
+//            self.navigationController?.popToRootViewController(animated: true)
+//        }
+//    }
     
     func setupView() {
         // 视线

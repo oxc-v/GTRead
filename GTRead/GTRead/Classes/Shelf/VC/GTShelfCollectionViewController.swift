@@ -42,7 +42,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
             self.collectionView.reloadData()
         }
     }
-    private var selectedBooks = [GTShelfDataModelItem]() {
+    private var selectedBooks = [GTBookDataModel]() {
         didSet {
             if selectedBooks.count == 0 {
                 self.deleteButton.isHidden = true
@@ -83,6 +83,8 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTAddBookToShelf, object: nil)
         // 注册删除书库书籍的通知
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTDeleteBookToShelf, object: nil)
+        // 注册书本下载完毕通知
+        NotificationCenter.default.addObserver(self, selector: #selector(tryOpenBook(notification:)), name: .GTDownloadBookFinished, object: nil)
     }
     
     init() {
@@ -290,6 +292,23 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         })
     }
     
+    // 尝试打开PDF
+    @objc private func tryOpenBook(notification: Notification) {
+        if self.tabBarController?.selectedIndex == 0 {
+            if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
+                // 读取缓存
+                let fileName = dataModel.bookId
+                if let url = GTDiskCache.shared.getPDF(fileName) {
+                    let vc = GTReadViewController(path: url, bookId: fileName)
+                    vc.hidesBottomBarWhenPushed = true;
+                    self.navigationController?.pushViewController(vc, animated: true)
+                } else {
+                    self.showNotificationMessageView(message: "文件打开失败")
+                }
+            }
+        }
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.dataModel?.lists?.count ?? 0
     }
@@ -335,8 +354,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let vc = GTDownloadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!)
-                vc.hidesBottomBarWhenPushed = true;
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.present(vc, animated: true)
             }
         }
     }

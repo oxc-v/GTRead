@@ -28,6 +28,12 @@ class GTOulineTableviewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let navigationBar = self.navigationController?.navigationBar
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.shadowColor = .clear
+        navigationBar?.scrollEdgeAppearance = navigationBarAppearance
+        
         tableView.register(GTOulineTableViewCell.self, forCellReuseIdentifier: "GTOulineTableViewCell")
         tableView.tableFooterView = UIView()
     }

@@ -30,7 +30,7 @@ class GTTabBarViewController: UITabBarController {
         
         // 图书商店
         let storeNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
-        let storeItem = UITabBarItem(title: "商店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
+        let storeItem = UITabBarItem(title: "图书商店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
         storeNav.tabBarItem = storeItem
         
         // 搜索

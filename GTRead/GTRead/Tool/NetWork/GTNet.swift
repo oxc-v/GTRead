@@ -233,7 +233,7 @@ extension GTNet {
     }
     
     // 删除书架书籍
-    func delShelfBook(books: Array<GTShelfDataModelItem>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func delShelfBook(books: Array<GTBookDataModel>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         var bookIds = [String]()
         for item in books {
             bookIds.append(item.bookId)

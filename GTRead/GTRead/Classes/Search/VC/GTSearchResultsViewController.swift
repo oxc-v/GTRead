@@ -13,7 +13,7 @@ class GTSearchResultsViewController: GTTableViewController {
     private var resultLabel: UILabel!
     private var dataModel: GTShelfDataModel?
     private var searchModel: GTShelfDataModel?
-    private var resultModel = Array<(score: Double, book: GTShelfDataModelItem)>()
+    private var resultModel = Array<(score: Double, book: GTBookDataModel)>()
     private let cellHeight: CGFloat = 150
 
     override func viewDidLoad() {

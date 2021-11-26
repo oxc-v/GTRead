@@ -12,17 +12,18 @@ import Alamofire
 
 class GTDownloadPDFViewContrlloer: GTBaseViewController {
     private var baseView: UIView!
+    private var exitBtn: UIButton!
     var pdfImageView: UIImageView!
     var progressView: UIProgressView!
     var progressLabel: UILabel!
     var bookNameLabel: UILabel!
     var button: UIButton!
-    var dataModel: GTShelfDataModelItem
+    var dataModel: GTBookDataModel
     var download: DownloadRequest!
     var isDownloading: Bool!
     var fileSize = 0.0
     
-    init(model: GTShelfDataModelItem) {
+    init(model: GTBookDataModel) {
         self.dataModel = model
         super.init(nibName: nil, bundle: nil)
     }
@@ -30,7 +31,7 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        self.title = dataModel.bookName
+        self.navigationItem.title = dataModel.bookName
         self.navigationItem.largeTitleDisplayMode = .never
         
         baseView = UIView()
@@ -118,9 +119,20 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if self.isMovingFromParent {
-            self.download.cancel()
-        }
+        self.download.cancel()
+    }
+    
+    // NavigationBar
+    private func setupNavigationBar() {
+        exitBtn = UIButton(type: .custom)
+        exitBtn.setImage(UIImage(named: "exit_view"), for: .normal)
+        exitBtn.addTarget(self, action: #selector(exitBtnDidClicked), for: .touchUpInside)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: exitBtn)
+    }
+    
+    // 退出页面
+    @objc private func exitBtnDidClicked() {
+        self.dismiss(animated: true)
     }
     
     // Downloading
@@ -156,14 +168,9 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
             }
         }, success: {
             DispatchQueue.main.async {
-                if let url = GTDiskCache.shared.getPDF(self.dataModel.bookId) {
-                    let vc = GTReadViewController(path: url, bookId: self.dataModel.bookId)
-                    vc.hidesBottomBarWhenPushed = true;
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } else {
-                    self.showNotificationMessageView(message: "文件打开失败")
-                    self.navigationController?.popViewController(animated: true)
-                }
+                let userInfo = ["dataModel": self.dataModel]
+                NotificationCenter.default.post(name: .GTDownloadBookFinished, object: self, userInfo: userInfo)
+                self.dismiss(animated: true)
             }
         })
     }

@@ -15,7 +15,7 @@ class GTCustomComplexTableViewCell: UITableViewCell {
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var button: UIButton!
-    var baseView: UIView!
+    private var baseView: UIView!
     var buttonClickedEvent: ((_ sender: UIButton) -> Void)?
     
     var isCustomFrame = false
@@ -30,8 +30,6 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         baseView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(20)
-//            make.width.equalTo(70)
-//            make.height.equalTo(100)
             make.height.equalToSuperview().multipliedBy(0.8)
             make.width.equalTo(baseView.snp.height).multipliedBy(0.7)
         }
@@ -45,8 +43,6 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         imgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(self.contentView.snp.left)
-//            make.width.equalTo(70)
-//            make.height.equalTo(95)
             make.width.height.equalToSuperview()
         }
         
@@ -58,7 +54,7 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview().offset(-15)
             make.left.equalTo(imgView.snp.right).offset(16)
-            make.width.lessThanOrEqualTo(200)
+            make.width.lessThanOrEqualTo(170)
         }
         
         
@@ -71,23 +67,23 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         detailLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview().offset(15)
             make.left.equalTo(imgView.snp.right).offset(16)
-            make.width.lessThanOrEqualTo(200)
+            make.width.lessThanOrEqualTo(170)
         }
         
         button = UIButton()
-        button.setTitle("添加藏书", for: .normal)
+        button.setTitle("添加书库", for: .normal)
         button.backgroundColor = UIColor(hexString: "#f2f2f6")
-        button.layer.cornerRadius = 18
+        button.layer.cornerRadius = 15
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.textAlignment = .center
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
         self.contentView.addSubview(button)
         button.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.right.equalToSuperview()
-            make.width.equalTo(90)
-            make.height.equalTo(36)
+            make.width.equalTo(80)
+            make.height.equalTo(30)
         }
         
         loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 3)

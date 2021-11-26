@@ -90,10 +90,6 @@ extension GTExploreMoreBookCell: UICollectionViewDelegate, UICollectionViewDataS
         
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-    }
 }
 extension GTExploreMoreBookCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

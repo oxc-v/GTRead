@@ -16,10 +16,10 @@ class GTBaseNavigationViewController: UINavigationController, UINavigationContro
         // Do any additional setup after loading the view.
     }
     
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        let item = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
-        viewController.navigationItem.backBarButtonItem = item
-    }
+//    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+//        let item = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
+//        viewController.navigationItem.backBarButtonItem = item
+//    }
 
     /*
     // MARK: - Navigation

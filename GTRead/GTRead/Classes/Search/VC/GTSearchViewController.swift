@@ -77,6 +77,9 @@ class GTSearchViewController: GTTableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(activateSearchController(notification:)), name: .GTActivateSearchController, object: nil)
         // 注册删除书库书籍的通知
         NotificationCenter.default.addObserver(self, selector: #selector(getSearchViewData), name: .GTDeleteBookToShelf, object: nil)
+        // 注册热门书籍点击事件
+        NotificationCenter.default.addObserver(self, selector: #selector(openBookDetailView(notification:)), name: .GTExploreMoreBookCellCollectionViewCellClicked, object: nil)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -174,6 +177,14 @@ class GTSearchViewController: GTTableViewController {
         }
     }
     
+    // 打开详情页
+    @objc private func openBookDetailView(notification: Notification) {
+        if let index = notification.userInfo?["index"] as? Int {
+            let vc =  GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController())
+            self.navigationController?.present(vc, animated: true)
+        }
+    }
+    
     // 追加历史搜索记录
     private func appendSearchHistoryData(text: String) {
         if self.searchHistoryDataModel == nil {
@@ -232,10 +243,10 @@ class GTSearchViewController: GTTableViewController {
                 let decoder = JSONDecoder()
                 let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!)
                 if dataModel?.code == 1 {
-                    // 发送添加书籍到书库的通知
-                    NotificationCenter.default.post(name: .GTAddBookToShelf, object: self)
                     // 提示添加书籍成功
                     self.showNotificationMessageView(message: "书籍添加成功")
+                    // 发送添加书籍到书库的通知
+                    NotificationCenter.default.post(name: .GTAddBookToShelf, object: self)
                 } else {
                     sender.isHidden = false
                     self.showNotificationMessageView(message: dataModel?.errorRes ?? "error")
@@ -318,6 +329,7 @@ class GTSearchViewController: GTTableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTExploreMoreBookCell", for: indexPath) as! GTExploreMoreBookCell
                 cell.accessoryType = .none
                 cell.selectionStyle = .none
+                
                 if self.exploreMoreDataModel != nil {
                     cell.dataModel = GTCustomComplexTableViewCellDataModel(lists: [GTCustomComplexTableViewCellDataModelItem(imgUrl: "", titleText: "", detailText: "", buttonClickedEvent: nil)], count: 0)
                     cell.dataModel?.lists?.removeAll()
