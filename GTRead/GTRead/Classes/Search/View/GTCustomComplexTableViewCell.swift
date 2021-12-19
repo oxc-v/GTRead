@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Cosmos
 
 class GTCustomComplexTableViewCell: UITableViewCell {
 
@@ -15,6 +16,7 @@ class GTCustomComplexTableViewCell: UITableViewCell {
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var button: UIButton!
+    var cosmosView: CosmosView!
     private var baseView: UIView!
     var buttonClickedEvent: ((_ sender: UIButton) -> Void)?
     
@@ -38,25 +40,13 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         imgView.contentMode = .scaleAspectFill
         imgView.clipsToBounds = true
         imgView.layer.masksToBounds = true
-        imgView.layer.cornerRadius = 10
+        imgView.layer.cornerRadius = 5
         baseView.addSubview(imgView)
         imgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.equalTo(self.contentView.snp.left)
             make.width.height.equalToSuperview()
         }
-        
-        titleLabel = UILabel()
-        titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        titleLabel.lineBreakMode = .byTruncatingMiddle
-        self.contentView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(-15)
-            make.left.equalTo(imgView.snp.right).offset(16)
-            make.width.lessThanOrEqualTo(170)
-        }
-        
         
         detailLabel = UILabel()
         detailLabel.textAlignment = .left
@@ -65,9 +55,34 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         detailLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(detailLabel)
         detailLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(15)
+            make.centerY.equalToSuperview()
             make.left.equalTo(imgView.snp.right).offset(16)
             make.width.lessThanOrEqualTo(170)
+        }
+        
+        titleLabel = UILabel()
+        titleLabel.textAlignment = .left
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        self.contentView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(detailLabel.snp.top).offset(-5)
+            make.left.equalTo(imgView.snp.right).offset(16)
+            make.width.lessThanOrEqualTo(170)
+        }
+        
+        cosmosView = CosmosView()
+        cosmosView.rating = 3.5
+        cosmosView.settings.fillMode = .precise
+        cosmosView.settings.updateOnTouch = false
+        cosmosView.settings.starSize = 12
+        cosmosView.settings.starMargin = 3
+        cosmosView.settings.filledImage = UIImage(named: "star_fill")
+        cosmosView.settings.emptyImage = UIImage(named: "star_empty")
+        self.contentView.addSubview(cosmosView)
+        cosmosView.snp.makeConstraints { make in
+            make.top.equalTo(detailLabel.snp.bottom).offset(5)
+            make.left.equalTo(imgView.snp.right).offset(16)
         }
         
         button = UIButton()
@@ -99,6 +114,7 @@ class GTCustomComplexTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        cosmosView.prepareForReuse()
         self.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         self.titleLabel.text = ""
         self.detailLabel.text = ""

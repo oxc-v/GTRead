@@ -11,17 +11,19 @@ import SDWebImage
 import Alamofire
 
 class GTDownloadPDFViewContrlloer: GTBaseViewController {
+    
     private var baseView: UIView!
-    private var exitBtn: UIButton!
-    var pdfImageView: UIImageView!
-    var progressView: UIProgressView!
-    var progressLabel: UILabel!
-    var bookNameLabel: UILabel!
-    var button: UIButton!
-    var dataModel: GTBookDataModel
-    var download: DownloadRequest!
-    var isDownloading: Bool!
-    var fileSize = 0.0
+    private var finishedBtn: UIButton!
+    private var pdfImageView: UIImageView!
+    private var progressView: UIProgressView!
+    private var progressLabel: UILabel!
+    private var bookNameLabel: UILabel!
+    private var button: UIButton!
+    
+    private var dataModel: GTBookDataModel
+    private var download: DownloadRequest!
+    private var isDownloading: Bool!
+    private var fileSize = 0.0
     
     init(model: GTBookDataModel) {
         self.dataModel = model
@@ -31,8 +33,8 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        self.navigationItem.title = dataModel.bookName
-        self.navigationItem.largeTitleDisplayMode = .never
+        
+        self.setupNavigationBar()
         
         baseView = UIView()
         baseView.backgroundColor = .clear
@@ -42,16 +44,13 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
             make.centerX.equalToSuperview()
             make.top.equalTo(100)
             make.width.equalTo(200)
-            make.height.equalTo(260)
+            make.height.equalTo(270)
         }
         
         pdfImageView = UIImageView()
-        pdfImageView.layer.cornerRadius = 10
-        pdfImageView.layer.masksToBounds = true
-        pdfImageView.layer.shadowRadius = 5
-        pdfImageView.layer.shadowOffset = CGSize(width: 0.0, height: -3.0)
-        pdfImageView.layer.shadowOpacity = 0.1
-        pdfImageView.sd_setImage(with: URL(string: self.dataModel.bookHeadUrl), placeholderImage: UIImage(named: "book_placeholder"))
+        pdfImageView.layer.cornerRadius = 5
+        pdfImageView.clipsToBounds = true
+        pdfImageView.sd_setImage(with: URL(string: self.dataModel.downInfo.bookHeadUrl), placeholderImage: UIImage(named: "book_placeholder"))
         baseView.addSubview(pdfImageView)
         pdfImageView.snp.makeConstraints { (make) in
             make.centerX.equalTo(self.view.snp.centerX)
@@ -59,7 +58,7 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
         }
 
         bookNameLabel = UILabel()
-        bookNameLabel.text = self.dataModel.bookName
+        bookNameLabel.text = self.dataModel.baseInfo.bookName
         bookNameLabel.textAlignment = .center
         bookNameLabel.lineBreakMode = .byTruncatingMiddle
         bookNameLabel.font = UIFont.boldSystemFont(ofSize: 18)
@@ -116,23 +115,29 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
         self.download.cancel()
     }
     
     // NavigationBar
     private func setupNavigationBar() {
-        exitBtn = UIButton(type: .custom)
-        exitBtn.setImage(UIImage(named: "exit_view"), for: .normal)
-        exitBtn.addTarget(self, action: #selector(exitBtnDidClicked), for: .touchUpInside)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: exitBtn)
+        finishedBtn = UIButton(type: .custom)
+        finishedBtn.setTitle("完成", for: .normal)
+        finishedBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        finishedBtn.setTitleColor(.systemBlue, for: .normal)
+        finishedBtn.addTarget(self, action: #selector(finishedBtnDidClicked(sender:)), for: .touchUpInside)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: finishedBtn)
+        self.navigationItem.title = dataModel.baseInfo.bookName
+        self.navigationItem.largeTitleDisplayMode = .never
     }
     
-    // 退出页面
-    @objc private func exitBtnDidClicked() {
-        self.dismiss(animated: true)
+    // finishedBtn clicked
+    @objc private func finishedBtnDidClicked(sender: UIButton) {
+        sender.clickedAnimation(withDuration: 0.1, completion: { _ in
+            self.dismiss(animated: true, completion: nil)
+        })
     }
     
     // Downloading
@@ -149,13 +154,13 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
         button.setTitle("重新加载", for: .normal)
         self.progressView.isHidden = true
         self.progressView.setProgress(0, animated: false)
-        self.bookNameLabel.text = self.dataModel.bookName
+        self.bookNameLabel.text = self.dataModel.baseInfo.bookName
         self.progressLabel.text = String(format: "%.2f", self.fileSize) + "M"
     }
      
     // 下载PDF
     func startDownloadPDF() {
-        self.download = GTNet.shared.downloadBook(path: self.dataModel.bookId, url: self.dataModel.bookDownUrl, downloadProgress: {progress in
+        self.download = GTNet.shared.downloadBook(path: self.dataModel.bookId, url: self.dataModel.downInfo.bookDownUrl, downloadProgress: {progress in
             DispatchQueue.main.async {
                 self.progressView.setProgress(Float(progress.fractionCompleted), animated: true)
                 self.fileSize = Double(progress.totalUnitCount) / 1024 / 1024
@@ -168,9 +173,10 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
             }
         }, success: {
             DispatchQueue.main.async {
-                let userInfo = ["dataModel": self.dataModel]
-                NotificationCenter.default.post(name: .GTDownloadBookFinished, object: self, userInfo: userInfo)
-                self.dismiss(animated: true)
+                self.dismiss(animated: true, completion: {
+                    let userInfo = ["dataModel": self.dataModel]
+                    NotificationCenter.default.post(name: .GTDownloadBookFinished, object: self, userInfo: userInfo)
+                })
             }
         })
     }

@@ -57,9 +57,9 @@ class GTShelfSearchResultsViewController: GTTableViewController {
         
         cell.selectionStyle = .none
         cell.isCustomFrame = true
-        cell.imgView.sd_setImage(with: URL(string: self.searchModel?.lists?[indexPath.row].bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
-        cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].bookName
-        cell.detailLabel.text = self.searchModel?.lists?[indexPath.row].authorName
+        cell.imgView.sd_setImage(with: URL(string: self.searchModel?.lists?[indexPath.row].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
+        cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].baseInfo.bookName
+        cell.detailLabel.text = self.searchModel?.lists?[indexPath.row].baseInfo.authorName
         cell.button.isHidden = true
 
         return cell
@@ -72,9 +72,8 @@ class GTShelfSearchResultsViewController: GTTableViewController {
             vc.hidesBottomBarWhenPushed = true;
             self.presentingViewController?.navigationController?.pushViewController(vc, animated: true)
         } else {
-            let vc = GTDownloadPDFViewContrlloer(model: (self.searchModel?.lists?[indexPath.row])!)
-            vc.hidesBottomBarWhenPushed = true;
-            self.presentingViewController?.navigationController?.pushViewController(vc, animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: (self.searchModel?.lists?[indexPath.row])!))
+            self.presentingViewController?.navigationController?.present(vc, animated: true)
         }
     }
 }
@@ -89,7 +88,7 @@ extension GTShelfSearchResultsViewController: UISearchResultsUpdating {
             let pattern = fuse.createPattern(from: searchController.searchBar.text ?? "")
 
             self.dataModel?.lists!.forEach {
-                if let result = fuse.search(pattern, in: $0.bookName) {
+                if let result = fuse.search(pattern, in: $0.baseInfo.bookName) {
                     self.resultModel.append((result.score, $0))
                 }
             }

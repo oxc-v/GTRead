@@ -17,6 +17,8 @@ target 'GTRead' do
   pod "Fuse"
   pod 'SwiftyPickerPopover'
   pod 'Glideshow'
+  pod 'Cosmos', '~> 23.0'
+  pod 'Presentr'
 
   target 'GTReadTests' do
     inherit! :search_paths

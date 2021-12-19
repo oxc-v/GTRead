@@ -7,15 +7,18 @@
 
 import Foundation
 import UIKit
+import Cosmos
 
 class GTBookCoverTableViewCell: UITableViewCell {
     
     private var baseView: UIView!
+    private var separatorView: UIView!
     private var loadingView: GTLoadingView!
-    private var imgView: UIImageView!
-    private var titleLabel: UILabel!
-    private var detailLabel: UILabel!
-    private var startReadBtn: UIButton!
+    var imgView: UIImageView!
+    var titleLabel: UILabel!
+    var detailLabel: UILabel!
+    var cosmosView: CosmosView!
+    var startReadBtn: UIButton!
     private var addShelfBtn: UIButton!
     private var editCommentBtn: UIButton!
     
@@ -39,8 +42,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
         imgView.contentMode = .scaleAspectFill
         imgView.clipsToBounds = true
         imgView.layer.masksToBounds = true
-        imgView.layer.cornerRadius = 10
-        imgView.image = UIImage(named: "book_placeholder")
+        imgView.layer.cornerRadius = 5
         baseView.addSubview(imgView)
         imgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -50,7 +52,6 @@ class GTBookCoverTableViewCell: UITableViewCell {
         
         titleLabel = UILabel()
         titleLabel.textAlignment = .left
-        titleLabel.text = "破极·暗夜凶光"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
         titleLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(titleLabel)
@@ -62,15 +63,27 @@ class GTBookCoverTableViewCell: UITableViewCell {
         
         detailLabel = UILabel()
         detailLabel.textAlignment = .left
-        detailLabel.text = "逆天而行"
         detailLabel.textColor = .black
-        detailLabel.font = UIFont.boldSystemFont(ofSize: 19)
+        detailLabel.font = UIFont.systemFont(ofSize: 19)
         detailLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(detailLabel)
         detailLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.left.equalTo(titleLabel.snp.left)
             make.width.lessThanOrEqualTo(300)
+        }
+        
+        cosmosView = CosmosView()
+        cosmosView.settings.fillMode = .precise
+        cosmosView.settings.updateOnTouch = false
+        cosmosView.settings.starSize = 18
+        cosmosView.settings.starMargin = 3
+        cosmosView.settings.filledImage = UIImage(named: "star_fill")
+        cosmosView.settings.emptyImage = UIImage(named: "star_empty")
+        self.contentView.addSubview(cosmosView)
+        cosmosView.snp.makeConstraints { make in
+            make.top.equalTo(detailLabel.snp.bottom).offset(15)
+            make.left.equalTo(titleLabel.snp.left)
         }
         
         startReadBtn = UIButton()
@@ -125,12 +138,28 @@ class GTBookCoverTableViewCell: UITableViewCell {
             make.bottom.equalTo(imgView.snp.bottom)
             make.height.equalTo(startReadBtn.snp.height)
         }
+        
+        separatorView = UIView()
+        separatorView.backgroundColor = UIColor(hexString: "#cacacc")
+        self.contentView.addSubview(separatorView)
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.width.equalTo(startReadBtn.snp.width)
+            make.top.equalTo(cosmosView.snp.bottom).offset(20)
+            make.left.equalTo(startReadBtn.snp.left)
+        }
     }
     
     override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
 
         let size = CGSize(width: UIScreen.main.bounds.width - GTViewMargin * 2, height: cellHeight)
         return size
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cosmosView.prepareForReuse()
     }
     
     override var frame: CGRect {

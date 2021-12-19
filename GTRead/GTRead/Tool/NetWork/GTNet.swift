@@ -212,6 +212,7 @@ extension GTNet {
                 case .success(let value):
                     success(value as AnyObject)
                 case .failure:
+                    print(response)
                     let statusCode = response.response?.statusCode
                     error(statusCode as AnyObject)
                 }
@@ -224,7 +225,8 @@ extension GTNet {
 extension GTNet {
     // 获取书架书籍
     func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId": dataModel?.userId ?? ""] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -234,11 +236,12 @@ extension GTNet {
     
     // 删除书架书籍
     func delShelfBook(books: Array<GTBookDataModel>, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         var bookIds = [String]()
         for item in books {
             bookIds.append(item.bookId)
         }
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookIds": bookIds] as [String : Any]
+        let params = ["userId": dataModel?.userId ?? "", "bookIds": bookIds] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -250,13 +253,11 @@ extension GTNet {
     func downloadBook(path: String, url: String, downloadProgress: @escaping ((Progress)->()?), failure: @escaping ((String)->()), success: @escaping (()->())) -> DownloadRequest {
         let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
         let destination: DownloadRequest.Destination = { _, _ in
-            let userFolder = UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""
             let pdfFolder = "PDFDocument"
-            let path_1 = (GTDiskCache.shared.diskCachePath as NSString).appendingPathComponent(userFolder)
-            let path_2 = (path_1 as NSString).appendingPathComponent(pdfFolder)
-            let path_3 = (path_2 as NSString).appendingPathComponent(path + ".pdf")
+            let path_1 = (GTDiskCache.shared.diskCachePath as NSString).appendingPathComponent(pdfFolder)
+            let path_2 = (path_1 as NSString).appendingPathComponent(path + ".pdf")
 
-            return (URL(fileURLWithPath: path_3), [.removePreviousFile, .createIntermediateDirectories])
+            return (URL(fileURLWithPath: path_2), [.removePreviousFile, .createIntermediateDirectories])
         }
         let download = AF.download(url, to: destination)
             .downloadProgress(queue: progressQueue) { progress in
@@ -287,7 +288,8 @@ extension GTNet {
     
     // 添加书籍到书库
     func addBookToShelfFun(bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId" : dataModel?.userId ?? "", "bookId": bookId] as [String : Any]
         GTNet.shared.requestWith(url: "http://39.105.217.90:8003/bookShelfService/addToShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -300,8 +302,8 @@ extension GTNet {
 extension GTNet {
     
     // 获取个人信息
-    func getPersonalInfo(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+    func getAccountInfo(userId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userId" : userId] as [String : Any]
         GTNet.shared.requestWith(url: "http://39.105.217.90:8007/accountService/userInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -331,7 +333,8 @@ extension GTNet {
     
     // 更改密码
     func updatePassword(pwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "newPassword": pwd] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId": dataModel?.userId ?? "", "newPassword": pwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8007/accountService/updatePasswdFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -341,7 +344,8 @@ extension GTNet {
     
     // 修改用户信息
     func updateAccountInfo(headImgData: Data?, nickName: String?, profile: String?, male: Bool?, age: Int?, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        var params = ["userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "userPwd": (UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.password) ?? "")] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        var params = ["userId": dataModel?.userId ?? "", "userPwd": (UserDefaults.standard.string(forKey: GTUserDefaultKeys.GTAccountPassword) ?? "")] as [String : Any]
         if nickName != nil {
             params.updateValue(nickName as Any, forKey: "nickName")
         }
@@ -370,7 +374,8 @@ extension GTNet {
 extension GTNet {
     // 上传评论
     func addCommentList(success: @escaping ((AnyObject)->()), bookId: String, pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
-        let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": dataModel?.userId ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8005/commonService/addCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -380,7 +385,8 @@ extension GTNet {
 
     // 获得评论
     func getCommentList(success: @escaping ((AnyObject)->()),error: @escaping ((AnyObject)->()), bookId: String, pageNum: Int) {
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "bookId": bookId, "pageNum": pageNum] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId" : dataModel?.userId ?? "", "bookId": bookId, "pageNum": pageNum] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8005/commonService/getCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -390,9 +396,10 @@ extension GTNet {
     
     // 发送视线数据
     func commitGazeTrackData(success: @escaping ((AnyObject)->()), startTime: TimeInterval, lists: Array<[String:Any]>, bookId: String, pageNum: Int) {
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         let date = Date.init()
         let endTime = date.timeIntervalSince1970
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]
+        let params = ["userId" : dataModel?.userId ?? "",  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/collectReadDataFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -415,6 +422,18 @@ extension GTNet {
 
 // 搜索
 extension GTNet {
+    // 搜索书籍
+    func searchBookInfoFun(words: String, dayTime: String, count: Int, offset: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["words": words, "dayTime": dayTime, "count" : count, "offset": offset] as [String : Any]
+        print(params)
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/FuzzySearchBooksFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            print(error)
+            failure(error)
+        }
+    }
+    
     // 获取热搜书籍
     func getPopularSearchFun(count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dateFormatter = DateFormatter()
@@ -440,19 +459,6 @@ extension GTNet {
             failure(error)
         }
     }
-    
-    // 查询书籍
-    func searchBookInfoFun(count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-dd"
-        let dayTime = dateFormatter.string(from: Date())
-        let params = ["count" : count, "dayTime": dayTime] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/searchBookInfoFun", httpMethod: .post, params: params) { (json) in
-            success(json)
-        } error: { (error) in
-            failure(error)
-        }
-    }
 }
 
 // 分析
@@ -460,7 +466,8 @@ extension GTNet {
     
     // 获取每日阅读目标
     func getReadTarget(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? ""] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId" : dataModel?.userId ?? ""] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/getTargetMinuteFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -470,7 +477,8 @@ extension GTNet {
     
     // 上传每日目标
     func setReadTarget(minute: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "", "minute": minute] as [String : Any]
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        let params = ["userId" : dataModel?.userId ?? "", "minute": minute] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/setTargetMinuteFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -480,10 +488,11 @@ extension GTNet {
     
     // 获取分析数据
     func getAnalyseData(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let dayTime = dateFormatter.string(from: Date())
-        let params = ["userId" : UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "",  "dayTime": dayTime] as [String : Any]
+        let params = ["userId" : dataModel?.userId ?? "",  "dayTime": dayTime] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in

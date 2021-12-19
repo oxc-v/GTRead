@@ -8,10 +8,28 @@
 import Foundation
 import UIKit
 import SwiftEntryKit
+import Presentr
 
 class GTTableViewController: UITableViewController {
     
     private var loadingView: GTLoadingView!
+    
+    private let presenter: Presentr = {
+        let width = ModalSize.fluid(percentage: 0.65)
+        let height = ModalSize.fluid(percentage: 0.5)
+        let center = ModalCenterPosition.custom(centerPoint: CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY))
+        let customType = PresentationType.custom(width: width, height: height, center: center)
+        let customPresenter = Presentr(presentationType: customType)
+        customPresenter.roundCorners = true
+        customPresenter.cornerRadius = 12
+        customPresenter.transitionType = .coverVertical
+        customPresenter.dismissTransitionType = .coverVertical
+        customPresenter.dismissOnSwipe = true
+        customPresenter.backgroundOpacity = 0.3
+        customPresenter.dismissOnSwipeDirection = .default
+        customPresenter.keyboardTranslationType = .moveUp
+        return customPresenter
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +42,15 @@ class GTTableViewController: UITableViewController {
             make.center.equalToSuperview()
             make.height.width.equalTo(40)
         }
+    }
+    
+    func getPresenter(widthFluid: Float, heightFluid: Float) -> Presentr {
+        let width = ModalSize.fluid(percentage: widthFluid)
+        let height = ModalSize.fluid(percentage: heightFluid)
+        let center = ModalCenterPosition.custom(centerPoint: CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY))
+        let customType = PresentationType.custom(width: width, height: height, center: center)
+        presenter.presentationType = customType
+        return presenter
     }
     
     // 显示loading view

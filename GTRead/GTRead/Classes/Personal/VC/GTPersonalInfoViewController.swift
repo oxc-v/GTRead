@@ -15,7 +15,7 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
     var tableView: UITableView!
     var cellRowHeight = 70
     let cellInfo = [["头像"], ["昵称", "性别", "个性签名"]]
-    var dataModel: GTPersonalInfoModel?
+    var dataModel: GTAccountInfoDataModel?
     
     var pickerView: UIPickerView!
     var pickerData = ["男", "女"]
@@ -71,7 +71,7 @@ class GTPersonalInfoViewController: GTBaseViewController, UIPopoverPresentationC
         }
     }
     
-    init(dataModel: GTPersonalInfoModel) {
+    init(dataModel: GTAccountInfoDataModel) {
         self.dataModel = dataModel
         super.init(nibName: nil, bundle: nil)
     }

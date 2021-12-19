@@ -11,6 +11,8 @@ import UIKit
 class GTBookPublicationInfoTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
+    
+    var dataModel: GTBookPublicationInfoDataModel?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -71,24 +73,24 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
             cell.imgView.isHidden = false
             cell.imgView.image = UIImage(named: "type_education")
             cell.contentLabel.isHidden = false
-            cell.subtitleLabel.text = "文学"
+            cell.subtitleLabel.text = "计算机与互联网"
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "发行日期"
-            cell.contentLabel.text = "2021年"
-            cell.subtitleLabel.text = "11月27日"
+            cell.contentLabel.text = self.dataModel!.lists[1].contentLabelText
+            cell.subtitleLabel.text = self.dataModel!.lists[1].subtitleLabelText
             return cell
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "长度"
-            cell.contentLabel.text = "1056"
+            cell.contentLabel.text = self.dataModel!.lists[2].contentLabelText
             cell.subtitleLabel.text = "页"
             return cell
         case 3:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "出版社"
-            cell.contentLabel.text = "清华大学计算机研究院附属科室405"
+            cell.contentLabel.text = self.dataModel!.lists[3].contentLabelText
             cell.contentLabel.font = UIFont.systemFont(ofSize: 13)
             cell.subtitleLabel.isHidden = true
             return cell
@@ -101,7 +103,7 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "大小"
-            cell.contentLabel.text = "46.7"
+            cell.contentLabel.text = self.dataModel!.lists[5].contentLabelText
             cell.subtitleLabel.text = "M"
             return cell
         }
@@ -109,7 +111,9 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
 }
 extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if indexPath.row == 3 {
+        if indexPath.row == 0 {
+            return CGSize(width: 140, height: 70)
+        } else if indexPath.row == 3 {
             return CGSize(width: 130, height: 70)
         } else {
             return CGSize(width: 110, height: 70)

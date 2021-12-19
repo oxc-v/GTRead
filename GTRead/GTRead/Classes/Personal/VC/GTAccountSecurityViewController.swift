@@ -56,7 +56,7 @@ class GTAccountSecurityViewController: GTBaseViewController {
 
         let changeAction = UIAlertAction(title: "修改", style: .default) { (action: UIAlertAction!) -> Void in
             self.showActivityIndicatorView()
-            if old_pwd.text != UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.password) {
+            if old_pwd.text != UserDefaults.standard.string(forKey: GTUserDefaultKeys.GTAccountPassword) {
                 self.hideActivityIndicatorView()
                 self.showChangePasswordAlertController(message: "当前密码输入错误")
             } else if new_pwd1.text != new_pwd2.text {

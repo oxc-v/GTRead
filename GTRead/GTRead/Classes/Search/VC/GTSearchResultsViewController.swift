@@ -11,17 +11,17 @@ import UIKit
 class GTSearchResultsViewController: GTTableViewController {
 
     private var resultLabel: UILabel!
-    private var dataModel: GTShelfDataModel?
-    private var searchModel: GTShelfDataModel?
-    private var resultModel = Array<(score: Double, book: GTBookDataModel)>()
+    private var dataModel: GTSearchBookDataModel?
+    private var loadingView: GTLoadingView!
+    
     private let cellHeight: CGFloat = 150
+    private var searchOffset: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .white
 
-        tableView = UITableView(frame: CGRect.zero, style: .plain)
         tableView.register(GTCustomComplexTableViewCell.self, forCellReuseIdentifier: "GTCustomComplexTableViewCell")
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets.zero
@@ -37,17 +37,16 @@ class GTSearchResultsViewController: GTTableViewController {
         resultLabel.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.dataModel = GTCommonShelfDataModel
-        self.searchModel = self.dataModel
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.searchModel?.lists?.count ?? 0
+        return self.dataModel?.lists?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -59,20 +58,47 @@ class GTSearchResultsViewController: GTTableViewController {
         
         cell.selectionStyle = .none
         cell.isCustomFrame = true
-        cell.imgView.sd_setImage(with: URL(string: self.searchModel?.lists?[indexPath.row].bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
-        cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].bookName
-        cell.detailLabel.text = self.searchModel?.lists?[indexPath.row].authorName
+        cell.imgView.sd_setImage(with: URL(string: self.dataModel?.lists?[indexPath.row].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
+        cell.titleLabel.text = self.dataModel?.lists?[indexPath.row].baseInfo.bookName
+        cell.detailLabel.text = self.dataModel?.lists?[indexPath.row].baseInfo.authorName
 
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+            
     }
 }
 
 extension GTSearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-       
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        let dayTime = dateFormatter.string(from: Date())
+        let trimmedString = (searchController.searchBar.text ?? " ").trimmingCharacters(in: .whitespaces)
+        if !trimmedString.isEmpty {
+            self.showActivityIndicatorView()
+            GTNet.shared.searchBookInfoFun(words: trimmedString, dayTime: dayTime, count: 10, offset: searchOffset, failure: { error in
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
+                self.hideActivityIndicatorView()
+            }, success: { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                let model = try? decoder.decode(GTSearchBookDataModel.self, from: data!)
+                if model == nil {
+                    self.showNotificationMessageView(message: "服务器数据错误")
+                } else if model?.count != -1 {
+                    self.dataModel = model
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+                self.hideActivityIndicatorView()
+            })
+        }
     }
 }

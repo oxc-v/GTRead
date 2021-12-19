@@ -22,7 +22,7 @@ class GTShelfCollectionViewCell: UICollectionViewCell {
     lazy var pdfImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 10
+        imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
         return imageView
     }()

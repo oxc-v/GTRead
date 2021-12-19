@@ -41,7 +41,7 @@ class GTMinutePickerViewController: GTBaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let minute = UserDefaults.standard.integer(forKey: UserDefaultKeys.EveryDayReadTarget.target)
+        let minute = UserDefaults.standard.integer(forKey: GTUserDefaultKeys.EveryDayReadTarget.target)
         // 设置默认值
         if minute == 0 {
             pickerView.selectRow(59, inComponent: 0, animated: true)
@@ -54,7 +54,7 @@ class GTMinutePickerViewController: GTBaseViewController {
         super.viewDidDisappear(animated)
         
         let minute = pickerView.selectedRow(inComponent: 0) + 1
-        if minute != UserDefaults.standard.integer(forKey: UserDefaultKeys.EveryDayReadTarget.target) {
+        if minute != UserDefaults.standard.integer(forKey: GTUserDefaultKeys.EveryDayReadTarget.target) {
             GTNet.shared.setReadTarget(minute: minute, failure: {json in
                 if GTNet.shared.networkAvailable() {
                     self.showNotificationMessageView(message: "服务器连接中断")
@@ -69,7 +69,7 @@ class GTMinutePickerViewController: GTBaseViewController {
                     self.showNotificationMessageView(message: "服务器数据错误")
                 } else if dataModel?.code == 1 {
                     // 保存阅读目标
-                    UserDefaults.standard.set(minute, forKey: UserDefaultKeys.EveryDayReadTarget.target)
+                    UserDefaults.standard.set(minute, forKey: GTUserDefaultKeys.EveryDayReadTarget.target)
                     // 每日阅读目标改变通知
                     NotificationCenter.default.post(name: .GTReadTargetChanged, object: self)
                     

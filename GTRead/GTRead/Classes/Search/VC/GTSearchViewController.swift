@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 import MJRefresh
+import SDWebImage
+import Presentr
 
 class GTSearchViewController: GTTableViewController {
     
@@ -16,7 +18,9 @@ class GTSearchViewController: GTTableViewController {
     private var sectionText = ["探索更多", "时下热门"]
     private var sectionTextForSearching = [String]()
     
+    private var accountBtn: UIButton!
     private var searchController: UISearchController!
+    private var accountInfoDataModel: GTAccountInfoDataModel?
     private var exploreMoreDataModel: GTExploreMoreDataModel?
     private var hotSearchWordDataModel: GTHotSearchWordDataModel?
     private var searchHistoryDataModel: GTSearchHistoryDataModel? {
@@ -56,10 +60,7 @@ class GTSearchViewController: GTTableViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .white
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-        self.title = "搜索"
-        self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         
         // 搜索条
         self.setupSearchBar()
@@ -79,20 +80,30 @@ class GTSearchViewController: GTTableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(getSearchViewData), name: .GTDeleteBookToShelf, object: nil)
         // 注册热门书籍点击事件
         NotificationCenter.default.addObserver(self, selector: #selector(openBookDetailView(notification:)), name: .GTExploreMoreBookCellCollectionViewCellClicked, object: nil)
-        
+        // 注册账户信息修改的通知
+        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTAccountInfoChanged, object: nil)
+        // 注册书本下载完毕通知
+        NotificationCenter.default.addObserver(self, selector: #selector(downloadBookFinishedNotification(notification:)), name: .GTDownloadBookFinished, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.showAccountBtn(true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        self.showAccountBtn(false)
     }
     
     // searchBar
     private func setupSearchBar() {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+        self.navigationItem.title = "搜索"
+        self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
         
         let vc = GTSearchResultsViewController()
         searchController = UISearchController(searchResultsController: vc)
@@ -107,6 +118,19 @@ class GTSearchViewController: GTTableViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "取消"
         definesPresentationContext = true
         self.navigationItem.searchController = searchController
+        
+        accountBtn = UIButton(type: .custom)
+        accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
+        accountBtn.imageView?.contentMode = .scaleAspectFill
+        accountBtn.imageView?.layer.cornerRadius = GTNavigationBarConst.ViewSizeForLargeState / 2.0
+        accountBtn.addTarget(self, action: #selector(accountBtnDidClicked(sender:)), for: .touchUpInside)
+        guard let navigationBar = self.navigationController?.navigationBar else { return }
+        navigationBar.addSubview(accountBtn)
+        accountBtn.snp.makeConstraints { make in
+            make.right.equalTo(navigationBar.snp.right).offset(-GTNavigationBarConst.ViewRightMargin)
+            make.bottom.equalTo(navigationBar.snp.bottom).offset(-GTNavigationBarConst.ViewBottomMarginForLargeState)
+            make.height.width.equalTo(GTNavigationBarConst.ViewSizeForLargeState)
+        }
     }
     
     // tableView
@@ -168,6 +192,28 @@ class GTSearchViewController: GTTableViewController {
         })
     }
     
+    // accountBtn clicked
+    @objc private func accountBtnDidClicked(sender: UIButton) {
+        sender.clickedAnimation(withDuration: 0.2, completion: { _ in
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountManagerTableViewController(style: .insetGrouped))
+            vc.definesPresentationContext = true
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
+        })
+    }
+    
+    // accountBtn
+    private func showAccountBtn(_ show: Bool) {
+        UIView.animate(withDuration: 0.2) {
+            self.accountBtn.alpha = show ? 1 : 0
+        }
+    }
+    
+    // accountBtn image change
+    @objc private func accountBtnReloadImg() {
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        self.accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
+    }
+    
     // 激活UISearchController
     @objc private func activateSearchController(notification: Notification) {
         if let text = notification.userInfo?["searchText"] as? String {
@@ -180,8 +226,26 @@ class GTSearchViewController: GTTableViewController {
     // 打开详情页
     @objc private func openBookDetailView(notification: Notification) {
         if let index = notification.userInfo?["index"] as? Int {
-            let vc =  GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController())
-            self.navigationController?.present(vc, animated: true)
+            let vc =  GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController(self.exploreMoreDataModel!.lists![index]))
+            self.present(vc, animated: true)
+        }
+    }
+    
+    // 书本下载完毕通知
+    @objc private func downloadBookFinishedNotification(notification: Notification) {
+        if self.tabBarController?.selectedIndex == 2 {
+            if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
+                let fileName = dataModel.bookId
+                if let url = GTDiskCache.shared.getPDF(fileName) {
+                    self.dismiss(animated: true, completion: {
+                        let vc = GTReadViewController(path: url, bookId: fileName)
+                        vc.hidesBottomBarWhenPushed = true;
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    })
+                } else {
+                    self.showNotificationMessageView(message: "文件打开失败")
+                }
+            }
         }
     }
     
@@ -202,15 +266,13 @@ class GTSearchViewController: GTTableViewController {
     
     // 读取本地历史搜索记录
     private func getSearchHistoryForDisk() {
-        if let obj: GTSearchHistoryDataModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_search_history") {
-            self.searchHistoryDataModel = obj
-        }
+        self.searchHistoryDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTSearchHistoryDataModel)
     }
     
     // 本地存储历史搜索记录
     private func saveSearchHistoryForDisk() {
         if self.searchHistoryDataModel != nil {
-            GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_search_history", value: self.searchHistoryDataModel)
+            GTUserDefault.shared.set(self.searchHistoryDataModel, forKey: GTUserDefaultKeys.GTSearchHistoryDataModel)
         }
     }
     
@@ -218,7 +280,7 @@ class GTSearchViewController: GTTableViewController {
     @objc private func clearSearchHistoryDataModel(sender: UIButton) {
         sender.clickedAnimation(withDuration: 0.2, completion: { _ in
             self.searchHistoryDataModel = nil
-            GTDiskCache.shared.delViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_search_history")
+            UserDefaults.standard.removeObject(forKey: GTUserDefaultKeys.GTSearchHistoryDataModel)
         })
     }
     
@@ -338,7 +400,7 @@ class GTSearchViewController: GTTableViewController {
                         if GTCommonShelfDataModel != nil && GTCommonShelfDataModel?.count != -1 {
                             isExistShelf = (GTCommonShelfDataModel?.lists)!.contains {$0.bookId == item.bookId}
                         }
-                        cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.bookHeadUrl, titleText: item.bookName, detailText: item.authorName, buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
+                        cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.downInfo.bookHeadUrl, titleText: item.baseInfo.bookName, detailText: item.baseInfo.authorName, buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
                     }
                     cell.dataModel?.count = (self.exploreMoreDataModel?.lists?.count)!
                 }
@@ -359,6 +421,16 @@ class GTSearchViewController: GTTableViewController {
                 cell.collectionView.reloadSections(IndexSet(integer: 0))
                 return cell
             }
+        }
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let height = navigationController?.navigationBar.frame.height else { return }
+        let scale = 1 - 1 / 30.0 * (154 - height)
+        if height < 152 {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
+        } else {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
         }
     }
 }

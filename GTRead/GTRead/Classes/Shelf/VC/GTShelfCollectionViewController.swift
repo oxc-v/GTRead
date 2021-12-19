@@ -8,14 +8,19 @@
 import UIKit
 import MJRefresh
 import SnapKit
+import SDWebImage
+import Presentr
 
 class GTShelfCollectionViewController: GTCollectionViewController {
     
+    private var accountBtn: UIButton!
     private var cancelButton: UIButton!
     private var editButton: UIButton!
     private var deleteButton: UIButton!
     private var searchController: UISearchController!
     private var goLoginAndRegisterView: GTGoLoginAndRegisterView!
+    
+    private var accountInfoDataModel: GTAccountInfoDataModel?
     
     private var dataModel: GTShelfDataModel? {
         didSet {
@@ -59,12 +64,8 @@ class GTShelfCollectionViewController: GTCollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.view.backgroundColor = .white
-        self.title = "书库"
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-        self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
         
         // 初始化变量
         self.initVariates()
@@ -85,26 +86,38 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTDeleteBookToShelf, object: nil)
         // 注册书本下载完毕通知
         NotificationCenter.default.addObserver(self, selector: #selector(tryOpenBook(notification:)), name: .GTDownloadBookFinished, object: nil)
+        // 注册账户信息修改的通知
+        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTAccountInfoChanged, object: nil)
+        // 注册用户登录的通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleLoginSuccessfulNotification), name: .GTLoginSuccessful, object: nil)
     }
     
-    init() {
-        let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
-        super.init(collectionViewLayout: layout)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+   
+        self.showAccountBtn(true)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.showAccountBtn(false)
     }
     
     // 初始化变量
     private func initVariates() {
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         itemWidth = floor((UIScreen.main.bounds.width - 2 * GTViewMargin - (CGFloat(itemCountInRow - 1) * itemMargin)) / CGFloat(itemCountInRow))
         itemHeight = floor(itemWidth * 1.60)
     }
     
     // 导航条
     private func setupNavigationBar() {
+        self.navigationItem.title = "书库"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+        self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        
         cancelButton = UIButton(type: .custom)
         cancelButton.isHidden = true
         cancelButton.setTitle("取消", for: .normal)
@@ -125,6 +138,19 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         let rightItems = [UIBarButtonItem(customView: editButton),UIBarButtonItem(customView: deleteButton)]
         self.navigationItem.rightBarButtonItems = rightItems
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
+        
+        accountBtn = UIButton(type: .custom)
+        accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
+        accountBtn.imageView?.contentMode = .scaleAspectFill
+        accountBtn.imageView?.layer.cornerRadius = GTNavigationBarConst.ViewSizeForLargeState / 2.0
+        accountBtn.addTarget(self, action: #selector(accountBtnDidClicked(sender:)), for: .touchUpInside)
+        guard let navigationBar = self.navigationController?.navigationBar else { return }
+        navigationBar.addSubview(accountBtn)
+        accountBtn.snp.makeConstraints { make in
+            make.right.equalTo(navigationBar.snp.right).offset(-GTNavigationBarConst.ViewRightMargin)
+            make.bottom.equalTo(navigationBar.snp.bottom).offset(-GTNavigationBarConst.ViewBottomMarginForLargeState)
+            make.height.width.equalTo(GTNavigationBarConst.ViewSizeForLargeState)
+        }
         
         let vc = GTShelfSearchResultsViewController()
         searchController = UISearchController(searchResultsController: vc)
@@ -175,6 +201,35 @@ class GTShelfCollectionViewController: GTCollectionViewController {
             // 进入编辑状态
             self.editEvent()
         }
+    }
+    
+    // accountBtn clicked
+    @objc private func accountBtnDidClicked(sender: UIButton) {
+        sender.clickedAnimation(withDuration: 0.2, completion: { _ in
+//            let vc = GTBaseNavigationViewController(rootViewController: GTAccountManagerTableViewController(style: .insetGrouped))
+//            self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountLoginTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.75, heightFluid: 0.63), viewController: vc, animated: true, completion: nil)
+        })
+    }
+    
+    // accountBtn image change
+    @objc private func accountBtnReloadImg() {
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        self.accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
+    }
+    
+    // accountBtn
+    private func showAccountBtn(_ show: Bool) {
+        UIView.animate(withDuration: 0.2) {
+            self.accountBtn.alpha = show ? 1 : 0
+        }
+    }
+    
+    // 响应通知
+    @objc private func handleLoginSuccessfulNotification() {
+        self.getShelfDataFromServer()
+        self.accountBtnReloadImg()
     }
     
     // 编辑事件
@@ -249,7 +304,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     
     // 从本地缓存加载书架数据
     private func getShelfDataFromDisk() {
-        if let obj: GTShelfDataModel = GTDiskCache.shared.getViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view") {
+        if let obj: GTShelfDataModel = GTDiskCache.shared.getObjectData((self.accountInfoDataModel?.userId ?? "") + "_shelf_view") {
             self.dataModel = obj
             GTCommonShelfDataModel = dataModel
             self.collectionView.reloadData()
@@ -280,7 +335,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 // 更新全局书库数据对象
                 GTCommonShelfDataModel = self.dataModel
                 // 对书库数据进行本地缓存
-                GTDiskCache.shared.saveViewObject((UserDefaults.standard.string(forKey: UserDefaultKeys.AccountInfo.account) ?? "") + "_shelf_view", value: self.dataModel)
+                GTDiskCache.shared.saveObjectData((self.accountInfoDataModel?.userId ?? "") + "_shelf_view", value: self.dataModel)
             } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
@@ -317,7 +372,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTShelfCollectionViewCell", for: indexPath) as! GTShelfCollectionViewCell
 
         let book = (self.dataModel?.lists?[indexPath.row])!
-        cell.updateData(imgURL: book.bookHeadUrl)
+        cell.updateData(imgURL: book.downInfo.bookHeadUrl)
         if self.isEdit {
             cell.startEdit()
             if self.isSeletedAll {
@@ -353,9 +408,19 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                let vc = GTDownloadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!)
+                let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!))
                 self.present(vc, animated: true)
             }
+        }
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let height = navigationController?.navigationBar.frame.height else { return }
+        let scale = 1 - 1 / 30.0 * (154 - height)
+        if height < 152 {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
+        } else {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
         }
     }
 }
