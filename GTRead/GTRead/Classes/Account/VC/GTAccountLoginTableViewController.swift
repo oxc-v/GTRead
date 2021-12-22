@@ -13,6 +13,7 @@ class GTAccountLoginTableViewController: GTTableViewController {
     private var cancelBtn: UIButton!
     private var loginBtn: UIButton!
     private var loadingView: GTLoadingView!
+    private var loginErrLab: UILabel!
     
     private var accountTextfield: UITextField?
     private var passwordTextfield: UITextField?
@@ -56,6 +57,19 @@ class GTAccountLoginTableViewController: GTTableViewController {
         loadingView.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
     }
     
+    // 控制加载动画的显示
+    private func showLoadingView(_ show: Bool) {
+        if show {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: loadingView))
+            loadingView.isAnimating = true
+        } else {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: loginBtn))
+            loadingView.isAnimating = false
+        }
+    }
+    
     // cancelBtn clicked
     @objc private func cancelBtnDidClicked() {
         self.dismiss(animated: true)
@@ -63,9 +77,63 @@ class GTAccountLoginTableViewController: GTTableViewController {
     
     // loginBtn clicked
     @objc private func loginBtnDidClicked() {
-        self.navigationItem.rightBarButtonItems?.removeAll()
-        self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: loadingView))
-        loadingView.isAnimating = true
+        
+        self.showLoadingView(true)
+        
+        // 发起登录请求
+        GTNet.shared.requestLogin(userId: self.accountTextfield?.text ?? "", userPwd: self.passwordTextfield?.text ?? "", failure: {json in
+            
+            self.showLoadingView(false)
+            
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { (json) in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTPersonalRegisterModel.self, from: data!) {
+                if dataModel.code == -1 {
+                    self.showLoadingView(false)
+                    self.loginErrLab.text = "账号或密码错误"
+                    self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
+                } else {
+                    // ----此处需要完善 记得暂停加载动画
+                    UserDefaults.standard.set(self.passwordTextfield?.text, forKey: GTUserDefaultKeys.GTAccountPassword)
+                    self.getAccountInfo(userId: (self.accountTextfield?.text)!)
+                }
+            } else {
+                self.showLoadingView(false)
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+        })
+    }
+    
+    // -----此处将来需要完善 请求获取账户信息
+    private func getAccountInfo(userId: String) {
+        GTNet.shared.getAccountInfo(userId: userId, failure: { json in
+            
+            self.showLoadingView(false)
+            
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: {json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTAccountInfoDataModel.self, from: data!) {
+                GTUserDefault.shared.set(dataModel, forKey: GTUserDefaultKeys.GTAccountDataModel)
+                NotificationCenter.default.post(name: .GTLoginSuccessful, object: self)
+                self.dismiss(animated: true)
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+            
+            self.showLoadingView(false)
+        })
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -97,7 +165,8 @@ class GTAccountLoginTableViewController: GTTableViewController {
         }
         
         let subLabel = UILabel()
-        subLabel.text = "登录您的账号"
+        self.loginErrLab = subLabel
+        subLabel.textColor = .systemRed
         subLabel.font = UIFont.systemFont(ofSize: 17)
         subLabel.textAlignment = .center
         contentView.addSubview(subLabel)
@@ -149,6 +218,10 @@ class GTAccountLoginTableViewController: GTTableViewController {
 
 extension GTAccountLoginTableViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        // 清除提示信息
+        self.loginErrLab.text = ""
+        
         if self.accountTextfield == textField {
             accountStr = (self.accountTextfield!.text! as NSString).replacingCharacters(in: range, with: string) as NSString
         } else if self.passwordTextfield == textField {
@@ -170,6 +243,7 @@ extension GTAccountLoginTableViewController: UITextFieldDelegate {
             self.passwordTextfield?.becomeFirstResponder()
         } else if self.passwordTextfield == textField {
             textField.resignFirstResponder()
+            self.loginBtnDidClicked()
         }
         
         return true

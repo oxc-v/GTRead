@@ -14,20 +14,24 @@ class GTReadChartTableViewCell: UITableViewCell {
     
     private var collectionViewCellHeaderTxt = [String]()
     
-    var dataModel: GTAnalyseDataModel?
+    var dataModel: GTAnalyseDataModel? {
+        didSet {
+            if dataModel?.lists != nil {
+                self.collectionViewCellHeaderTxt.append("阅读时间")
+            }
+            if dataModel?.speedPoints != nil {
+                self.collectionViewCellHeaderTxt.append("视线速度")
+            }
+            if dataModel?.scatterDiagram != nil {
+                self.collectionViewCellHeaderTxt.append("视线特征")
+            }
+            
+            collectionView.reloadData()
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        if dataModel?.lists != nil {
-            self.collectionViewCellHeaderTxt.append("阅读时间")
-        }
-        if dataModel?.speedPoints != nil {
-            self.collectionViewCellHeaderTxt.append("视线速度")
-        }
-        if dataModel?.scatterDiagram != nil {
-            self.collectionViewCellHeaderTxt.append("视线特征")
-        }
         
         // CollectionView
         self.setupCollectionView()
@@ -119,7 +123,11 @@ extension GTReadChartTableViewCell: UICollectionViewDelegate, UICollectionViewDa
 
 extension GTReadChartTableViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 300, height: 310)
+        if indexPath.row == 0 {
+            return CGSize(width: 550, height: 330)
+        } else {
+            return CGSize(width: 350, height: 330)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -127,6 +135,6 @@ extension GTReadChartTableViewCell: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 30
     }
 }

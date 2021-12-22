@@ -61,7 +61,7 @@ class GTReadSpeedChartCollectionViewCell: UICollectionViewCell {
         chartView.snp.makeConstraints { make in
             make.top.equalTo(separatorView.snp.bottom).offset(20)
             make.width.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview().offset(-10)
         }
     }
     

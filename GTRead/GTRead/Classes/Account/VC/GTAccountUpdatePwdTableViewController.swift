@@ -14,6 +14,14 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
     private var updateBtn: UIButton!
     private var loadingView: GTLoadingView!
     
+    private var loginErrLab: UILabel!
+    private var oldPwdTextfield: UITextField?
+    private var newPwdTextfield: UITextField?
+    private var newPwdSubTextfield: UITextField?
+    private var oldPwdStr: NSString = ""
+    private var newPwdStr: NSString = ""
+    private var newPwdSubStr: NSString = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,10 +47,10 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
         self.navigationItem.leftBarButtonItems = leftItems
         
         updateBtn = UIButton()
-        updateBtn.setTitle("修改", for: .normal)
+        updateBtn.setTitle("提交", for: .normal)
         updateBtn.setTitleColor(UIColor(hexString: "#b4b4b4"), for: .disabled)
         updateBtn.setTitleColor(.systemBlue, for: .normal)
-        updateBtn.addTarget(self, action: #selector(cancelBtnDidClicked), for: .touchUpInside)
+        updateBtn.addTarget(self, action: #selector(updateBtnDidClicked), for: .touchUpInside)
         let rightItems = [UIBarButtonItem(customView: updateBtn)]
         self.navigationItem.rightBarButtonItems = rightItems
         updateBtn.isEnabled = false
@@ -54,6 +62,75 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
     // cancelBtn clicked
     @objc private func cancelBtnDidClicked() {
         self.dismiss(animated: true)
+    }
+    
+    // 控制加载动画的显示
+    private func showLoadingView(_ show: Bool) {
+        if show {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: loadingView))
+            loadingView.isAnimating = true
+        } else {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: updateBtn))
+            loadingView.isAnimating = false
+        }
+    }
+    
+    // updateBtn clicked
+    @objc private func updateBtnDidClicked() {
+        
+        self.showLoadingView(true)
+        
+        let pwd = (UserDefaults.standard.string(forKey: GTUserDefaultKeys.GTAccountPassword))!
+        if pwd != (self.oldPwdTextfield?.text)! {
+            self.showLoadingView(false)
+            self.loginErrLab.text = "密码验证失败"
+            self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
+        } else if self.newPwdStr != self.newPwdSubStr {
+            self.showLoadingView(false)
+            self.loginErrLab.text = "两次输入的新密码不一致"
+            self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
+        } else if pwd == (self.newPwdTextfield?.text)! {
+            self.showLoadingView(false)
+            self.loginErrLab.text = "不能使用旧的密码作为新密码"
+            self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
+        } else {
+            GTNet.shared.updatePassword(pwd: (self.newPwdTextfield?.text)!, failure: {json in
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
+                self.showLoadingView(false)
+            }, success: {json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
+                    if dataModel.code == -1 {
+                        self.showLoadingView(false)
+                        self.loginErrLab.text = dataModel.errorRes!
+                        self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
+                    } else {
+                        // 删除用户配置信息
+                        let userDefaults = UserDefaults.standard
+                        for key in userDefaults.dictionaryRepresentation() {
+                            userDefaults.removeObject(forKey: key.key)
+                        }
+                        userDefaults.synchronize()
+                        
+                        // 发送退出登录通知
+                        NotificationCenter.default.post(name: .GTExitAccount, object: self)
+                        
+                        self.dismiss(animated: true)
+                    }
+                } else {
+                    self.showNotificationMessageView(message: "服务器数据错误")
+                }
+                
+                self.showLoadingView(false)
+            })
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -81,8 +158,9 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
         }
         
         let subLabel = UILabel()
-        subLabel.text = "登录您的账号"
+        self.loginErrLab = subLabel
         subLabel.font = UIFont.systemFont(ofSize: 17)
+        subLabel.textColor = .systemRed
         subLabel.textAlignment = .center
         contentView.addSubview(subLabel)
         subLabel.snp.makeConstraints { make in
@@ -97,20 +175,32 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountLoginTableViewCell", for: indexPath) as! GTAccountLoginTableViewCell
             cell.selectionStyle = .none
+            cell.textfield.delegate = self
             cell.textfield.placeholder = "当前密码"
             cell.textfield.isSecureTextEntry = true
+            cell.textfield.returnKeyType = .next
+            cell.textfield.enablesReturnKeyAutomatically = true
+            self.oldPwdTextfield = cell.textfield
             return cell
         } else if indexPath.row == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountLoginTableViewCell", for: indexPath) as! GTAccountLoginTableViewCell
             cell.selectionStyle = .none
+            cell.textfield.delegate = self
             cell.textfield.placeholder = "新的密码"
             cell.textfield.isSecureTextEntry = true
+            cell.textfield.returnKeyType = .next
+            cell.textfield.enablesReturnKeyAutomatically = true
+            self.newPwdTextfield = cell.textfield
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountLoginTableViewCell", for: indexPath) as! GTAccountLoginTableViewCell
             cell.selectionStyle = .none
+            cell.textfield.delegate = self
             cell.textfield.placeholder = "确认新的密码"
             cell.textfield.isSecureTextEntry = true
+            cell.textfield.returnKeyType = .done
+            cell.textfield.enablesReturnKeyAutomatically = true
+            self.newPwdSubTextfield = cell.textfield
             return cell
         }
         
@@ -120,3 +210,43 @@ class GTAccountUpdatePwdTableViewController: GTTableViewController {
         
     }
 }
+
+extension GTAccountUpdatePwdTableViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        // 清除提示信息
+        self.loginErrLab.text = ""
+        
+        if self.oldPwdTextfield == textField {
+            oldPwdStr = (self.oldPwdTextfield!.text! as NSString).replacingCharacters(in: range, with: string) as NSString
+        } else if self.newPwdTextfield == textField {
+            newPwdStr = (self.newPwdTextfield!.text! as NSString).replacingCharacters(in: range, with: string) as NSString
+        } else if self.newPwdSubTextfield == textField {
+            newPwdSubStr = (self.newPwdSubTextfield!.text! as NSString).replacingCharacters(in: range, with: string) as NSString
+        }
+        
+        if oldPwdStr != "" && newPwdStr != "" && newPwdSubStr != "" {
+            self.updateBtn.isEnabled = true
+        } else {
+            self.updateBtn.isEnabled = false
+        }
+        
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if self.oldPwdTextfield == textField {
+            textField.resignFirstResponder()
+            self.newPwdTextfield?.becomeFirstResponder()
+        } else if self.newPwdTextfield == textField {
+            textField.resignFirstResponder()
+            self.newPwdSubTextfield?.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+            self.updateBtnDidClicked()
+        }
+        
+        return true
+    }
+}
+

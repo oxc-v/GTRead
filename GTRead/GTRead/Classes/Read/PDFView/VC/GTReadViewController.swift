@@ -69,6 +69,9 @@ class GTReadViewController: EyeTrackViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // 发送退出阅读界面通知
+        NotificationCenter.default.post(name: .GTExitReadView, object: self)
+        
         if self.isMovingFromParent {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
             getSightDataTimer.invalidate()

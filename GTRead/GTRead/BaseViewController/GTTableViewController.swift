@@ -9,10 +9,12 @@ import Foundation
 import UIKit
 import SwiftEntryKit
 import Presentr
+import SDWebImage
 
 class GTTableViewController: UITableViewController {
     
     private var loadingView: GTLoadingView!
+    private var notLoginView: GTGoLoginView!
     
     private let presenter: Presentr = {
         let width = ModalSize.fluid(percentage: 0.65)
@@ -34,14 +36,26 @@ class GTTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 5)
-        loadingView.layer.zPosition = 100
-        loadingView.isAnimating = false
-        self.view.addSubview(loadingView)
-        loadingView.snp.makeConstraints { make in
+        // 设置加载动画
+        self.setupLoadingView()
+        // 设置登录提示视图
+        self.setupNotLoginView()
+    }
+    
+    // 设置登录提示视图
+    private func setupNotLoginView() {
+        notLoginView = GTGoLoginView()
+        notLoginView.isHidden = true
+        self.tableView.addSubview(notLoginView)
+        notLoginView.snp.makeConstraints { make in
+            make.width.height.equalTo(580)
             make.center.equalToSuperview()
-            make.height.width.equalTo(40)
         }
+    }
+    
+    // 控制显示登录提示视图---供子类使用
+    func showNotLoginView(_ show: Bool) {
+        self.notLoginView.isHidden = !show
     }
     
     func getPresenter(widthFluid: Float, heightFluid: Float) -> Presentr {
@@ -51,16 +65,6 @@ class GTTableViewController: UITableViewController {
         let customType = PresentationType.custom(width: width, height: height, center: center)
         presenter.presentationType = customType
         return presenter
-    }
-    
-    // 显示loading view
-    func showActivityIndicatorView() {
-        loadingView.isAnimating = true
-    }
-    
-    // 隐藏loading view
-    func hideActivityIndicatorView() {
-        loadingView.isAnimating = false
     }
     
     // 显示通知
@@ -85,5 +89,48 @@ class GTTableViewController: UITableViewController {
         let contentView = EKNotificationMessageView(with: notificationMessage)
        
         SwiftEntryKit.display(entry: contentView, using: attributes)
+    }
+    
+    // 显示登录/注册弹窗----供子类选择
+    func showLoginAlertController() {
+        let alertController = UIAlertController(title: "咱要做一个有身份的人哟", message: nil, preferredStyle: .alert)
+        let loginAction = UIAlertAction(title: "登录", style: .default) {
+                    (action: UIAlertAction!) -> Void in
+            NotificationCenter.default.post(name: .GTOpenLoginView, object: self)
+        }
+        let registerAction = UIAlertAction(title: "注册", style: .default) {
+                    (action: UIAlertAction!) -> Void in
+            NotificationCenter.default.post(name: .GTOpenRegisterView, object: self)
+        }
+        let cancelAction = UIAlertAction(title: "取消", style: .destructive, handler: nil)
+        alertController.addAction(loginAction)
+        alertController.addAction(registerAction)
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
+}
+
+extension GTTableViewController {
+    
+    // 设置加载动画
+    private func setupLoadingView() {
+        loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 5)
+        loadingView.layer.zPosition = 100
+        loadingView.isAnimating = false
+        self.view.addSubview(loadingView)
+        loadingView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.height.width.equalTo(40)
+        }
+    }
+    
+    // 显示loading view----供子类使用
+    func showActivityIndicatorView() {
+        loadingView.isAnimating = true
+    }
+    
+    // 隐藏loading view----供子类使用
+    func hideActivityIndicatorView() {
+        loadingView.isAnimating = false
     }
 }

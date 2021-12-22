@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class GTGoLoginAndRegisterView: UIView {
+class GTGoLoginView: UIView {
     
     private var imageView: UIImageView!
     private var button: UIButton!
@@ -28,20 +28,20 @@ class GTGoLoginAndRegisterView: UIView {
         }
         
         button = UIButton()
-        button.setTitle("登录/注册", for: .normal)
+        button.setTitle("登录账号", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         button.layer.cornerRadius = 25
         button.layer.shadowRadius = 5
         button.layer.shadowOffset = CGSize(width: 0.0, height: -3.0)
         button.layer.shadowOpacity = 0.1
-        button.addTarget(self, action: #selector(buttonDidClicked), for: .touchUpInside)
+        button.addTarget(self, action: #selector(buttonDidClicked(sender:)), for: .touchUpInside)
         button.backgroundColor = .black
         button.isUserInteractionEnabled = true
         self.addSubview(button)
         button.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.width.equalTo(130)
+            make.width.equalTo(190)
             make.height.equalTo(50)
             make.top.equalTo(imageView.snp.bottom).offset(10)
         }
@@ -51,8 +51,10 @@ class GTGoLoginAndRegisterView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 跳转个人主页
-    @objc private func buttonDidClicked() {
-        NotificationCenter.default.post(name: .GTGoPersonalViewController, object: self)
+    // button clicked
+    @objc private func buttonDidClicked(sender: UIButton) {
+        sender.clickedAnimation(withDuration: 0.1, completion: {_ in
+            NotificationCenter.default.post(name: .GTOpenLoginView, object: self)
+        })
     }
 }

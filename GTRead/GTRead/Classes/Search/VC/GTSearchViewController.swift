@@ -60,7 +60,6 @@ class GTSearchViewController: GTTableViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .white
-        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         
         // 搜索条
         self.setupSearchBar()
@@ -82,19 +81,31 @@ class GTSearchViewController: GTTableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(openBookDetailView(notification:)), name: .GTExploreMoreBookCellCollectionViewCellClicked, object: nil)
         // 注册账户信息修改的通知
         NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTAccountInfoChanged, object: nil)
+        // 注册用户登录的通知
+        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTLoginSuccessful, object: nil)
         // 注册书本下载完毕通知
         NotificationCenter.default.addObserver(self, selector: #selector(downloadBookFinishedNotification(notification:)), name: .GTDownloadBookFinished, object: nil)
+        // 注册用户登录的通知
+        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTLoginSuccessful, object: nil)
+        // 注册退出登录通知
+        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTExitAccount, object: nil)
+        // 注册打开登录视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenLoginViewNotification), name: .GTOpenLoginView, object: nil)
+        // 注册打开注册视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenRegisterViewNotification), name: .GTOpenRegisterView, object: nil)
+        // 注册打开修改密码视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenUpdatePwdViewNotification), name: .GTOpenUpdatePwdView, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         self.showAccountBtn(true)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         self.showAccountBtn(false)
     }
     
@@ -119,6 +130,7 @@ class GTSearchViewController: GTTableViewController {
         definesPresentationContext = true
         self.navigationItem.searchController = searchController
         
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         accountBtn = UIButton(type: .custom)
         accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
         accountBtn.imageView?.contentMode = .scaleAspectFill
@@ -207,11 +219,21 @@ class GTSearchViewController: GTTableViewController {
             self.accountBtn.alpha = show ? 1 : 0
         }
     }
-    
+
     // accountBtn image change
     @objc private func accountBtnReloadImg() {
         self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let height = navigationController?.navigationBar.frame.height else { return }
+        let scale = 1 - 1 / 30.0 * (154 - height)
+        if height < 152 {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
+        } else {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+        }
     }
     
     // 激活UISearchController
@@ -286,35 +308,73 @@ class GTSearchViewController: GTTableViewController {
     
     // 添加书籍到书库
     @objc private func addBookToShelf(sender: UIButton) {
+        
         let cell = sender.superview?.superview as! GTCustomComplexTableViewCell
-        sender.clickedAnimation(withDuration: 0.2, completion: { _ in
-            GTNet.shared.addBookToShelfFun(bookId: (self.exploreMoreDataModel?.lists?[sender.tag].bookId)!, failure: { error in
-                sender.isHidden = false
-                cell.loadingView.isHidden = true
-                cell.loadingView.isAnimating = false
-                if GTNet.shared.networkAvailable() {
-                    self.showNotificationMessageView(message: "服务器连接中断")
-                } else {
-                    self.showNotificationMessageView(message: "网络连接不可用")
-                }
-            }, success: { json in
-                cell.loadingView.isHidden = true
-                cell.loadingView.isAnimating = false
-                
-                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
-                let decoder = JSONDecoder()
-                let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!)
-                if dataModel?.code == 1 {
-                    // 提示添加书籍成功
-                    self.showNotificationMessageView(message: "书籍添加成功")
-                    // 发送添加书籍到书库的通知
-                    NotificationCenter.default.post(name: .GTAddBookToShelf, object: self)
-                } else {
+        
+        if self.accountInfoDataModel == nil {
+            // 父类方法
+            self.showLoginAlertController()
+            
+            sender.isHidden = false
+            cell.loadingView.isHidden = true
+            cell.loadingView.isAnimating = false
+        } else {
+            sender.clickedAnimation(withDuration: 0.2, completion: { _ in
+                GTNet.shared.addBookToShelfFun(bookId: (self.exploreMoreDataModel?.lists?[sender.tag].bookId)!, failure: { error in
                     sender.isHidden = false
-                    self.showNotificationMessageView(message: dataModel?.errorRes ?? "error")
-                }
+                    cell.loadingView.isHidden = true
+                    cell.loadingView.isAnimating = false
+                    if GTNet.shared.networkAvailable() {
+                        self.showNotificationMessageView(message: "服务器连接中断")
+                    } else {
+                        self.showNotificationMessageView(message: "网络连接不可用")
+                    }
+                }, success: { json in
+                    cell.loadingView.isHidden = true
+                    cell.loadingView.isAnimating = false
+                    
+                    let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                    let decoder = JSONDecoder()
+                    let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!)
+                    if dataModel?.code == 1 {
+                        // 提示添加书籍成功
+                        self.showNotificationMessageView(message: "书籍添加成功")
+                        // 发送添加书籍到书库的通知
+                        NotificationCenter.default.post(name: .GTAddBookToShelf, object: self)
+                    } else {
+                        sender.isHidden = false
+                        self.showNotificationMessageView(message: dataModel?.errorRes ?? "error")
+                    }
+                })
             })
-        })
+        }
+    }
+    
+    // 响应打开登录视图通知
+    @objc private func handleOpenLoginViewNotification() {
+        if self.tabBarController?.selectedIndex == 3 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountLoginTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
+    }
+    
+    // 响应打开注册视图通知
+    @objc private func handleOpenRegisterViewNotification() {
+        if self.tabBarController?.selectedIndex == 3 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountRegistTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
+    }
+    
+    // 响应打开修改密码视图通知
+    @objc private func handleOpenUpdatePwdViewNotification() {
+        if self.tabBarController?.selectedIndex == 3 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountUpdatePwdTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -421,16 +481,6 @@ class GTSearchViewController: GTTableViewController {
                 cell.collectionView.reloadSections(IndexSet(integer: 0))
                 return cell
             }
-        }
-    }
-    
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let height = navigationController?.navigationBar.frame.height else { return }
-        let scale = 1 - 1 / 30.0 * (154 - height)
-        if height < 152 {
-            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
-        } else {
-            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
         }
     }
 }

@@ -18,9 +18,18 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     private var editButton: UIButton!
     private var deleteButton: UIButton!
     private var searchController: UISearchController!
-    private var goLoginAndRegisterView: GTGoLoginAndRegisterView!
     
-    private var accountInfoDataModel: GTAccountInfoDataModel?
+    private var accountInfoDataModel: GTAccountInfoDataModel? {
+        didSet {
+            if accountInfoDataModel == nil {
+                // 父类方法
+                self.showNotLoginView(true)
+            } else {
+                // 父类方法
+                self.showNotLoginView(false)
+            }
+        }
+    }
     
     private var dataModel: GTShelfDataModel? {
         didSet {
@@ -73,8 +82,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         self.setupNavigationBar()
         // CollectionView
         self.setupCollectionView()
-        // 未登录视图
-        self.setupGoLoginAndRegisterView()
         // LongGesture
         self.setupLongGestureRecognizerOnCollection()
         // 加载书架数据
@@ -90,17 +97,25 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTAccountInfoChanged, object: nil)
         // 注册用户登录的通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleLoginSuccessfulNotification), name: .GTLoginSuccessful, object: nil)
+        // 注册退出登录通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleExitAccountNotification), name: .GTExitAccount, object: nil)
+        // 注册打开登录视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenLoginViewNotification), name: .GTOpenLoginView, object: nil)
+        // 注册打开注册视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenRegisterViewNotification), name: .GTOpenRegisterView, object: nil)
+        // 注册打开修改密码视图通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOpenUpdatePwdViewNotification), name: .GTOpenUpdatePwdView, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-   
+
         self.showAccountBtn(true)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         self.showAccountBtn(false)
     }
     
@@ -171,17 +186,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         collectionView.register(GTShelfCollectionViewCell.self, forCellWithReuseIdentifier: "GTShelfCollectionViewCell")
     }
     
-    // 未登录视图
-    private func setupGoLoginAndRegisterView() {
-        goLoginAndRegisterView = GTGoLoginAndRegisterView()
-        goLoginAndRegisterView.isHidden = true
-        self.view.addSubview(goLoginAndRegisterView)
-        goLoginAndRegisterView.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-            make.height.width.equalTo(320)
-        }
-    }
-    
     // LongGesture
     private func setupLongGestureRecognizerOnCollection() {
         let longPressedGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gestureRecognizer:)))
@@ -206,30 +210,73 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     // accountBtn clicked
     @objc private func accountBtnDidClicked(sender: UIButton) {
         sender.clickedAnimation(withDuration: 0.2, completion: { _ in
-//            let vc = GTBaseNavigationViewController(rootViewController: GTAccountManagerTableViewController(style: .insetGrouped))
-//            self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
-            let vc = GTBaseNavigationViewController(rootViewController: GTAccountLoginTableViewController(style: .grouped))
-            self.customPresentViewController(self.getPresenter(widthFluid: 0.75, heightFluid: 0.63), viewController: vc, animated: true, completion: nil)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountManagerTableViewController(style: .insetGrouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
         })
     }
     
     // accountBtn image change
     @objc private func accountBtnReloadImg() {
-        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
     }
     
     // accountBtn
     private func showAccountBtn(_ show: Bool) {
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.1) {
             self.accountBtn.alpha = show ? 1 : 0
         }
     }
     
-    // 响应通知
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let height = navigationController?.navigationBar.frame.height else { return }
+        let scale = 1 - 1 / 30.0 * (154 - height)
+        if height < 152 {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
+        } else {
+            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+        }
+    }
+    
+    // 响应登录成功通知
     @objc private func handleLoginSuccessfulNotification() {
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.getShelfDataFromServer()
         self.accountBtnReloadImg()
+    }
+    
+    // 响应退出登录通知
+    @objc private func handleExitAccountNotification() {
+        self.dataModel = nil
+        self.accountInfoDataModel = nil
+        self.accountBtnReloadImg()
+        self.collectionView.reloadData()
+    }
+    
+    // 响应打开登录视图通知
+    @objc private func handleOpenLoginViewNotification() {
+        if self.tabBarController?.selectedIndex == 0 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountLoginTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
+    }
+    
+    // 响应打开注册视图通知
+    @objc private func handleOpenRegisterViewNotification() {
+        if self.tabBarController?.selectedIndex == 0 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountRegistTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
+    }
+    
+    // 响应打开修改密码视图通知
+    @objc private func handleOpenUpdatePwdViewNotification() {
+        if self.tabBarController?.selectedIndex == 0 {
+            self.dismiss(animated: true)
+            let vc = GTBaseNavigationViewController(rootViewController: GTAccountUpdatePwdTableViewController(style: .grouped))
+            self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
+        }
     }
     
     // 编辑事件
@@ -411,16 +458,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!))
                 self.present(vc, animated: true)
             }
-        }
-    }
-    
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let height = navigationController?.navigationBar.frame.height else { return }
-        let scale = 1 - 1 / 30.0 * (154 - height)
-        if height < 152 {
-            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: scale < 0 ? 0 : scale, y: scale < 0 ? 0 : scale)
-        } else {
-            accountBtn.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
         }
     }
 }

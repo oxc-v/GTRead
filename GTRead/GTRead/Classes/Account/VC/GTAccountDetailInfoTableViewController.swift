@@ -172,7 +172,7 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
             cell.selectionStyle = .none
             cell.accessoryType = .disclosureIndicator
             cell.titleLabel.text = self.cellInfo[indexPath.section][indexPath.row]
-            cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: "head_placeholder"))
+            cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.accountInfoDataModel!.male ? "head_men" : "head_women"))
             return cell
         default:
             switch indexPath.row {
@@ -210,8 +210,8 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
             let cell = tableView.cellForRow(at: indexPath) as! GTAccountManagerCommonTableViewCell
             switch indexPath.row {
             case 0:
-                let vc = GTBaseNavigationViewController(rootViewController: GTAccountTextEditViewController(editType: 0))
-                self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
+                let vc = GTAccountTextEditViewController(editType: 0)
+                self.navigationController?.pushViewController(vc, animated: true)
             case 1:
                 let vc = GTBaseNavigationViewController(rootViewController: GTSexPickerViewController(viewController: self))
                 vc.modalPresentationStyle = .popover
@@ -223,8 +223,8 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
                 }
                 self.present(vc, animated: true)
             default:
-                let vc = GTBaseNavigationViewController(rootViewController: GTAccountTextEditViewController(editType: 1))
-                self.customPresentViewController(self.getPresenter(widthFluid: 0.64, heightFluid: 0.53), viewController: vc, animated: true, completion: nil)
+                let vc = GTAccountTextEditViewController(editType: 1)
+                self.navigationController?.pushViewController(vc, animated: true)
             }
         default:
             break

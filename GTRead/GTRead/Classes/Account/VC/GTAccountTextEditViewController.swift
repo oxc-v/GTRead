@@ -12,7 +12,6 @@ class GTAccountTextEditViewController: GTBaseViewController {
     
     private var textView: UITextView!
     private var saveButton: UIButton!
-    private var cancelBtn: UIButton!
     private var label: UILabel!
     private var sizeLabel: UILabel!
     private var contentView: UIView!
@@ -38,13 +37,6 @@ class GTAccountTextEditViewController: GTBaseViewController {
         
         self.view.backgroundColor = UIColor(hexString: "#f2f2f7")
         self.navigationItem.title = "编辑"
-        
-        cancelBtn = UIButton()
-        cancelBtn.setTitle("取消", for: .normal)
-        cancelBtn.setTitleColor(.systemBlue, for: .normal)
-        cancelBtn.addTarget(self, action: #selector(cancelBtnDidClicked), for: .touchUpInside)
-        let leftItems = [UIBarButtonItem(customView: cancelBtn)]
-        self.navigationItem.leftBarButtonItems = leftItems
         
         saveButton = UIButton()
         saveButton.isHidden = true
@@ -103,11 +95,6 @@ class GTAccountTextEditViewController: GTBaseViewController {
         }
     }
     
-    // cancelBtn clicked
-    @objc private func cancelBtnDidClicked() {
-        self.dismiss(animated: true)
-    }
-    
     // saveButton clicked
     @objc private func saveButtonDidClicked() {
         var nickName: String?
@@ -140,7 +127,7 @@ class GTAccountTextEditViewController: GTBaseViewController {
                     // 账户信息修改成功通知
                     NotificationCenter.default.post(name: .GTAccountInfoChanged, object: self)
                     self.showNotificationMessageView(message: "信息修改成功")
-                    self.dismiss(animated: true)
+                    self.navigationController?.popViewController(animated: true)
                 } else {
                     self.showNotificationMessageView(message: "信息修改失败")
                 }

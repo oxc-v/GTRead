@@ -32,6 +32,7 @@ class GTAccountManagerButtonTableViewCell: UITableViewCell {
         
         btn.isEnabled = true
         btn.setTitleColor(.systemBlue, for: .normal)
+        btn.removeTarget(nil, action: nil, for: .allEvents)
     }
     
     required init?(coder: NSCoder) {

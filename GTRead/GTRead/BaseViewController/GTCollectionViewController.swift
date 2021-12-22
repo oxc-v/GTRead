@@ -13,6 +13,7 @@ import Presentr
 class GTCollectionViewController: UICollectionViewController {
     
     private var loadingView: GTLoadingView!
+    private var notLoginView: GTGoLoginView!
     
     private var presenter: Presentr = {
         let width = ModalSize.fluid(percentage: 0.65)
@@ -34,6 +35,14 @@ class GTCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 设置加载动画
+        self.setupLoadingView()
+        // 设置登录提示视图
+        self.setupNotLoginView()
+    }
+    
+    // 设置加载动画
+    private func setupLoadingView() {
         loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 5)
         loadingView.layer.zPosition = 100
         loadingView.isAnimating = false
@@ -44,6 +53,32 @@ class GTCollectionViewController: UICollectionViewController {
         }
     }
     
+    // 设置登录提示视图
+    private func setupNotLoginView() {
+        notLoginView = GTGoLoginView()
+        notLoginView.isHidden = true
+        self.collectionView.addSubview(notLoginView)
+        notLoginView.snp.makeConstraints { make in
+            make.width.height.equalTo(580)
+            make.center.equalToSuperview()
+        }
+    }
+    
+    // 控制显示登录提示视图---供子类使用
+    func showNotLoginView(_ show: Bool) {
+        self.notLoginView.isHidden = !show
+    }
+    
+    // 显示loading view----供子类使用
+    func showActivityIndicatorView() {
+        loadingView.isAnimating = true
+    }
+    
+    // 隐藏loading view----供子类使用
+    func hideActivityIndicatorView() {
+        loadingView.isAnimating = false
+    }
+    
     func getPresenter(widthFluid: Float, heightFluid: Float) -> Presentr {
         let width = ModalSize.fluid(percentage: widthFluid)
         let height = ModalSize.fluid(percentage: heightFluid)
@@ -51,16 +86,6 @@ class GTCollectionViewController: UICollectionViewController {
         let customType = PresentationType.custom(width: width, height: height, center: center)
         presenter.presentationType = customType
         return presenter
-    }
-    
-    // 显示loading view
-    func showActivityIndicatorView() {
-        loadingView.isAnimating = true
-    }
-    
-    // 隐藏loading view
-    func hideActivityIndicatorView() {
-        loadingView.isAnimating = false
     }
     
     // 显示通知

@@ -19,11 +19,11 @@ class GTAccountManagerImgTableViewCell: UITableViewCell {
         
         imgView = UIImageView()
         imgView.contentMode = .scaleAspectFill
-        imgView.layer.cornerRadius = 30
+        imgView.layer.cornerRadius = 25
         imgView.clipsToBounds = true
         self.contentView.addSubview(imgView)
         imgView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(60)
+            make.height.width.equalTo(50)
             make.left.equalTo(16)
             make.centerY.equalToSuperview()
         }

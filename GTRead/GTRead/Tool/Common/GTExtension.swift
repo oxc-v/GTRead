@@ -9,8 +9,24 @@ import Foundation
 import UIKit
 
 extension Notification.Name {
-    // 用户登录
+    
+    // 打开登录弹窗
+    static let GTOpenLoginView = Notification.Name("GTOpenLoginView")
+    
+    // 打开注册弹窗
+    static let GTOpenRegisterView = Notification.Name("GTOpenRegisterView")
+    
+    // 打开修改密码弹窗
+    static let GTOpenUpdatePwdView = Notification.Name("GTOpenUpdatePwdView")
+    
+    // 登录成功
     static let GTLoginSuccessful = Notification.Name("GTLoginSuccessful")
+    
+    // 退出登录
+    static let GTExitAccount = Notification.Name("GTExitAccount")
+    
+    // 退出阅读界面
+    static let GTExitReadView = Notification.Name("GTExitReadView")
     
     // 修改用户信息
     static let GTAccountInfoChanged = Notification.Name("GTAccountInfoChanged")
@@ -21,7 +37,7 @@ extension Notification.Name {
     // 重新加载网络
     static let GTLoadNetwork = Notification.Name("GTLoadNetwork")
     
-    // 跳转个人主页
+    // 跳转个人主页----将来要删除
     static let GTGoPersonalViewController = Notification.Name("GTGoPersonalViewController")
     
     // 跳转到指定PDF页码
