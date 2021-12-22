@@ -455,13 +455,18 @@ class GTSearchViewController: GTTableViewController {
                 if self.exploreMoreDataModel != nil {
                     cell.dataModel = GTCustomComplexTableViewCellDataModel(lists: [GTCustomComplexTableViewCellDataModelItem(imgUrl: "", titleText: "", detailText: "", buttonClickedEvent: nil)], count: 0)
                     cell.dataModel?.lists?.removeAll()
+                    
+                    // 判断书籍是否已加入书库
                     for item in (self.exploreMoreDataModel?.lists)! {
                         var isExistShelf = false
-                        if GTCommonShelfDataModel != nil && GTCommonShelfDataModel?.count != -1 {
-                            isExistShelf = (GTCommonShelfDataModel?.lists)!.contains {$0.bookId == item.bookId}
+                        if let shelfDataModel: GTShelfDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel) {
+                            if shelfDataModel.count != -1 {
+                                isExistShelf = (shelfDataModel.lists)!.contains {$0.bookId == item.bookId}
+                            }
                         }
                         cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.downInfo.bookHeadUrl, titleText: item.baseInfo.bookName, detailText: item.baseInfo.authorName, buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
                     }
+                    
                     cell.dataModel?.count = (self.exploreMoreDataModel?.lists?.count)!
                 }
                 cell.collectionView.reloadSections(IndexSet(integer: 0))

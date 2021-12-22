@@ -123,7 +123,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
         }, success: { (json) in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTPersonalRegisterModel.self, from: data!) {
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                 if dataModel.code == -1 {
                     self.loadingView.isAnimating = false
                     self.loginErrorBtn?.setTitle("账号或密码错误", for: .normal)

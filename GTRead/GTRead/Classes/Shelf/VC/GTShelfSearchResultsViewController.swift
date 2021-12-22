@@ -40,7 +40,7 @@ class GTShelfSearchResultsViewController: GTTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.dataModel = GTCommonShelfDataModel
+        self.dataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
         self.searchModel = self.dataModel
     }
     

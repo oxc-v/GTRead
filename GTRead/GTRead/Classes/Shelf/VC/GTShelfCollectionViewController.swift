@@ -38,6 +38,8 @@ class GTShelfCollectionViewController: GTCollectionViewController {
             } else {
                 editButton.isEnabled = true
             }
+            
+            self.collectionView.reloadData()
         }
     }
     private var isSeletedAll: Bool = false {
@@ -85,7 +87,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         // LongGesture
         self.setupLongGestureRecognizerOnCollection()
         // 加载书架数据
-        self.getShelfDataFromServer()
+        self.loadShelfData()
         
         // 注册添加书籍到书库的通知
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTAddBookToShelf, object: nil)
@@ -249,7 +251,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         self.dataModel = nil
         self.accountInfoDataModel = nil
         self.accountBtnReloadImg()
-        self.collectionView.reloadData()
     }
     
     // 响应打开登录视图通知
@@ -337,10 +338,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 self.showNotificationMessageView(message: "服务器数据错误")
             } else if dataModel?.FailBookIds == nil {
                 self.showNotificationMessageView(message: "书籍删除成功")
-                // 刷新书库界面
-                DispatchQueue.main.async {
-                    self.collectionView.reloadData()
-                }
                 // 发送书籍删除的通知
                 NotificationCenter.default.post(name: .GTDeleteBookToShelf, object: self)
             } else {
@@ -349,18 +346,21 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         })
     }
     
-    // 从本地缓存加载书架数据
-    private func getShelfDataFromDisk() {
-        if let obj: GTShelfDataModel = GTDiskCache.shared.getObjectData((self.accountInfoDataModel?.userId ?? "") + "_shelf_view") {
-            self.dataModel = obj
-            GTCommonShelfDataModel = dataModel
-            self.collectionView.reloadData()
-        }
+    // 加载书架数据
+    private func loadShelfData() {
+        self.getShelfDataFromServer()
+    }
+    
+    // 从本地配置加载书架数据
+    private func getShelfDataFromUserDefaults() {
+        self.dataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
     }
     
     // 从服务器拉取书架数据
     @objc private func getShelfDataFromServer() {
+        
         self.showActivityIndicatorView()
+        
         GTNet.shared.getShelfBook(failure: { json in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
@@ -368,29 +368,24 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 self.showNotificationMessageView(message: "网络连接不可用")
             }
             
-            self.hideActivityIndicatorView()
-            // 从本地缓存加载书架数据
-            self.getShelfDataFromDisk()
-        }, success: { json in
-            self.hideActivityIndicatorView()
+            // 从本地配置加载书架数据
+            self.getShelfDataFromUserDefaults()
             
+            self.hideActivityIndicatorView()
+        }, success: { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             let dataModel = try? decoder.decode(GTShelfDataModel.self, from: data!)
             if dataModel != nil {
                 self.dataModel = dataModel
-                // 更新全局书库数据对象
-                GTCommonShelfDataModel = self.dataModel
-                // 对书库数据进行本地缓存
-                GTDiskCache.shared.saveObjectData((self.accountInfoDataModel?.userId ?? "") + "_shelf_view", value: self.dataModel)
+                
+                // 将书架数据写入配置中
+                GTUserDefault.shared.set(self.dataModel, forKey: GTUserDefaultKeys.GTShelfDataModel)
             } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
             
-            // 更新书库界面
-            DispatchQueue.main .async {
-                self.collectionView.reloadData()
-            }
+            self.hideActivityIndicatorView()
         })
     }
     

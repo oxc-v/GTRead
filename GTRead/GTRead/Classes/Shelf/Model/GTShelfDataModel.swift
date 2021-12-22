@@ -35,4 +35,4 @@ struct GTShelfDataModel: Codable {
 //}
 
 // 全局书库对象
-var GTCommonShelfDataModel: GTShelfDataModel?
+//var GTCommonShelfDataModel: GTShelfDataModel?

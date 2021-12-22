@@ -99,7 +99,7 @@ class GTAccountRegistTableViewController: GTTableViewController {
                 // 提取数据
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
-                if let dataModel = try? decoder.decode(GTPersonalRegisterModel.self, from: data!) {
+                if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                     if dataModel.code == -1 {
                         self.showLoadingView(false)
                         self.loginErrLab.text = "注册失败，此账号已存在"

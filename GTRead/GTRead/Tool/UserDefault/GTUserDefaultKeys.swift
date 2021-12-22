@@ -12,10 +12,15 @@ struct GTUserDefaultKeys {
     
     // 账户密码
     static let GTAccountPassword = "GTAccountPassword"
+    
     // 账户信息
     static let GTAccountDataModel = "GTAccountDataModel"
+    
     // 搜索记录
     static let GTSearchHistoryDataModel = "GTSearchHistoryDataModel"
+    
+    // 书架数据
+    static let GTShelfDataModel = "GTShelfDataModel"
     
     // 每日目标
     struct EveryDayReadTarget {
