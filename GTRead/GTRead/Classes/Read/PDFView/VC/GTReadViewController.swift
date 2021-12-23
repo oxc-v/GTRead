@@ -22,8 +22,15 @@ class GTReadViewController: EyeTrackViewController {
     
     //MARK: -PDF 相关
     private var pdfdocument: PDFDocument?
+    private var pageLabel: UILabel!
     let pdfURL: URL // pdf路径
-    var currentPage = 0
+    var currentPage = 0 {
+        didSet {
+            if pageLabel != nil {
+                pageLabel.text = String(currentPage + 1)
+            }
+        }
+    }
     lazy var pdfView: PDFView = {
         let pdfView = PDFView()
         pdfView.autoScales = true
@@ -37,7 +44,6 @@ class GTReadViewController: EyeTrackViewController {
     var eyeTrackController: EyeTrackController!
     var correctPoints = [CGPoint]()
     var trackView: UIImageView!
-    var trackPointLabel: UILabel!
     var trackCorrectView: UIImageView!
     var trackCorrectViewPoints = [CGPoint]()
     var correctPointsSet = [[CGPoint]]()
@@ -172,6 +178,17 @@ class GTReadViewController: EyeTrackViewController {
         NotificationCenter.default.addObserver(self,selector: #selector(handlePageChange(notification:)), name: Notification.Name.PDFViewPageChanged, object: nil)
         let tap = UITapGestureRecognizer(target: self, action: #selector(pdfViewTapEvent))
         pdfView.addGestureRecognizer(tap)
+        
+        pageLabel = UILabel()
+        pageLabel.textColor = UIColor(hexString: "#b4b4b4")
+        pageLabel.textAlignment = .center
+        pageLabel.text = String(self.currentPage + 1)
+        pageLabel.font = UIFont.systemFont(ofSize: 15)
+        self.view.addSubview(pageLabel)
+        pageLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-20)
+        }
     }
     
     func setupGateTrackView() {
@@ -180,16 +197,6 @@ class GTReadViewController: EyeTrackViewController {
         trackView.image = UIImage(named: "track_icon")
         trackView.isHidden = false
         self.view.addSubview(trackView)
-        
-        trackPointLabel = UILabel()
-        trackPointLabel.textAlignment = .center
-        trackPointLabel.font = UIFont.systemFont(ofSize: 15)
-        self.trackView.addSubview(trackPointLabel)
-        trackPointLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(10)
-            make.width.equalTo(200)
-        }
         
         trackCorrectView = UIImageView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
         trackCorrectView.contentMode = .scaleToFill
@@ -208,10 +215,8 @@ class GTReadViewController: EyeTrackViewController {
             let correctPoint = self?.sightDataModel.getCorrectSightData(p: self?.sightPoint ?? CGPoint())
             if self?.sightDataModel.isCorrect == true {
                 self?.trackView.center = correctPoint ?? CGPoint()
-                self?.trackPointLabel.text = String(format: "%.2f", Double(correctPoint!.x)) + "，" + String(format: "%.2f", Double(correctPoint!.y))
             } else {
                 self?.trackView.center = point
-                self?.trackPointLabel.text = String(format: "%.2f", Double(point.x)) + "，" + String(format: "%.2f", Double(point.y))
             }
         }
         self.initialize(eyeTrack: eyeTrackController.eyeTrack)
@@ -327,7 +332,6 @@ class GTReadViewController: EyeTrackViewController {
                 popoverController.sourceView = sender
                 popoverController.sourceRect = CGRect(x: sender.frame.size.width / 2.0, y: sender.frame.size.height, width: 0, height: 0)
                 popoverController.permittedArrowDirections = .up
-                popoverController.delegate = self
             }
             self.present(nav, animated: true)
         }
@@ -382,8 +386,4 @@ extension GTReadViewController: GTThumbnailGridViewControllerDelegate {
         pdfView.go(to: page)
         self.dismiss(animated: true, completion: nil)
     }
-}
-
-extension GTReadViewController: UIPopoverPresentationControllerDelegate {
-    
 }

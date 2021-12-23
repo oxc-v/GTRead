@@ -57,6 +57,9 @@ extension Notification.Name {
     
     // GTExploreMoreBookCell 点击
     static let GTExploreMoreBookCellCollectionViewCellClicked = Notification.Name("GTExploreMoreBookCellCollectionViewCellClicked")
+    
+    // 书架数据更新
+    static let GTShelfDataUpdate = Notification.Name("GTShelfDataUpdate")
 }
 
 extension UIViewController {

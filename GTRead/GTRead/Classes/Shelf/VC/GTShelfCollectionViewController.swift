@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MJRefresh
 import SnapKit
 import SDWebImage
 import Presentr
@@ -40,6 +39,9 @@ class GTShelfCollectionViewController: GTCollectionViewController {
             }
             
             self.collectionView.reloadData()
+            
+            // 发送书架数据更新通知，供搜索页使用
+            NotificationCenter.default.post(name: .GTShelfDataUpdate, object: self)
         }
     }
     private var isSeletedAll: Bool = false {

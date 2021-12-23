@@ -15,10 +15,10 @@ target 'GTRead' do
   pod 'Charts'
   pod 'SwiftEntryKit', '~> 2.0.0'
   pod "Fuse"
-  pod 'SwiftyPickerPopover'
-  pod 'Glideshow'
+  #pod 'SwiftyPickerPopover'
   pod 'Cosmos', '~> 23.0'
   pod 'Presentr'
+  pod 'UIImageColors'
 
   target 'GTReadTests' do
     inherit! :search_paths

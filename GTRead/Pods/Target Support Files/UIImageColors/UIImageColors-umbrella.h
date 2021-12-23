@@ -10,8 +10,7 @@
 #endif
 #endif
 
-#import "Glideshow.h"
 
-FOUNDATION_EXPORT double GlideshowVersionNumber;
-FOUNDATION_EXPORT const unsigned char GlideshowVersionString[];
+FOUNDATION_EXPORT double UIImageColorsVersionNumber;
+FOUNDATION_EXPORT const unsigned char UIImageColorsVersionString[];
 

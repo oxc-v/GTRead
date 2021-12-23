@@ -23,6 +23,7 @@ class GTSearchViewController: GTTableViewController {
     private var accountInfoDataModel: GTAccountInfoDataModel?
     private var exploreMoreDataModel: GTExploreMoreDataModel?
     private var hotSearchWordDataModel: GTHotSearchWordDataModel?
+    
     private var searchHistoryDataModel: GTSearchHistoryDataModel? {
         didSet {
             if searchHistoryDataModel == nil {
@@ -31,6 +32,7 @@ class GTSearchViewController: GTTableViewController {
             self.tableView.reloadData()
         }
     }
+    
     private var isBeginSearch = false {
         didSet {
             if isBeginSearch && self.searchHistoryDataModel != nil {
@@ -41,6 +43,7 @@ class GTSearchViewController: GTTableViewController {
             self.tableView.reloadData()
         }
     }
+    
     private var dataLoadFinished: Int = 0 {
         didSet{
             if dataLoadFinished == 2 {
@@ -66,8 +69,6 @@ class GTSearchViewController: GTTableViewController {
         // scrollView
         self.setupTableView()
         
-        // 显示加载动画
-        self.showActivityIndicatorView()
         // 加载搜索页面数据
         self.getSearchViewData()
         // 读取本地历史搜索记录
@@ -86,15 +87,18 @@ class GTSearchViewController: GTTableViewController {
         // 注册书本下载完毕通知
         NotificationCenter.default.addObserver(self, selector: #selector(downloadBookFinishedNotification(notification:)), name: .GTDownloadBookFinished, object: nil)
         // 注册用户登录的通知
-        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTLoginSuccessful, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleLoginSuccessfulNotification), name: .GTLoginSuccessful, object: nil)
         // 注册退出登录通知
-        NotificationCenter.default.addObserver(self, selector: #selector(accountBtnReloadImg), name: .GTExitAccount, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleExitAccountNotification), name: .GTExitAccount, object: nil)
         // 注册打开登录视图通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleOpenLoginViewNotification), name: .GTOpenLoginView, object: nil)
         // 注册打开注册视图通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleOpenRegisterViewNotification), name: .GTOpenRegisterView, object: nil)
         // 注册打开修改密码视图通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleOpenUpdatePwdViewNotification), name: .GTOpenUpdatePwdView, object: nil)
+        // 书架数据更新通知
+        NotificationCenter.default.addObserver(self, selector: #selector(handleShelfDataUpdateNotification), name: .GTShelfDataUpdate, object: nil)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -158,6 +162,7 @@ class GTSearchViewController: GTTableViewController {
     
     // 加载搜索页面数据
     @objc private func getSearchViewData() {
+        self.showActivityIndicatorView()
         self.getExploreMoreBookData()
         self.getHotSearchWordData()
     }
@@ -348,6 +353,21 @@ class GTSearchViewController: GTTableViewController {
                 })
             })
         }
+    }
+    
+    // 响应书架数据更新通知
+    @objc private func handleShelfDataUpdateNotification() {
+        self.tableView.reloadData()
+    }
+    
+    // 响应登录通知
+    @objc private func handleLoginSuccessfulNotification() {
+        self.accountBtnReloadImg()
+    }
+    
+    // 响应退出登录通知
+    @objc private func handleExitAccountNotification() {
+        self.accountBtnReloadImg()
     }
     
     // 响应打开登录视图通知

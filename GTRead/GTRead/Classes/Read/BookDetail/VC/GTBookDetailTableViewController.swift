@@ -27,12 +27,6 @@ class GTBookDetailTableViewController: GTTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let navigationBar = self.navigationController?.navigationBar
-//        let navigationBarAppearance = UINavigationBarAppearance()
-//        navigationBarAppearance.shadowColor = .clear
-//        navigationBar?.scrollEdgeAppearance = navigationBarAppearance
-        self.view.backgroundColor = .white
-        
         // NavigationBar
         self.setupNavigationBar()
         // tableView

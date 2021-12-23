@@ -18,7 +18,8 @@ class GTCustomComplexTableViewCell: UITableViewCell {
     var button: UIButton!
     var cosmosView: CosmosView!
     private var baseView: UIView!
-    var buttonClickedEvent: ((_ sender: UIButton) -> Void)?
+    
+    var buttonClickedEvent: ((_ sender: UIButton) -> Void)? 
     
     var isCustomFrame = false
     
@@ -120,6 +121,7 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         self.detailLabel.text = ""
         self.imgView.image = nil
         self.buttonClickedEvent = nil
+        self.loadingView.isHidden = true
     }
     
     override var frame: CGRect {

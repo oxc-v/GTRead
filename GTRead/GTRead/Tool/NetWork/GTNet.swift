@@ -425,11 +425,9 @@ extension GTNet {
     // 搜索书籍
     func searchBookInfoFun(words: String, dayTime: String, count: Int, offset: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["words": words, "dayTime": dayTime, "count" : count, "offset": offset] as [String : Any]
-        print(params)
         self.requestWith(url: "http://39.105.217.90:8002/bookCityService/FuzzySearchBooksFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
-            print(error)
             failure(error)
         }
     }

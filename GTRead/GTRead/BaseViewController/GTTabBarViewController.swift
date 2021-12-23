@@ -44,10 +44,10 @@ class GTTabBarViewController: UITabBarController {
         analyseItem.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 13)], for: .normal)
         analyseNav.tabBarItem = analyseItem
         
-        // 图书商店
-        let storeNav = GTBaseNavigationViewController(rootViewController: GTBookStoreViewController())
-        let storeItem = UITabBarItem(title: "图书商店", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
-        storeItem.imageInsets = UIEdgeInsets(top: 10, left: -95, bottom: -10, right: 0)
+        // 书城
+        let storeNav = GTBaseNavigationViewController(rootViewController: GTBookStoreTableViewController(style: .grouped))
+        let storeItem = UITabBarItem(title: "书城", image: UIImage(named: "store"), selectedImage: UIImage(named: "store"))
+        storeItem.imageInsets = UIEdgeInsets(top: 10, left: -65, bottom: -10, right: 0)
         storeItem.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 13)], for: .normal)
         storeNav.tabBarItem = storeItem
         

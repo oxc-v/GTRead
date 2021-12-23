@@ -136,7 +136,6 @@ class GTAnalyseTableViewController: GTTableViewController {
     
     // 响应登录成功通知
     @objc private func handleLoginSuccessfulNotification() {
-        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.accountBtnReloadImg()
     }
     
@@ -148,7 +147,6 @@ class GTAnalyseTableViewController: GTTableViewController {
     // 响应退出登录通知
     @objc private func handleExitAccountNotification() {
         self.dataModel = nil
-        self.accountInfoDataModel = nil
         self.accountBtnReloadImg()
     }
     

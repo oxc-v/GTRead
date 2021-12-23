@@ -108,16 +108,13 @@ class GTTableViewController: UITableViewController {
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion: nil)
     }
-}
-
-extension GTTableViewController {
     
     // 设置加载动画
     private func setupLoadingView() {
         loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 5)
         loadingView.layer.zPosition = 100
         loadingView.isAnimating = false
-        self.view.addSubview(loadingView)
+        self.tableView.addSubview(loadingView)
         loadingView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.height.width.equalTo(40)
