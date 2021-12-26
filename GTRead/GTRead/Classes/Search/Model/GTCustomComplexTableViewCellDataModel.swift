@@ -17,5 +17,6 @@ struct GTCustomComplexTableViewCellDataModelItem {
     var imgUrl: String
     var titleText: String
     var detailText: String
+    var rating: Double
     var buttonClickedEvent: ((_ sender: UIButton) -> Void)?
 }

@@ -13,7 +13,7 @@ class GTReadDetailCollectionViewCell: UICollectionViewCell {
     private var titleLabel: UILabel!
     private var dataLabel: UILabel!
     private var imgView: UIImageView!
-    private var baseView: UIView!
+    private var baseView: GTShadowView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,10 +23,9 @@ class GTReadDetailCollectionViewCell: UICollectionViewCell {
     
     private func setupView() {
 
-        baseView = UIView()
+        baseView = GTShadowView(opacity: 0.1)
         baseView.backgroundColor = .white
         baseView.layer.cornerRadius = 10
-        baseView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.1)
         self.contentView.addSubview(baseView)
         baseView.snp.makeConstraints { make in
             make.size.equalToSuperview()

@@ -11,13 +11,14 @@ import Cosmos
 
 class GTCustomComplexTableViewCell: UITableViewCell {
 
+    private var gtImgView: GTShadowImageView!
+    
     var imgView: UIImageView!
     var loadingView: GTLoadingView!
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var button: UIButton!
     var cosmosView: CosmosView!
-    private var baseView: UIView!
     
     var buttonClickedEvent: ((_ sender: UIButton) -> Void)? 
     
@@ -25,28 +26,18 @@ class GTCustomComplexTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        baseView = UIView()
-        baseView.backgroundColor = .clear
-        baseView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.3)
-        self.contentView.addSubview(baseView)
-        baseView.snp.makeConstraints { make in
+
+        gtImgView = GTShadowImageView()
+        gtImgView.imgView.contentMode = .scaleAspectFill
+        gtImgView.imgView.clipsToBounds = true
+        gtImgView.imgView.layer.masksToBounds = true
+        gtImgView.imgView.layer.cornerRadius = 5
+        imgView = gtImgView.imgView
+        self.contentView.addSubview(gtImgView)
+        gtImgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.left.equalTo(20)
             make.height.equalToSuperview().multipliedBy(0.8)
-            make.width.equalTo(baseView.snp.height).multipliedBy(0.7)
-        }
-        
-        imgView = UIImageView()
-        imgView.contentMode = .scaleAspectFill
-        imgView.clipsToBounds = true
-        imgView.layer.masksToBounds = true
-        imgView.layer.cornerRadius = 5
-        baseView.addSubview(imgView)
-        imgView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.left.equalTo(self.contentView.snp.left)
-            make.width.height.equalToSuperview()
+            make.width.equalTo(imgView.snp.height).multipliedBy(0.7)
         }
         
         detailLabel = UILabel()
@@ -73,7 +64,6 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         }
         
         cosmosView = CosmosView()
-        cosmosView.rating = 3.5
         cosmosView.settings.fillMode = .precise
         cosmosView.settings.updateOnTouch = false
         cosmosView.settings.starSize = 12

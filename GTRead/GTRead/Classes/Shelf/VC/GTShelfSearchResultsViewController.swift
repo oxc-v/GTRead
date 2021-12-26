@@ -61,6 +61,7 @@ class GTShelfSearchResultsViewController: GTTableViewController {
         cell.titleLabel.text = self.searchModel?.lists?[indexPath.row].baseInfo.bookName
         cell.detailLabel.text = self.searchModel?.lists?[indexPath.row].baseInfo.authorName
         cell.button.isHidden = true
+        cell.cosmosView.rating = Double((self.dataModel?.lists?[indexPath.row].gradeInfo.averageScore)!)
 
         return cell
     }

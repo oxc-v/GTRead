@@ -57,6 +57,7 @@ extension GTCustomComplexCollectionViewCell: UITableViewDelegate, UITableViewDat
         cell.buttonClickedEvent = dataModel?.buttonClickedEvent
         cell.button.isHidden = dataModel?.buttonClickedEvent == nil ? true : false
         cell.button.tag = cellIndex
+        cell.cosmosView.rating = dataModel?.rating ?? 0
         cell.selectionStyle = .none
         cell.separatorInset = UIEdgeInsets(top: 0, left: 86, bottom: 0, right: 0)
         if isHideLine {

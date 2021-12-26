@@ -11,9 +11,10 @@ import Cosmos
 
 class GTBookCoverTableViewCell: UITableViewCell {
     
-    private var baseView: UIView!
+    private var gtImgView: GTShadowImageView!
     private var separatorView: UIView!
     private var loadingView: GTLoadingView!
+    
     var imgView: UIImageView!
     var titleLabel: UILabel!
     var detailLabel: UILabel!
@@ -27,27 +28,18 @@ class GTBookCoverTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        baseView = UIView()
-        baseView.backgroundColor = .clear
-        baseView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.3)
-        self.contentView.addSubview(baseView)
-        baseView.snp.makeConstraints { make in
+        gtImgView = GTShadowImageView(opacity: 0.2)
+        gtImgView.imgView.contentMode = .scaleAspectFill
+        gtImgView.imgView.clipsToBounds = true
+        gtImgView.imgView.layer.masksToBounds = true
+        gtImgView.imgView.layer.cornerRadius = 5
+        self.imgView = gtImgView.imgView
+        self.contentView.addSubview(gtImgView)
+        gtImgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.left.equalTo(20)
+            make.left.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.8)
-            make.width.equalTo(baseView.snp.height).multipliedBy(0.7)
-        }
-        
-        imgView = UIImageView()
-        imgView.contentMode = .scaleAspectFill
-        imgView.clipsToBounds = true
-        imgView.layer.masksToBounds = true
-        imgView.layer.cornerRadius = 5
-        baseView.addSubview(imgView)
-        imgView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.left.equalTo(self.contentView.snp.left)
-            make.width.height.equalToSuperview()
+            make.width.equalTo(gtImgView.snp.height).multipliedBy(0.7)
         }
         
         titleLabel = UILabel()
@@ -56,8 +48,8 @@ class GTBookCoverTableViewCell: UITableViewCell {
         titleLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(imgView.snp.top).offset(15)
-            make.left.equalTo(imgView.snp.right).offset(50)
+            make.top.equalTo(gtImgView.snp.top).offset(15)
+            make.left.equalTo(gtImgView.snp.right).offset(50)
             make.right.equalToSuperview().offset(-50)
         }
         
@@ -98,7 +90,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
             make.left.equalTo(titleLabel.snp.left)
             make.right.equalToSuperview()
             make.height.equalTo(50)
-            make.bottom.equalTo(imgView.snp.bottom).offset(-50 - 20)
+            make.bottom.equalTo(gtImgView.snp.bottom).offset(-50 - 20)
         }
         
         addShelfBtn = UIButton()
@@ -115,7 +107,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
         self.contentView.addSubview(addShelfBtn)
         addShelfBtn.snp.makeConstraints { make in
             make.left.equalTo(detailLabel.snp.left)
-            make.bottom.equalTo(imgView.snp.bottom)
+            make.bottom.equalTo(gtImgView.snp.bottom)
             make.right.equalTo(startReadBtn.snp.centerX).offset(-30)
             make.height.equalTo(startReadBtn.snp.height)
         }
@@ -135,7 +127,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
         editCommentBtn.snp.makeConstraints { make in
             make.right.equalToSuperview()
             make.left.equalTo(startReadBtn.snp.centerX).offset(-20)
-            make.bottom.equalTo(imgView.snp.bottom)
+            make.bottom.equalTo(gtImgView.snp.bottom)
             make.height.equalTo(startReadBtn.snp.height)
         }
         

@@ -15,6 +15,7 @@ class GTSearchResultsViewController: GTTableViewController {
     private var loadingView: GTLoadingView!
     
     private var dataModel: GTSearchBookDataModel?
+
     private let cellHeight: CGFloat = 150
     private var searchOffset: Int = 0
     private var searchWord: String = ""
@@ -140,8 +141,17 @@ class GTSearchResultsViewController: GTTableViewController {
             if model == nil {
                 self.showNotificationMessageView(message: "服务器数据错误")
             } else if model?.count != -1 {
-                self.dataModel = model
-                self.searchOffset += 1
+                
+                if self.dataModel != nil {
+                    for item in model!.lists! {
+                        self.dataModel?.lists?.append(item)
+                    }
+                    self.searchOffset += model!.lists!.count
+                } else {
+                    self.dataModel = model
+                    self.searchOffset += self.dataModel!.lists!.count
+                }
+                
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
@@ -185,6 +195,7 @@ extension GTSearchResultsViewController {
         cell.imgView.sd_setImage(with: URL(string: self.dataModel?.lists?[indexPath.row].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
         cell.titleLabel.text = self.dataModel?.lists?[indexPath.row].baseInfo.bookName
         cell.detailLabel.text = self.dataModel?.lists?[indexPath.row].baseInfo.authorName
+        cell.cosmosView.rating = Double((self.dataModel?.lists?[indexPath.row].gradeInfo.averageScore)!)
         
         // 判断书籍是否已加入书库
         if self.dataModel != nil {
@@ -212,8 +223,10 @@ extension GTSearchResultsViewController {
 extension GTSearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         
-        // 重置步长
+        // 重置步长和数据
         self.searchOffset = 0
+        self.dataModel = nil
+        self.tableView.reloadData()
         
         let trimmedString = (searchController.searchBar.text ?? " ").trimmingCharacters(in: .whitespaces)
         if !trimmedString.isEmpty {

@@ -19,6 +19,7 @@ target 'GTRead' do
   pod 'Cosmos', '~> 23.0'
   pod 'Presentr'
   pod 'UIImageColors'
+  pod 'SideMenu'
 
   target 'GTReadTests' do
     inherit! :search_paths

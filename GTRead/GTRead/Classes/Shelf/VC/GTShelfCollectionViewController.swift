@@ -127,7 +127,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     private func initVariates() {
         self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         itemWidth = floor((UIScreen.main.bounds.width - 2 * GTViewMargin - (CGFloat(itemCountInRow - 1) * itemMargin)) / CGFloat(itemCountInRow))
-        itemHeight = floor(itemWidth * 1.60)
+        itemHeight = floor(itemWidth * 1.33)
     }
     
     // 导航条
@@ -465,7 +465,7 @@ extension GTShelfCollectionViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return 30
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

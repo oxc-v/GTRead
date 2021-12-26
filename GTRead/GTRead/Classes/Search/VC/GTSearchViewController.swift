@@ -123,7 +123,8 @@ class GTSearchViewController: GTTableViewController {
         let vc = GTSearchResultsViewController()
         searchController = UISearchController(searchResultsController: vc)
         searchController.loadViewIfNeeded()
-        searchController.searchBar.placeholder = "搜索图书、作者"
+        searchController.searchBar.placeholder = "搜索图书"
+        searchController.searchBar.scopeButtonTitles = ["书名", "作者", "出版社", "类别"]
         searchController.searchBar.searchBarStyle = .default
         searchController.searchBar.delegate = self
         searchController.delegate = self
@@ -473,7 +474,7 @@ class GTSearchViewController: GTTableViewController {
                 cell.selectionStyle = .none
                 
                 if self.exploreMoreDataModel != nil {
-                    cell.dataModel = GTCustomComplexTableViewCellDataModel(lists: [GTCustomComplexTableViewCellDataModelItem(imgUrl: "", titleText: "", detailText: "", buttonClickedEvent: nil)], count: 0)
+                    cell.dataModel = GTCustomComplexTableViewCellDataModel(lists: [GTCustomComplexTableViewCellDataModelItem(imgUrl: "", titleText: "", detailText: "", rating: 0, buttonClickedEvent: nil)], count: 0)
                     cell.dataModel?.lists?.removeAll()
                     
                     // 判断书籍是否已加入书库
@@ -484,7 +485,7 @@ class GTSearchViewController: GTTableViewController {
                                 isExistShelf = (shelfDataModel.lists)!.contains {$0.bookId == item.bookId}
                             }
                         }
-                        cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.downInfo.bookHeadUrl, titleText: item.baseInfo.bookName, detailText: item.baseInfo.authorName, buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
+                        cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.downInfo.bookHeadUrl, titleText: item.baseInfo.bookName, detailText: item.baseInfo.authorName, rating: Double(item.gradeInfo.averageScore), buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
                     }
                     
                     cell.dataModel?.count = (self.exploreMoreDataModel?.lists?.count)!

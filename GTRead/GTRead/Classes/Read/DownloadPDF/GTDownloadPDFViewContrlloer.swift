@@ -12,8 +12,8 @@ import Alamofire
 
 class GTDownloadPDFViewContrlloer: GTBaseViewController {
     
-    private var baseView: UIView!
     private var finishedBtn: UIButton!
+    private var gtImageView: GTShadowImageView!
     private var pdfImageView: UIImageView!
     private var progressView: UIProgressView!
     private var progressLabel: UILabel!
@@ -36,25 +36,17 @@ class GTDownloadPDFViewContrlloer: GTBaseViewController {
         
         self.setupNavigationBar()
         
-        baseView = UIView()
-        baseView.backgroundColor = .clear
-        baseView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.2)
-        self.view.addSubview(baseView)
-        baseView.snp.makeConstraints { make in
+        gtImageView = GTShadowImageView(opacity: 0.15)
+        gtImageView.imgView.layer.cornerRadius = 5
+        gtImageView.imgView.clipsToBounds = true
+        gtImageView.imgView.sd_setImage(with: URL(string: self.dataModel.downInfo.bookHeadUrl), placeholderImage: UIImage(named: "book_placeholder"))
+        self.pdfImageView = gtImageView.imgView
+        self.view.addSubview(gtImageView)
+        gtImageView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
             make.top.equalTo(100)
             make.width.equalTo(200)
             make.height.equalTo(270)
-        }
-        
-        pdfImageView = UIImageView()
-        pdfImageView.layer.cornerRadius = 5
-        pdfImageView.clipsToBounds = true
-        pdfImageView.sd_setImage(with: URL(string: self.dataModel.downInfo.bookHeadUrl), placeholderImage: UIImage(named: "book_placeholder"))
-        baseView.addSubview(pdfImageView)
-        pdfImageView.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self.view.snp.centerX)
-            make.width.height.equalToSuperview()
         }
 
         bookNameLabel = UILabel()

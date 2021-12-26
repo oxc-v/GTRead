@@ -10,37 +10,37 @@ import UIKit
 
 class GTAdCollectionViewCell: UICollectionViewCell {
     
-    private var baseView: UIView!
+    private var baseView: GTShadowView!
     
     var titleLabel: UILabel!
     var imgView: UIImageView!
-    var bgView: UIView!
+    var bgView: GTShadowView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         titleLabel = UILabel()
         titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 21)
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.numberOfLines = 0
         self.contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.width.top.equalToSuperview()
+            make.height.equalTo(55)
         }
         
-        bgView = UIView()
+        bgView = GTShadowView(opacity: 0.1)
         bgView.backgroundColor = .white
         bgView.layer.cornerRadius = 15
-        bgView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.1)
         self.contentView.addSubview(bgView)
         bgView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.bottom.width.equalToSuperview()
         }
         
-        baseView = UIView()
+        baseView = GTShadowView(opacity: 0.15)
         baseView.backgroundColor = .clear
-        baseView.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.3)
         self.bgView.addSubview(baseView)
         baseView.snp.makeConstraints { make in
             make.center.equalToSuperview()

@@ -78,7 +78,7 @@ extension GTAdTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTAdCollectionViewCell", for: indexPath) as! GTAdCollectionViewCell
-        cell.titleLabel.text = self.dataModel?.lists?[indexPath.section].baseInfo.bookName
+        cell.titleLabel.text = (self.dataModel?.lists?[indexPath.section].baseInfo.bookName ?? "") + "这本书真的很不错咧，乃当今天下第一书"
         cell.imgView.sd_setImage(with: URL(string: self.dataModel?.lists?[indexPath.section].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
         cell.imgView.image?.getColors(quality: .high) { colors in
             guard let colors = colors else { return }
@@ -92,7 +92,7 @@ extension GTAdTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! GTAdCollectionViewCell
         cell.clickedAnimation(withDuration: 0.1, completion: { _ in
-            let vc =  GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController(self.dataModel!.lists![indexPath.row]))
+            let vc =  GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController(self.dataModel!.lists![indexPath.section]))
             self.viewController?.present(vc, animated: true)
         })
     }
@@ -100,7 +100,7 @@ extension GTAdTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
 
 extension GTAdTableViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 360, height: 280)
+        return CGSize(width: 370, height: 310)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

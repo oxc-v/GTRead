@@ -12,19 +12,16 @@ class GTShelfCollectionViewCell: UICollectionViewCell {
     
     lazy var selectedStatu: Bool = false
     
-    lazy var baseView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.addShadow(offset: CGSize(width: 3, height: 3), color: UIColor.black, radius: 5, opacity: 0.2)
-        return view
+    lazy var gtImageView: GTShadowImageView = {
+        let imageView = GTShadowImageView(opacity: 0.25)
+        imageView.imgView.contentMode = .scaleAspectFill
+        imageView.imgView.layer.cornerRadius = 5
+        imageView.imgView.clipsToBounds = true
+        return imageView
     }()
     
     lazy var pdfImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 5
-        imageView.clipsToBounds = true
-        return imageView
+        return gtImageView.imgView
     }()
     
     lazy var circleImageView: UIImageView = {
@@ -46,29 +43,21 @@ class GTShelfCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
-        self.contentView.addSubview(baseView)
-        baseView.addSubview(pdfImageView)
+        self.contentView.addSubview(gtImageView)
         self.contentView.addSubview(circleImageView)
         self.contentView.addSubview(rightImageView)
-        
-        baseView.snp.makeConstraints { make in
-            make.left.equalTo(10)
-            make.width.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.9)
-        }
-        pdfImageView.snp.makeConstraints { (make) in
-            make.width.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.9)
-            make.centerX.equalTo(self.contentView.snp.centerX)
+
+        gtImageView.snp.makeConstraints { (make) in
+            make.width.height.equalToSuperview()
         }
         circleImageView.snp.makeConstraints { (make) in
-            make.right.equalTo(pdfImageView.snp.right)
-            make.top.equalTo(pdfImageView.snp.top)
+            make.right.equalTo(gtImageView.snp.right)
+            make.top.equalTo(gtImageView.snp.top)
             make.width.height.equalTo(30)
         }
         rightImageView.snp.makeConstraints { (make) in
-            make.right.equalTo(pdfImageView.snp.right)
-            make.top.equalTo(pdfImageView.snp.top)
+            make.right.equalTo(gtImageView.snp.right)
+            make.top.equalTo(gtImageView.snp.top)
             make.width.height.equalTo(30)
         }
     }

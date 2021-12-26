@@ -8,12 +8,17 @@
 import Foundation
 import UIKit
 import SDWebImage
+import SideMenu
 
 class GTBookStoreTableViewController: GTTableViewController {
     
     private var accountBtn: UIButton!
     
     private var accountInfoDataModel: GTAccountInfoDataModel?
+    
+    private let sectionHeaderHeight = 50.0
+    private let cellInfo = ["", "排行榜", "类型"]
+    private let partitionInfo = ["计算机与互联网", "教育", "经管理财", "科幻奇幻", "悬疑推理", "全部"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,7 +88,10 @@ class GTBookStoreTableViewController: GTTableViewController {
     // TableView
     private func setupTableView() {
         tableView.backgroundColor = .white
+        tableView.register(GTSubareaTableViewCell.self, forCellReuseIdentifier: "GTSubareaTableViewCell")
         tableView.register(GTAdTableViewCell.self, forCellReuseIdentifier: "GTAdTableViewCell")
+        tableView.register(GTRankingListTableViewCell.self, forCellReuseIdentifier: "GTRankingListTableViewCell")
+        tableView.register(GTBookTypeTableViewCell.self, forCellReuseIdentifier: "GTBookTypeTableViewCell")
     }
     
     // accountBtn clicked
@@ -144,21 +152,103 @@ class GTBookStoreTableViewController: GTTableViewController {
         }
     }
     
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return self.cellInfo.count
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        switch section {
+        case 0:
+            return 2
+        case 1:
+            return 1
+        default:
+            return 6
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 370
+        switch indexPath.section {
+        case 0:
+            if indexPath.row == 0 {
+                return 60
+            } else {
+                return 390
+            }
+        case 1:
+            return 490
+        default:
+            return 75
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch section {
+        case 0:
+            return 10
+        default:
+            return self.sectionHeaderHeight + 20
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: self.sectionHeaderHeight))
+        let titleLabel = UILabel()
+        titleLabel.textAlignment = .left
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 23)
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        titleLabel.text = self.cellInfo[section]
+        headerView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-10)
+            make.left.equalTo(GTViewMargin)
+            make.width.lessThanOrEqualTo(200)
+        }
+        
+        return headerView
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GTAdTableViewCell", for: indexPath) as! GTAdTableViewCell
-        cell.viewController = self
-        return cell
+        switch indexPath.section {
+        case 0:
+            if indexPath.row == 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "GTSubareaTableViewCell", for: indexPath) as! GTSubareaTableViewCell
+                cell.selectionStyle = .none
+                cell.separatorInset = UIEdgeInsets.zero
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "GTAdTableViewCell", for: indexPath) as! GTAdTableViewCell
+                cell.selectionStyle = .none
+                cell.viewController = self
+                return cell
+            }
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GTRankingListTableViewCell", for: indexPath) as! GTRankingListTableViewCell
+            cell.selectionStyle = .none
+            cell.viewController = self
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GTBookTypeTableViewCell", for: indexPath) as! GTBookTypeTableViewCell
+            cell.selectionStyle = .none
+            cell.accessoryType = .disclosureIndicator
+            cell.separatorInset = UIEdgeInsets.zero
+            if indexPath.row == 5 {
+                cell.imgView.image = UIImage(named: "bookType_all")
+            } else {
+                cell.imgView.image = UIImage(named: "bookType_" + String(indexPath.row))
+            }
+            cell.titleLab.text = self.partitionInfo[indexPath.row]
+            return cell
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        if indexPath.section == 0 && indexPath.row == 0 {
+            let leftMenu = SideMenuNavigationController(rootViewController: GTBookPartitionTableViewController(style: .grouped))
+            leftMenu.leftSide = true
+            leftMenu.menuWidth = 320
+            leftMenu.presentationStyle = .menuSlideIn
+            self.present(leftMenu, animated: true)
+        }
     }
 }
