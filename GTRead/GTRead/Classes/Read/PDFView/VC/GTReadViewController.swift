@@ -316,7 +316,8 @@ class GTReadViewController: EyeTrackViewController {
         let thumbnailGridViewController = GTThumbnailGridViewController(collectionViewLayout: layout)
         thumbnailGridViewController.pdfDocument = self.pdfdocument
         thumbnailGridViewController.delegate = self
-        self.present(thumbnailGridViewController, animated: true)
+        let vc = GTBaseNavigationViewController(rootViewController: thumbnailGridViewController)
+        self.present(vc, animated: true)
     }
 
     //MARK: -目录

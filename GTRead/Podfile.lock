@@ -5,6 +5,7 @@ PODS:
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
   - Cosmos (23.0.0)
+  - ExpandableLabel (0.5.2)
   - Fuse (1.4.0)
   - MJRefresh (3.5.0)
   - Presentr (1.9)
@@ -22,6 +23,7 @@ DEPENDENCIES:
   - ARVideoKit (~> 1.5.51)
   - Charts
   - Cosmos (~> 23.0)
+  - ExpandableLabel
   - Fuse
   - MJRefresh (~> 3.5.0)
   - Presentr
@@ -38,6 +40,7 @@ SPEC REPOS:
     - ARVideoKit
     - Charts
     - Cosmos
+    - ExpandableLabel
     - Fuse
     - MJRefresh
     - Presentr
@@ -53,6 +56,7 @@ SPEC CHECKSUMS:
   ARVideoKit: cd70e1e49e042ed4a88fb59964c17520e34f7f5b
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   Cosmos: b5c6a9a637e28a061b54c8f8b1d8529d7d4db73f
+  ExpandableLabel: c2fab6d27860c572d67134b30522a5917746171d
   Fuse: 48eaf66d0c407c7f8b0ddb168888dc4637e87f14
   MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
   Presentr: 7078d7eb5d1661ebeaae60c9e42a1e534de1b993
@@ -63,6 +67,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
 
-PODFILE CHECKSUM: d20ef9b89eadac9ea1151c7f7f640e0bc2b9ba70
+PODFILE CHECKSUM: 5d6a28737676abc71477aa99be2180c7c742e0d8
 
 COCOAPODS: 1.11.2

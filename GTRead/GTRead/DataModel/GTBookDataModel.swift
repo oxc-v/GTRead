@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+let GTBookTypeLists = ["计算机与互联网", "教育", "经管理财", "科幻奇幻", "悬疑推理", "言情", "文学", "历史", "地理", "政治", "化学", "生物", "物理", "数学"]
+let GTBookLanguageTypeForCH = ["简体中文", "英文"]
+let GTBookLanguageTypeForEN = ["CH", "EN"]
+
 struct GTBookDataModel: Codable {
     
     var bookId: String

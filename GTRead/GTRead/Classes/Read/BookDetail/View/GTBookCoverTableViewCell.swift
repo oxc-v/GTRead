@@ -13,15 +13,14 @@ class GTBookCoverTableViewCell: UITableViewCell {
     
     private var gtImgView: GTShadowImageView!
     private var separatorView: UIView!
-    private var loadingView: GTLoadingView!
     
     var imgView: UIImageView!
     var titleLabel: UILabel!
     var detailLabel: UILabel!
     var cosmosView: CosmosView!
     var startReadBtn: UIButton!
-    private var addShelfBtn: UIButton!
-    private var editCommentBtn: UIButton!
+    var addShelfBtn: UIButton!
+    var editCommentBtn: UIButton!
     
     private let cellHeight = 400.0
     
@@ -37,32 +36,32 @@ class GTBookCoverTableViewCell: UITableViewCell {
         self.contentView.addSubview(gtImgView)
         gtImgView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.left.equalToSuperview()
+            make.left.equalTo(GTViewMargin)
             make.height.equalToSuperview().multipliedBy(0.8)
             make.width.equalTo(gtImgView.snp.height).multipliedBy(0.7)
         }
         
         titleLabel = UILabel()
         titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 26)
         titleLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(gtImgView.snp.top).offset(15)
             make.left.equalTo(gtImgView.snp.right).offset(50)
-            make.right.equalToSuperview().offset(-50)
+            make.right.equalTo(-GTViewMargin)
         }
         
         detailLabel = UILabel()
         detailLabel.textAlignment = .left
         detailLabel.textColor = .black
-        detailLabel.font = UIFont.systemFont(ofSize: 19)
+        detailLabel.font = UIFont.systemFont(ofSize: 17)
         detailLabel.lineBreakMode = .byTruncatingMiddle
         self.contentView.addSubview(detailLabel)
         detailLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.left.equalTo(titleLabel.snp.left)
-            make.width.lessThanOrEqualTo(300)
+            make.right.equalTo(-GTViewMargin)
         }
         
         cosmosView = CosmosView()
@@ -88,7 +87,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
         self.contentView.addSubview(startReadBtn)
         startReadBtn.snp.makeConstraints { make in
             make.left.equalTo(titleLabel.snp.left)
-            make.right.equalToSuperview()
+            make.right.equalTo(-GTViewMargin)
             make.height.equalTo(50)
             make.bottom.equalTo(gtImgView.snp.bottom).offset(-50 - 20)
         }
@@ -125,7 +124,7 @@ class GTBookCoverTableViewCell: UITableViewCell {
         editCommentBtn.layer.cornerRadius = 25
         self.contentView.addSubview(editCommentBtn)
         editCommentBtn.snp.makeConstraints { make in
-            make.right.equalToSuperview()
+            make.right.equalTo(-GTViewMargin)
             make.left.equalTo(startReadBtn.snp.centerX).offset(-20)
             make.bottom.equalTo(gtImgView.snp.bottom)
             make.height.equalTo(startReadBtn.snp.height)
@@ -136,15 +135,15 @@ class GTBookCoverTableViewCell: UITableViewCell {
         self.contentView.addSubview(separatorView)
         separatorView.snp.makeConstraints { make in
             make.height.equalTo(0.5)
-            make.width.equalTo(startReadBtn.snp.width)
             make.top.equalTo(cosmosView.snp.bottom).offset(20)
             make.left.equalTo(startReadBtn.snp.left)
+            make.right.equalTo(-GTViewMargin)
         }
     }
     
     override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
 
-        let size = CGSize(width: UIScreen.main.bounds.width - GTViewMargin * 2, height: cellHeight)
+        let size = CGSize(width: self.frame.width - GTViewMargin * 2, height: cellHeight)
         return size
     }
     
@@ -152,20 +151,6 @@ class GTBookCoverTableViewCell: UITableViewCell {
         super.prepareForReuse()
         
         cosmosView.prepareForReuse()
-    }
-    
-    override var frame: CGRect {
-        get {
-            return super.frame
-        }
-        set(newFrame) {
-            var frame = newFrame
-            let newWidth = 704 - GTViewMargin * 2
-            let space = (frame.width - newWidth) / 2
-            frame.size.width = newWidth
-            frame.origin.x += space
-            super.frame = frame
-        }
     }
     
     required init?(coder: NSCoder) {

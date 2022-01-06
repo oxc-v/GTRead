@@ -28,7 +28,7 @@ class GTBookPublicationInfoCollectionViewCell: UICollectionViewCell {
             make.centerX.top.equalToSuperview()
             make.height.equalTo(15)
         }
-        
+
         imgView = UIImageView()
         imgView.isHidden = true
         imgView.contentMode = .scaleAspectFill
@@ -39,7 +39,7 @@ class GTBookPublicationInfoCollectionViewCell: UICollectionViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(5)
             make.width.height.equalTo(30)
         }
-        
+
         contentLabel = UILabel()
         contentLabel.numberOfLines = 0
         contentLabel.textAlignment = .center
@@ -52,7 +52,7 @@ class GTBookPublicationInfoCollectionViewCell: UICollectionViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(5)
             make.height.lessThanOrEqualTo(50)
         }
-        
+
         subtitleLabel = UILabel()
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = .black
@@ -63,7 +63,7 @@ class GTBookPublicationInfoCollectionViewCell: UICollectionViewCell {
             make.bottom.equalToSuperview()
             make.width.lessThanOrEqualToSuperview().offset(-25)
         }
-        
+
         separatorView = UIView()
         separatorView.backgroundColor = UIColor(hexString: "#cacacc")
         self.contentView.addSubview(separatorView)
@@ -76,7 +76,7 @@ class GTBookPublicationInfoCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         imgView.isHidden = true
         subtitleLabel.isHidden = false
         contentLabel.isHidden = false

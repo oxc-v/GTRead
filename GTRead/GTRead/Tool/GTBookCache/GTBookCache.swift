@@ -19,7 +19,7 @@ class GTBookCache {
     func getCacheBookPage(bookId: String) -> Int {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         // 获取PDF页码缓存
-        self.booksPageDataModel = GTDiskCache.shared.getObjectData((dataModel?.userId ?? "") + "_page_cache")
+        self.booksPageDataModel = GTDiskCache.shared.getObjectData(String(dataModel!.userId) + "_page_cache")
         
         if self.booksPageDataModel != nil {
             var flag = false
@@ -47,6 +47,6 @@ class GTBookCache {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.booksPageDataModel?.lists[self.index].page = page
         
-        GTDiskCache.shared.saveObjectData((dataModel?.userId ?? "") + "_page_cache", value: self.booksPageDataModel)
+        GTDiskCache.shared.saveObjectData(String(dataModel!.userId) + "_page_cache", value: self.booksPageDataModel)
     }
 }

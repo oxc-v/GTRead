@@ -81,7 +81,7 @@ class GTAccountLoginTableViewController: GTTableViewController {
         self.showLoadingView(true)
         
         // 发起登录请求
-        GTNet.shared.requestLogin(userId: self.accountTextfield?.text ?? "", userPwd: self.passwordTextfield?.text ?? "", failure: {json in
+        GTNet.shared.requestLogin(userId: Int((self.accountTextfield?.text)!)!, userPwd: self.passwordTextfield?.text ?? "", failure: {json in
             
             self.showLoadingView(false)
             
@@ -101,7 +101,7 @@ class GTAccountLoginTableViewController: GTTableViewController {
                 } else {
                     // ----此处需要完善 记得暂停加载动画
                     UserDefaults.standard.set(self.passwordTextfield?.text, forKey: GTUserDefaultKeys.GTAccountPassword)
-                    self.getAccountInfo(userId: (self.accountTextfield?.text)!)
+                    self.getAccountInfo(userId: Int((self.accountTextfield?.text)!)!)
                 }
             } else {
                 self.showLoadingView(false)
@@ -111,7 +111,7 @@ class GTAccountLoginTableViewController: GTTableViewController {
     }
     
     // -----此处将来需要完善 请求获取账户信息
-    private func getAccountInfo(userId: String) {
+    private func getAccountInfo(userId: Int) {
         GTNet.shared.getAccountInfo(userId: userId, failure: { json in
             
             self.showLoadingView(false)
@@ -124,8 +124,9 @@ class GTAccountLoginTableViewController: GTTableViewController {
         }, success: {json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTAccountInfoDataModel.self, from: data!) {
+            if var dataModel = try? decoder.decode(GTAccountInfoDataModel.self, from: data!) {
                 GTUserDefault.shared.set(dataModel, forKey: GTUserDefaultKeys.GTAccountDataModel)
+                
                 NotificationCenter.default.post(name: .GTLoginSuccessful, object: self)
                 self.dismiss(animated: true)
             } else {
@@ -193,6 +194,7 @@ class GTAccountLoginTableViewController: GTTableViewController {
             self.accountTextfield = cell.textfield
             cell.textfield.delegate = self
             cell.textfield.placeholder = "账号"
+            cell.textfield.becomeFirstResponder()
             cell.textfield.isSecureTextEntry = false
             cell.textfield.returnKeyType = .next
             cell.textfield.enablesReturnKeyAutomatically = true

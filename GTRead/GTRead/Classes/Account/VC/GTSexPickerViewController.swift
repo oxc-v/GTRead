@@ -12,7 +12,7 @@ class GTSexPickerViewController: GTBaseViewController {
     
     private var pickerView: UIPickerView!
     private var vc: GTAccountDetailInfoTableViewController!
-    private let pickerData = ["女", "男"]
+    private let pickerData = ["男", "女"]
     private var accountInfoDataModel: GTAccountInfoDataModel?
     
     init(viewController: GTAccountDetailInfoTableViewController) {
@@ -38,18 +38,13 @@ class GTSexPickerViewController: GTBaseViewController {
         super.viewDidAppear(animated)
         
         // 设置默认值
-        if self.accountInfoDataModel!.male {
-            self.pickerView.selectRow(1, inComponent: 0, animated: true)
-        } else {
-            self.pickerView.selectRow(0, inComponent: 0, animated: true)
-        }
+        self.pickerView.selectRow(self.accountInfoDataModel!.male ?? 0, inComponent: 0, animated: true)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        let index = self.pickerView.selectedRow(inComponent: 0)
-        let male = index == 1 ? true : false
+        let male = self.pickerView.selectedRow(inComponent: 0)
         if male != self.accountInfoDataModel!.male {
             self.uploadAccountInfo(male: male)
         }
@@ -69,7 +64,7 @@ class GTSexPickerViewController: GTBaseViewController {
     }
     
     // 上传信息
-    private func uploadAccountInfo(male: Bool) {
+    private func uploadAccountInfo(male: Int) {
         DispatchQueue.main.async {
             self.vc.loadingView.isAnimating = true
         }

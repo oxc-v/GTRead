@@ -35,45 +35,10 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         imgView = gtImgView.imgView
         self.contentView.addSubview(gtImgView)
         gtImgView.snp.makeConstraints { make in
+            make.left.equalToSuperview()
             make.centerY.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.8)
-            make.width.equalTo(imgView.snp.height).multipliedBy(0.7)
-        }
-        
-        detailLabel = UILabel()
-        detailLabel.textAlignment = .left
-        detailLabel.textColor = UIColor(hexString: "#b4b4b4")
-        detailLabel.font = UIFont.boldSystemFont(ofSize: 13)
-        detailLabel.lineBreakMode = .byTruncatingMiddle
-        self.contentView.addSubview(detailLabel)
-        detailLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.left.equalTo(imgView.snp.right).offset(16)
-            make.width.lessThanOrEqualTo(170)
-        }
-        
-        titleLabel = UILabel()
-        titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        titleLabel.lineBreakMode = .byTruncatingMiddle
-        self.contentView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(detailLabel.snp.top).offset(-5)
-            make.left.equalTo(imgView.snp.right).offset(16)
-            make.width.lessThanOrEqualTo(170)
-        }
-        
-        cosmosView = CosmosView()
-        cosmosView.settings.fillMode = .precise
-        cosmosView.settings.updateOnTouch = false
-        cosmosView.settings.starSize = 12
-        cosmosView.settings.starMargin = 3
-        cosmosView.settings.filledImage = UIImage(named: "star_fill")
-        cosmosView.settings.emptyImage = UIImage(named: "star_empty")
-        self.contentView.addSubview(cosmosView)
-        cosmosView.snp.makeConstraints { make in
-            make.top.equalTo(detailLabel.snp.bottom).offset(5)
-            make.left.equalTo(imgView.snp.right).offset(16)
+            make.width.equalTo(gtImgView.snp.height).multipliedBy(0.7)
         }
         
         button = UIButton()
@@ -90,6 +55,42 @@ class GTCustomComplexTableViewCell: UITableViewCell {
             make.right.equalToSuperview()
             make.width.equalTo(80)
             make.height.equalTo(30)
+        }
+        
+        detailLabel = UILabel()
+        detailLabel.textAlignment = .left
+        detailLabel.textColor = UIColor(hexString: "#b4b4b4")
+        detailLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        detailLabel.lineBreakMode = .byTruncatingMiddle
+        self.contentView.addSubview(detailLabel)
+        detailLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.left.equalTo(gtImgView.snp.right).offset(16)
+            make.right.equalTo(button.snp.left).offset(-20)
+        }
+        
+        titleLabel = UILabel()
+        titleLabel.textAlignment = .left
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        self.contentView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(detailLabel.snp.top).offset(-5)
+            make.left.equalTo(gtImgView.snp.right).offset(16)
+            make.right.equalTo(button.snp.left).offset(-20)
+        }
+        
+        cosmosView = CosmosView()
+        cosmosView.settings.fillMode = .precise
+        cosmosView.settings.updateOnTouch = false
+        cosmosView.settings.starSize = 12
+        cosmosView.settings.starMargin = 3
+        cosmosView.settings.filledImage = UIImage(named: "star_fill")
+        cosmosView.settings.emptyImage = UIImage(named: "star_empty")
+        self.contentView.addSubview(cosmosView)
+        cosmosView.snp.makeConstraints { make in
+            make.top.equalTo(detailLabel.snp.bottom).offset(5)
+            make.left.equalTo(gtImgView.snp.right).offset(16)
         }
         
         loadingView = GTLoadingView(colors: [UIColor(hexString: "#12c2e9"), UIColor(hexString: "#c471ed"), UIColor(hexString: "#f64f59")], lineWidth: 3)

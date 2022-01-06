@@ -13,6 +13,7 @@ import UIImageColors
 class GTAdTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
+    private var separatorView: UIView!
     var viewController: GTBookStoreTableViewController?
     
     var dataModel: GTShelfDataModel?
@@ -22,28 +23,24 @@ class GTAdTableViewCell: UITableViewCell {
         
         dataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
         
-        self.setupCollectionView()
+        self.setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override var frame: CGRect {
-        get {
-            return super.frame
-        }
-        set(newFrame) {
-            var frame = newFrame
-            let newWidth = UIScreen.main.bounds.width - GTViewMargin * 2
-            let space = (frame.width - newWidth) / 2
-            frame.size.width = newWidth
-            frame.origin.x += space
-            super.frame = frame
-        }
-    }
+    private func setupView() {
     
-    private func setupCollectionView() {
+        separatorView = UIView()
+        separatorView.backgroundColor = UIColor(hexString: "#cacacc")
+        self.contentView.addSubview(separatorView)
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.top.equalToSuperview()
+            make.left.equalTo(GTViewMargin)
+            make.right.equalTo(-GTViewMargin)
+        }
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -58,10 +55,9 @@ class GTAdTableViewCell: UITableViewCell {
         collectionView.register(GTAdCollectionViewCell.self, forCellWithReuseIdentifier: "GTAdCollectionViewCell")
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(GTViewMargin)
-            make.left.equalToSuperview().offset(-GTViewMargin)
-            make.top.equalToSuperview().offset(30)
-            make.bottom.equalToSuperview().offset(-30)
+            make.right.left.equalToSuperview()
+            make.top.equalTo(separatorView.snp.bottom).offset(20)
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
 }

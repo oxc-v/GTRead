@@ -17,6 +17,7 @@ protocol GTThumbnailGridViewControllerDelegate: AnyObject {
 class GTThumbnailGridViewController: UICollectionViewController {
 
     var pdfDocument: PDFDocument?
+    private var finishedBtn: UIButton!
     weak var delegate: GTThumbnailGridViewControllerDelegate?
     let itemWidth: CGFloat = 210
     let itemHeight: CGFloat = 300
@@ -24,8 +25,24 @@ class GTThumbnailGridViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionView!.register(GTThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        collectionView?.backgroundColor = UIColor(hexString: "#f2f2f7")
+        
+        self.navigationItem.title = "缩略图"
+        self.collectionView.register(GTThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView.backgroundColor = .white
+        
+        finishedBtn = UIButton(type: .custom)
+        finishedBtn.setTitle("完成", for: .normal)
+        finishedBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        finishedBtn.setTitleColor(.systemBlue, for: .normal)
+        finishedBtn.addTarget(self, action: #selector(finishedBtnDidClicked(sender:)), for: .touchUpInside)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: finishedBtn)
+    }
+    
+    // finishedBtn clicked
+    @objc private func finishedBtnDidClicked(sender: UIButton) {
+        sender.clickedAnimation(withDuration: 0.1, completion: { _ in
+            self.dismiss(animated: true, completion: nil)
+        })
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {

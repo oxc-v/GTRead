@@ -113,7 +113,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
     // 处理登录请求
     @objc private func loginBtnDidClicked() {
         self.loadingView.isAnimating = true
-        GTNet.shared.requestLogin(userId: self.accountTextfield?.text ?? "", userPwd: self.passwordTextfield?.text ?? "", failure: {json in
+        GTNet.shared.requestLogin(userId: Int((self.accountTextfield?.text)!)!, userPwd: self.passwordTextfield?.text ?? "", failure: {json in
             self.loadingView.isAnimating = false
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
@@ -123,7 +123,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
         }, success: { (json) in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
+            if let dataModel = try? decoder.decode(GTRegisterAccountDataModel.self, from: data!) {
                 if dataModel.code == -1 {
                     self.loadingView.isAnimating = false
                     self.loginErrorBtn?.setTitle("账号或密码错误", for: .normal)
@@ -131,7 +131,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
                 } else {
                     // ----此处需要完善 记得暂停加载动画
                     UserDefaults.standard.set(self.passwordTextfield?.text, forKey: GTUserDefaultKeys.GTAccountPassword)
-                    self.getAccountInfo(userId: (self.accountTextfield?.text)!)
+                    self.getAccountInfo(userId: dataModel.userId!)
                 }
             } else {
                 self.loadingView.isAnimating = false
@@ -141,7 +141,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
     }
     
     // -----此处将来需要完善 请求获取账户信息
-    private func getAccountInfo(userId: String) {
+    private func getAccountInfo(userId: Int) {
         GTNet.shared.getAccountInfo(userId: userId, failure: { json in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
@@ -228,7 +228,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountManagerImgTableViewCell", for: indexPath) as! GTAccountManagerImgTableViewCell
                 cell.selectionStyle = .none
                 cell.accessoryType = .disclosureIndicator
-                cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.accountInfoDataModel!.male ? "head_men" : "head_women"))
+                cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: (self.accountInfoDataModel!.male ?? 0) == 0 ? "head_men" : "head_women"))
                 cell.nameLabel.text = self.accountInfoDataModel?.nickName
                 cell.profileLabel.text = self.accountInfoDataModel?.profile
                 return cell

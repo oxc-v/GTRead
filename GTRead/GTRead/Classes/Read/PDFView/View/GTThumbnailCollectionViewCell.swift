@@ -8,20 +8,20 @@
 import UIKit
 
 class GTThumbnailCollectionViewCell: UICollectionViewCell {
-    var imageView: UIImageView!
+    private var imageView: GTShadowImageView!
     var pageLab: UILabel!
     var image: UIImage? = nil {
         didSet {
-            imageView.image = image
+            imageView.imgView.image = image
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        imageView = UIImageView()
-        imageView.layer.cornerRadius = 10
-        imageView.clipsToBounds = true
+        imageView = GTShadowImageView(opacity: 0.2)
+        imageView.imgView.layer.cornerRadius = 10
+        imageView.imgView.clipsToBounds = true
         self.contentView.addSubview(imageView)
         imageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()

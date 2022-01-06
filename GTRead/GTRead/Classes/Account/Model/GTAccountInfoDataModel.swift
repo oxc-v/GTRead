@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 
 struct GTAccountInfoDataModel: Codable {
-    var userId: String
+    var userId: Int
     var nickName: String
     var headImgUrl: String
     var profile: String
-    var male: Bool
-    var age: Int
+    var male: Int?
+    var age: Int?
 
     enum CodingKeys: String, CodingKey {
         case userId

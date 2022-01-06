@@ -18,7 +18,6 @@ class GTTabBarViewController: UITabBarController {
         
         UITabBarItem.appearance().titlePositionAdjustment = UIOffset(horizontal: 15, vertical: -12)
         
-        
         self.tabBar.backgroundColor = .white
         self.tabBar.tintColor = .black
         self.tabBar.itemPositioning = .centered

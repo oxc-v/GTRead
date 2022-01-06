@@ -12,7 +12,8 @@ class GTBookPublicationInfoTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
     
-    var dataModel: GTBookPublicationInfoDataModel?
+//    var dataModel: GTBookPublicationInfoDataModel?
+    var dataModel: GTBookDataModel?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -29,25 +30,10 @@ class GTBookPublicationInfoTableViewCell: UITableViewCell {
         collectionView.register(GTBookPublicationInfoCollectionViewCell.self, forCellWithReuseIdentifier: "GTBookPublicationInfoCollectionViewCell")
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(GTViewMargin)
-            make.left.equalToSuperview().offset(-GTViewMargin)
+            make.left.right.equalToSuperview()
             make.height.equalTo(70)
             make.top.equalToSuperview().offset(GTViewMargin - 10)
             make.bottom.equalToSuperview().offset(-GTViewMargin + 10)
-        }
-    }
-    
-    override var frame: CGRect {
-        get {
-            return super.frame
-        }
-        set(newFrame) {
-            var frame = newFrame
-            let newWidth = 704 - GTViewMargin * 2
-            let space = (frame.width - newWidth) / 2
-            frame.size.width = newWidth
-            frame.origin.x += space
-            super.frame = frame
         }
     }
     
@@ -62,7 +48,7 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        6
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -71,26 +57,26 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "类型"
             cell.imgView.isHidden = false
-            cell.imgView.image = UIImage(named: "type_education")
+            cell.imgView.image = UIImage(named: "bookType_" + String(self.dataModel!.baseInfo.bookType))
             cell.contentLabel.isHidden = false
-            cell.subtitleLabel.text = "计算机与互联网"
+            cell.subtitleLabel.text = GTBookTypeLists[self.dataModel!.baseInfo.bookType]
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "发行日期"
-            cell.contentLabel.text = self.dataModel!.lists[1].contentLabelText
-            cell.subtitleLabel.text = self.dataModel!.lists[1].subtitleLabelText
+            cell.contentLabel.text = "2022年"
+            cell.subtitleLabel.text = "1月6日"
             return cell
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "长度"
-            cell.contentLabel.text = self.dataModel!.lists[2].contentLabelText
+            cell.contentLabel.text = String(self.dataModel!.baseInfo.bookPage)
             cell.subtitleLabel.text = "页"
             return cell
         case 3:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "出版社"
-            cell.contentLabel.text = self.dataModel!.lists[3].contentLabelText
+            cell.contentLabel.text = self.dataModel!.baseInfo.publishHouse
             cell.contentLabel.font = UIFont.systemFont(ofSize: 13)
             cell.subtitleLabel.isHidden = true
             return cell
@@ -103,12 +89,13 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             cell.titleLabel.text = "大小"
-            cell.contentLabel.text = self.dataModel!.lists[5].contentLabelText
+            cell.contentLabel.text = String(format: "%.1f", self.dataModel!.downInfo.fileSize / 1024 / 1024)
             cell.subtitleLabel.text = "M"
             return cell
         }
     }
 }
+
 extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.row == 0 {
@@ -119,11 +106,11 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegateFlowLayout
             return CGSize(width: 110, height: 70)
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }

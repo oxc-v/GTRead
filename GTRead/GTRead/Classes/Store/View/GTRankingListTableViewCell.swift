@@ -11,6 +11,7 @@ import UIKit
 class GTRankingListTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
+    private var separatorView: UIView!
     
     var viewController: GTBookStoreTableViewController?
     
@@ -26,21 +27,18 @@ class GTRankingListTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override var frame: CGRect {
-        get {
-            return super.frame
-        }
-        set(newFrame) {
-            var frame = newFrame
-            let newWidth = UIScreen.main.bounds.width - GTViewMargin * 2
-            let space = (frame.width - newWidth) / 2
-            frame.size.width = newWidth
-            frame.origin.x += space
-            super.frame = frame
-        }
-    }
-    
     private func setupCollectionView() {
+        
+        separatorView = UIView()
+        separatorView.backgroundColor = UIColor(hexString: "#cacacc")
+        self.contentView.addSubview(separatorView)
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.top.equalToSuperview()
+            make.left.equalTo(GTViewMargin)
+            make.right.equalTo(-GTViewMargin)
+        }
+        
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
@@ -54,9 +52,8 @@ class GTRankingListTableViewCell: UITableViewCell {
         collectionView.register(GTRankingListCollectionViewCell.self, forCellWithReuseIdentifier: "GTRankingListCollectionViewCell")
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(GTViewMargin)
-            make.left.equalToSuperview().offset(-GTViewMargin)
-            make.top.equalToSuperview().offset(20)
+            make.right.left.equalToSuperview()
+            make.top.equalTo(separatorView.snp.bottom).offset(20)
             make.bottom.equalToSuperview().offset(-20)
         }
     }

@@ -123,8 +123,11 @@ class GTSearchResultsViewController: GTTableViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let dayTime = dateFormatter.string(from: Date())
+        
+        // 单词获取数据条数
+        let count = 10
 
-        GTNet.shared.searchBookInfoFun(words: searchWord, dayTime: dayTime, count: 10, offset: searchOffset, failure: { error in
+        GTNet.shared.searchBookInfoFun(words: searchWord, dayTime: dayTime, count: count, offset: searchOffset, failure: { error in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
             } else {
@@ -139,8 +142,8 @@ class GTSearchResultsViewController: GTTableViewController {
             let decoder = JSONDecoder()
             let model = try? decoder.decode(GTSearchBookDataModel.self, from: data!)
             if model == nil {
-                self.showNotificationMessageView(message: "服务器数据错误")
-            } else if model?.count != -1 {
+                self.showNotificationMessageView(message: "服务器数据错误") 
+            } else if model!.count > 0 {
                 
                 if self.dataModel != nil {
                     for item in model!.lists! {
@@ -155,12 +158,14 @@ class GTSearchResultsViewController: GTTableViewController {
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
-                
-                // 发送数据加载完毕通知
-                NotificationCenter.default.post(name: .GTGetSearchDataFinished, object: self)
-            } else {
+            }
+            
+            if model?.count != count && model != nil {
                 // 发送数据全部加载完毕通知
                 NotificationCenter.default.post(name: .GTSearchDataIsBottom, object: self)
+            } else {
+                // 发送数据加载完毕通知
+                NotificationCenter.default.post(name: .GTGetSearchDataFinished, object: self)
             }
         })
     }

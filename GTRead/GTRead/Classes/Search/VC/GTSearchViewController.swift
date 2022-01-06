@@ -15,7 +15,7 @@ class GTSearchViewController: GTTableViewController {
     
     private let sectionMargin = 10.0
     private let sectionHeaderHeight = 50.0
-    private var sectionText = ["探索更多", "时下热门"]
+    private var sectionText = [String]()
     private var sectionTextForSearching = [String]()
     
     private var accountBtn: UIButton!
@@ -182,8 +182,14 @@ class GTSearchViewController: GTTableViewController {
             
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            self.exploreMoreDataModel = try? decoder.decode(GTExploreMoreDataModel.self, from: data!)
-            if self.exploreMoreDataModel == nil {
+            if let dataModel = try? decoder.decode(GTExploreMoreDataModel.self, from: data!) {
+                if dataModel.count != 0 {
+                    self.exploreMoreDataModel = dataModel
+                    if !self.sectionText.contains("时下热门") {
+                        self.sectionText.append("时下热门")
+                    }
+                }
+            } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
         })
@@ -203,8 +209,14 @@ class GTSearchViewController: GTTableViewController {
             
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            self.hotSearchWordDataModel = try? decoder.decode(GTHotSearchWordDataModel.self, from: data!)
-            if self.hotSearchWordDataModel == nil {
+            if let dataModel = try? decoder.decode(GTHotSearchWordDataModel.self, from: data!) {
+                if dataModel.count != 0 {
+                    self.hotSearchWordDataModel = dataModel
+                    if !self.sectionText.contains("探索更多") {
+                        self.sectionText.append("探索更多")
+                    }
+                }
+            } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
         })
@@ -261,7 +273,7 @@ class GTSearchViewController: GTTableViewController {
     
     // 书本下载完毕通知
     @objc private func downloadBookFinishedNotification(notification: Notification) {
-        if self.tabBarController?.selectedIndex == 2 {
+        if self.tabBarController?.selectedIndex == 3 {
             if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
                 let fileName = dataModel.bookId
                 if let url = GTDiskCache.shared.getPDF(fileName) {
@@ -473,22 +485,20 @@ class GTSearchViewController: GTTableViewController {
                 cell.accessoryType = .none
                 cell.selectionStyle = .none
                 
-                if self.exploreMoreDataModel != nil {
+                if self.exploreMoreDataModel != nil && self.exploreMoreDataModel!.count > 0 {
                     cell.dataModel = GTCustomComplexTableViewCellDataModel(lists: [GTCustomComplexTableViewCellDataModelItem(imgUrl: "", titleText: "", detailText: "", rating: 0, buttonClickedEvent: nil)], count: 0)
-                    cell.dataModel?.lists?.removeAll()
+                    cell.dataModel!.lists!.removeAll()
                     
                     // 判断书籍是否已加入书库
-                    for item in (self.exploreMoreDataModel?.lists)! {
+                    let shelfDataModel: GTShelfDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
+                    for item in (self.exploreMoreDataModel!.lists)! {
                         var isExistShelf = false
-                        if let shelfDataModel: GTShelfDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel) {
-                            if shelfDataModel.count != -1 {
-                                isExistShelf = (shelfDataModel.lists)!.contains {$0.bookId == item.bookId}
-                            }
+                        if shelfDataModel != nil && shelfDataModel!.count > 0 {
+                            isExistShelf = (shelfDataModel!.lists)!.contains {$0.bookId == item.bookId}
                         }
                         cell.dataModel?.lists?.append(GTCustomComplexTableViewCellDataModelItem(imgUrl: item.downInfo.bookHeadUrl, titleText: item.baseInfo.bookName, detailText: item.baseInfo.authorName, rating: Double(item.gradeInfo.averageScore), buttonClickedEvent: isExistShelf ? nil : self.addBookToShelf(sender:)))
                     }
-                    
-                    cell.dataModel?.count = (self.exploreMoreDataModel?.lists?.count)!
+                    cell.dataModel!.count = self.exploreMoreDataModel!.lists!.count
                 }
                 cell.collectionView.reloadSections(IndexSet(integer: 0))
                 return cell
@@ -496,13 +506,13 @@ class GTSearchViewController: GTTableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTHotSearchWordCell", for: indexPath) as! GTHotSearchWordCell
                 cell.selectionStyle = .none
                 cell.accessoryType = .none
-                if self.hotSearchWordDataModel != nil {
+                if self.hotSearchWordDataModel != nil && self.hotSearchWordDataModel!.count > 0 {
                     cell.dataModel = GTCustomPlainTableViewCellDataModel(lists: [GTCustomPlainTableViewCellDataModelItem(imgName: "", titleText: "")], count: 0)
                     cell.dataModel?.lists?.removeAll()
-                    for item in (self.hotSearchWordDataModel?.lists)! {
+                    for item in (self.hotSearchWordDataModel!.lists)! {
                         cell.dataModel?.lists?.append(GTCustomPlainTableViewCellDataModelItem(imgName: "search_word", titleText: item.bookName))
                     }
-                    cell.dataModel?.count = (self.hotSearchWordDataModel?.lists?.count)!
+                    cell.dataModel?.count = self.hotSearchWordDataModel!.lists!.count
                 }
                 cell.collectionView.reloadSections(IndexSet(integer: 0))
                 return cell

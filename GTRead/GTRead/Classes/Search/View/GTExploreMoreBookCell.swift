@@ -72,8 +72,7 @@ extension GTExploreMoreBookCell: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let count = dataModel?.count ?? 0
-        let itemCount = (count == -1 ? 0 : count)
-        return itemCount
+        return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

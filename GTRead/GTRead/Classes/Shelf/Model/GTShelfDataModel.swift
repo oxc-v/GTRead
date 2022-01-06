@@ -15,24 +15,3 @@ struct GTShelfDataModel: Codable {
         case count
     }
 }
-
-//struct GTShelfDataModelItem: Codable{
-//    var bookId: String
-//    var bookName: String
-//    var bookHeadUrl: String
-//    var bookDownUrl: String
-//    var bookType: String
-//    var authorName: String
-//
-//    enum CodingKeys: String, CodingKey {
-//        case bookId
-//        case bookName
-//        case bookHeadUrl
-//        case bookDownUrl
-//        case bookType
-//        case authorName
-//    }
-//}
-
-// 全局书库对象
-//var GTCommonShelfDataModel: GTShelfDataModel?

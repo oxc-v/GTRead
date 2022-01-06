@@ -128,9 +128,12 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
                 if dataModel.code == 1 {
                     // 删除头像图片缓存
                     SDImageCache.shared.removeImage(forKey: self.accountInfoDataModel?.headImgUrl, withCompletion: {
-                        SDImageCache.shared.store(nil, imageData: imgData, forKey: self.accountInfoDataModel?.headImgUrl, toDisk: true, completion: {
+                        let key = "http://39.105.217.90:8006/fileService/fileDownFun/images/" + String(self.accountInfoDataModel!.userId) + "_head.png"
+                        SDImageCache.shared.store(nil, imageData: imgData, forKey: key, toDisk: true, completion: {
                             // 账户信息修改通知
                             NotificationCenter.default.post(name: .GTAccountInfoChanged, object: self)
+                            self.accountInfoDataModel!.headImgUrl = key
+                            GTUserDefault.shared.set(self.accountInfoDataModel, forKey: GTUserDefaultKeys.GTAccountDataModel)
                             self.showNotificationMessageView(message: "头像上传成功")
                             self.loadingView.isAnimating = false
                         })
@@ -165,14 +168,14 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
             cell.selectionStyle = .none
             cell.accessoryType = .none
             cell.titleLabel.text = self.cellInfo[indexPath.section][indexPath.row]
-            cell.detailLabel.text = self.accountInfoDataModel?.userId
+            cell.detailLabel.text = String(self.accountInfoDataModel!.userId)
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountDetailInfoImgTableViewCell", for: indexPath) as! GTAccountDetailInfoImgTableViewCell
             cell.selectionStyle = .none
             cell.accessoryType = .disclosureIndicator
             cell.titleLabel.text = self.cellInfo[indexPath.section][indexPath.row]
-            cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: self.accountInfoDataModel!.male ? "head_men" : "head_women"))
+            cell.imgView.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), placeholderImage: UIImage(named: (self.accountInfoDataModel!.male ?? 0) == 0 ? "head_men" : "head_women"))
             return cell
         default:
             switch indexPath.row {
@@ -188,7 +191,7 @@ class GTAccountDetailInfoTableViewController: GTTableViewController {
                 cell.selectionStyle = .none
                 cell.accessoryType = .disclosureIndicator
                 cell.titleLabel.text = self.cellInfo[indexPath.section][indexPath.row]
-                cell.detailLabel.text = self.accountInfoDataModel!.male ? "男" : "女"
+                cell.detailLabel.text = (self.accountInfoDataModel!.male ?? 0) == 0 ? "男" : "女"
                 return cell
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountManagerCommonTableViewCell", for: indexPath) as! GTAccountManagerCommonTableViewCell

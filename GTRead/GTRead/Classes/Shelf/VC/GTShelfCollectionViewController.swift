@@ -88,8 +88,11 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         self.setupCollectionView()
         // LongGesture
         self.setupLongGestureRecognizerOnCollection()
-        // 加载书架数据
-        self.loadShelfData()
+        
+        if self.accountInfoDataModel != nil {
+            // 加载书架数据
+            self.loadShelfData()
+        }
         
         // 注册添加书籍到书库的通知
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTAddBookToShelf, object: nil)
@@ -377,12 +380,12 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         }, success: { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            let dataModel = try? decoder.decode(GTShelfDataModel.self, from: data!)
-            if dataModel != nil {
-                self.dataModel = dataModel
-                
-                // 将书架数据写入配置中
-                GTUserDefault.shared.set(self.dataModel, forKey: GTUserDefaultKeys.GTShelfDataModel)
+            if let dataModel = try? decoder.decode(GTShelfDataModel.self, from: data!) {
+                if dataModel.count != 0 {
+                    self.dataModel = dataModel
+                    // 将书架数据写入配置中
+                    GTUserDefault.shared.set(self.dataModel, forKey: GTUserDefaultKeys.GTShelfDataModel)
+                }
             } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
@@ -393,6 +396,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     
     // 尝试打开PDF
     @objc private func tryOpenBook(notification: Notification) {
+        self.dismiss(animated: true)
         if self.tabBarController?.selectedIndex == 0 {
             if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
                 // 读取缓存
@@ -452,7 +456,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: (self.dataModel?.lists?[indexPath.row])!))
+                let vc = GTBaseNavigationViewController(rootViewController: GTBookDetailTableViewController((self.dataModel?.lists?[indexPath.row])!))
                 self.present(vc, animated: true)
             }
         }

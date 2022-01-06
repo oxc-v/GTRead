@@ -69,6 +69,7 @@ class GTBookStoreTableViewController: GTTableViewController {
         self.navigationItem.title = "书城"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        self.navigationController?.navigationBar.tintColor = .black
         
         self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         accountBtn = UIButton(type: .custom)
@@ -88,6 +89,7 @@ class GTBookStoreTableViewController: GTTableViewController {
     // TableView
     private func setupTableView() {
         tableView.backgroundColor = .white
+        tableView.separatorStyle = .none
         tableView.register(GTSubareaTableViewCell.self, forCellReuseIdentifier: "GTSubareaTableViewCell")
         tableView.register(GTAdTableViewCell.self, forCellReuseIdentifier: "GTAdTableViewCell")
         tableView.register(GTRankingListTableViewCell.self, forCellReuseIdentifier: "GTRankingListTableViewCell")
@@ -214,7 +216,6 @@ class GTBookStoreTableViewController: GTTableViewController {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTSubareaTableViewCell", for: indexPath) as! GTSubareaTableViewCell
                 cell.selectionStyle = .none
-                cell.separatorInset = UIEdgeInsets.zero
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GTAdTableViewCell", for: indexPath) as! GTAdTableViewCell
@@ -231,7 +232,6 @@ class GTBookStoreTableViewController: GTTableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTBookTypeTableViewCell", for: indexPath) as! GTBookTypeTableViewCell
             cell.selectionStyle = .none
             cell.accessoryType = .disclosureIndicator
-            cell.separatorInset = UIEdgeInsets.zero
             if indexPath.row == 5 {
                 cell.imgView.image = UIImage(named: "bookType_all")
             } else {

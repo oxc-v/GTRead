@@ -10,8 +10,6 @@ import UIKit
 
 class GTBookPartitionTableViewController: GTTableViewController {
     
-    private let cellInfo = ["计算机与互联网", "教育", "经管理财", "科幻奇幻", "悬疑推理", "言情", "文学", "历史", "地理", "政治", "化学", "生物", "物理", "数学"]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,7 +37,7 @@ class GTBookPartitionTableViewController: GTTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.cellInfo.count
+        return GTBookTypeLists.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -52,12 +50,15 @@ class GTBookPartitionTableViewController: GTTableViewController {
         cell.accessoryType = .disclosureIndicator
         
         cell.imgView.image = UIImage(named: "bookType_" + String(indexPath.row))
-        cell.titleLab.text = self.cellInfo[indexPath.row]
+        cell.titleLab.text = GTBookTypeLists[indexPath.row]
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        let vc = GTBookReadMoreCollectionViewController(title: GTBookTypeLists[indexPath.row], layout: layout)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

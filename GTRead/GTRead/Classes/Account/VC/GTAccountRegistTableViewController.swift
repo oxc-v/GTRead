@@ -88,7 +88,7 @@ class GTAccountRegistTableViewController: GTTableViewController {
             self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
         } else {
             // 注册请求
-            GTNet.shared.requestRegister(userId: self.accountTextfield?.text ?? "", userPwd: self.passwordTextfield?.text ?? "", failure: { json in
+            GTNet.shared.requestRegister(userPwd: self.passwordTextfield?.text ?? "", failure: { json in
                 self.showLoadingView(false)
                 if GTNet.shared.networkAvailable() {
                     self.showNotificationMessageView(message: "服务器连接中断")
@@ -99,15 +99,15 @@ class GTAccountRegistTableViewController: GTTableViewController {
                 // 提取数据
                 let data = try? JSONSerialization.data(withJSONObject: json, options: [])
                 let decoder = JSONDecoder()
-                if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
-                    if dataModel.code == -1 {
+                if let dataModel = try? decoder.decode(GTRegisterAccountDataModel.self, from: data!) {
+                    if dataModel.code != 1 {
                         self.showLoadingView(false)
-                        self.loginErrLab.text = "注册失败，此账号已存在"
+                        self.loginErrLab.text = "账号注册失败"
                         self.loginErrLab.clickedAnimation(withDuration: 0.2, completion: nil)
                     } else {
                         // ----此处需要完善 记得暂停加载动画
                         UserDefaults.standard.set(self.passwordTextfield?.text, forKey: GTUserDefaultKeys.GTAccountPassword)
-                        self.getAccountInfo(userId: (self.accountTextfield?.text)!)
+                        self.getAccountInfo(userId: dataModel.userId!)
                     }
                 } else {
                     self.showLoadingView(false)
@@ -118,7 +118,7 @@ class GTAccountRegistTableViewController: GTTableViewController {
     }
     
     // -----此处将来需要完善 请求获取账户信息
-    private func getAccountInfo(userId: String) {
+    private func getAccountInfo(userId: Int) {
         GTNet.shared.getAccountInfo(userId: userId, failure: { json in
             
             self.showLoadingView(false)
@@ -186,7 +186,7 @@ class GTAccountRegistTableViewController: GTTableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTAccountLoginTableViewCell", for: indexPath) as! GTAccountLoginTableViewCell
             cell.selectionStyle = .none
             cell.textfield.delegate = self
-            cell.textfield.placeholder = "账号"
+            cell.textfield.placeholder = "邮箱地址"
             cell.textfield.isSecureTextEntry = false
             cell.textfield.returnKeyType = .next
             cell.textfield.enablesReturnKeyAutomatically = true

@@ -288,8 +288,11 @@ extension GTNet {
     
     // 添加书籍到书库
     func addBookToShelfFun(bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        // 只有登录账户之后才能添加书籍到书库
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId" : dataModel?.userId ?? "", "bookId": bookId] as [String : Any]
+        let date = Date.init()
+        let timeStamp = date.timeIntervalSince1970
+        let params = ["userId" : dataModel!.userId, "bookId": bookId, "addTime": String(timeStamp)] as [String : Any]
         GTNet.shared.requestWith(url: "http://39.105.217.90:8003/bookShelfService/addToShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -302,7 +305,7 @@ extension GTNet {
 extension GTNet {
     
     // 获取个人信息
-    func getAccountInfo(userId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func getAccountInfo(userId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId" : userId] as [String : Any]
         GTNet.shared.requestWith(url: "http://39.105.217.90:8007/accountService/userInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
@@ -312,8 +315,8 @@ extension GTNet {
     }
     
     // 注册请求
-    func requestRegister(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
+    func requestRegister(userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["userPwd": userPwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8007/accountService/registerFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -322,7 +325,7 @@ extension GTNet {
     }
     
     // 登录请求
-    func requestLogin(userId: String, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func requestLogin(userId: Int, userPwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let params = ["userId": userId, "userPwd": userPwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8007/accountService/loginFun", httpMethod: .post, params: params) { (json) in
             success(json)
@@ -334,7 +337,7 @@ extension GTNet {
     // 更改密码
     func updatePassword(pwd: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId": dataModel?.userId ?? "", "newPassword": pwd] as [String : Any]
+        let params = ["userId": dataModel!.userId, "newPassword": pwd] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8007/accountService/updatePasswdFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -343,9 +346,9 @@ extension GTNet {
     }
     
     // 修改用户信息
-    func updateAccountInfo(headImgData: Data?, nickName: String?, profile: String?, male: Bool?, age: Int?, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+    func updateAccountInfo(headImgData: Data?, nickName: String?, profile: String?, male: Int?, age: Int?, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        var params = ["userId": dataModel?.userId ?? "", "userPwd": (UserDefaults.standard.string(forKey: GTUserDefaultKeys.GTAccountPassword) ?? "")] as [String : Any]
+        var params = ["userId": dataModel!.userId, "userPwd": (UserDefaults.standard.string(forKey: GTUserDefaultKeys.GTAccountPassword) ?? "")] as [String : Any]
         if nickName != nil {
             params.updateValue(nickName as Any, forKey: "nickName")
         }
@@ -375,7 +378,7 @@ extension GTNet {
     // 上传评论
     func addCommentList(success: @escaping ((AnyObject)->()), bookId: String, pageNum: Int, parentId: Int = 0, timeStamp: String, commentContent: String) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": dataModel?.userId ?? "", "timestamp": timeStamp, "parentId": parentId] as [String : Any]
+        let params = ["bookId": bookId, "pageNum": pageNum, "commentContent": commentContent, "userId": dataModel!.userId, "timestamp": timeStamp, "parentId": parentId] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8005/commonService/addCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -386,7 +389,7 @@ extension GTNet {
     // 获得评论
     func getCommentList(success: @escaping ((AnyObject)->()),error: @escaping ((AnyObject)->()), bookId: String, pageNum: Int) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId" : dataModel?.userId ?? "", "bookId": bookId, "pageNum": pageNum] as [String : Any]
+        let params = ["userId" : dataModel!.userId, "bookId": bookId, "pageNum": pageNum] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8005/commonService/getCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -399,7 +402,7 @@ extension GTNet {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         let date = Date.init()
         let endTime = date.timeIntervalSince1970
-        let params = ["userId" : dataModel?.userId ?? "",  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]
+        let params = ["userId" : dataModel!.userId,  "bookId": bookId, "pageNum": pageNum, "startTime": String(startTime), "endTime": String(endTime), "lists" : lists] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/collectReadDataFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -465,7 +468,7 @@ extension GTNet {
     // 获取每日阅读目标
     func getReadTarget(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId" : dataModel?.userId ?? ""] as [String : Any]
+        let params = ["userId" : dataModel!.userId] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/getTargetMinuteFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -476,7 +479,7 @@ extension GTNet {
     // 上传每日目标
     func setReadTarget(minute: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId" : dataModel?.userId ?? "", "minute": minute] as [String : Any]
+        let params = ["userId" : dataModel!.userId, "minute": minute] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/setTargetMinuteFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
@@ -490,7 +493,7 @@ extension GTNet {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let dayTime = dateFormatter.string(from: Date())
-        let params = ["userId" : dataModel?.userId ?? "",  "dayTime": dayTime] as [String : Any]
+        let params = ["userId" : dataModel!.userId,  "dayTime": dayTime] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8004/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in

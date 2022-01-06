@@ -60,6 +60,9 @@ extension Notification.Name {
     
     // 书架数据更新
     static let GTShelfDataUpdate = Notification.Name("GTShelfDataUpdate")
+    
+    // 评论内容筛选选项变化
+    static let GTCommentFilterValueChanged = Notification.Name("GTCommentFilterValueChanged")
 }
 
 extension UIViewController {
@@ -232,6 +235,19 @@ extension UITextView {
 }
 
 extension String {
+    
+    func utf8DecodedString()-> String {
+        let data = self.data(using: .utf8)
+        let message = String(data: data!, encoding: .nonLossyASCII) ?? ""
+        return message
+    }
+        
+    func utf8EncodedString()-> String {
+        let messageData = self.data(using: .nonLossyASCII, allowLossyConversion: true)
+        let text = String(data: messageData!, encoding: .utf8) ?? ""
+        return text
+    }
+    
     subscript(_ indexs: ClosedRange<Int>) -> String {
         let beginIndex = index(startIndex, offsetBy: indexs.lowerBound)
         let endIndex = index(startIndex, offsetBy: indexs.upperBound)

@@ -10,6 +10,7 @@ import UIKit
 
 class GTSubareaTableViewCell: UITableViewCell {
     
+    private var separatorView: UIView!
     private var imgView: UIImageView!
     private var btn: UIButton!
     
@@ -23,30 +24,27 @@ class GTSubareaTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override var frame: CGRect {
-        get {
-            return super.frame
-        }
-        set(newFrame) {
-            var frame = newFrame
-            let newWidth = UIScreen.main.bounds.width - GTViewMargin * 2
-            let space = (frame.width - newWidth) / 2
-            frame.size.width = newWidth
-            frame.origin.x += space
-            super.frame = frame
-        }
-    }
-    
     private func setupView() {
+        
+        separatorView = UIView()
+        separatorView.backgroundColor = UIColor(hexString: "#cacacc")
+        self.contentView.addSubview(separatorView)
+        separatorView.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.top.equalToSuperview()
+            make.left.equalTo(GTViewMargin)
+            make.right.equalTo(-GTViewMargin)
+        }
+        
         imgView = UIImageView()
         imgView.contentMode = .scaleAspectFill
         imgView.image = UIImage(named: "partition")
         self.contentView.addSubview(imgView)
         imgView.snp.makeConstraints { make in
             make.bottom.equalTo(-15)
-            make.top.equalTo(15)
+            make.top.equalTo(separatorView.snp.bottom).offset(15)
             make.width.equalTo(imgView.snp.height)
-            make.left.equalToSuperview()
+            make.left.equalTo(GTViewMargin)
         }
         
         btn = UIButton()
