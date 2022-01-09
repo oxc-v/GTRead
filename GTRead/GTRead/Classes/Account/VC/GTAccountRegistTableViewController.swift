@@ -132,9 +132,13 @@ class GTAccountRegistTableViewController: GTTableViewController {
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             if let dataModel = try? decoder.decode(GTAccountInfoDataModel.self, from: data!) {
-                GTUserDefault.shared.set(dataModel, forKey: GTUserDefaultKeys.GTAccountDataModel)
-                NotificationCenter.default.post(name: .GTLoginSuccessful, object: self)
-                self.dismiss(animated: true)
+                if dataModel.userId != 0 {
+                    GTUserDefault.shared.set(dataModel, forKey: GTUserDefaultKeys.GTAccountDataModel)
+                    NotificationCenter.default.post(name: .GTLoginSuccessful, object: self)
+                    self.dismiss(animated: true)
+                } else {
+                    self.showNotificationMessageView(message: "获取个人信息失败")
+                }
             } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }

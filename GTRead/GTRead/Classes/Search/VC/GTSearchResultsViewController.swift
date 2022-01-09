@@ -14,11 +14,13 @@ class GTSearchResultsViewController: GTTableViewController {
     private var resultLabel: UILabel!
     private var loadingView: GTLoadingView!
     
-    private var dataModel: GTSearchBookDataModel?
+    var dataModel: GTSearchBookDataModel?
 
+    var searchOffset = 0
+    var searchStr = ""
+    var searchType: GTSearchType = .bookName
+    
     private let cellHeight: CGFloat = 150
-    private var searchOffset: Int = 0
-    private var searchWord: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,21 +115,20 @@ class GTSearchResultsViewController: GTTableViewController {
     
     // 上拉刷新
     @objc private func refreshSearchData(refreshControl: UIRefreshControl) {
-        self.getSearchData(self.searchWord)
+        
+        // 获取时间戳
+        let date = Date.init()
+        let timeStamp = date.timeIntervalSince1970
+        
+        let count = 10
+        
+        self.getSearchData(searchStr: self.searchStr, searchType: self.searchType, dayTime: String(timeStamp), count: count, offset: self.searchOffset)
     }
     
     // 获取搜索数据
-    private func getSearchData(_ searchWord: String) {
+    func getSearchData(searchStr: String, searchType: GTSearchType, dayTime: String, count: Int, offset: Int) {
         
-        // 获取当前日期
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-dd"
-        let dayTime = dateFormatter.string(from: Date())
-        
-        // 单词获取数据条数
-        let count = 10
-
-        GTNet.shared.searchBookInfoFun(words: searchWord, dayTime: dayTime, count: count, offset: searchOffset, failure: { error in
+        GTNet.shared.searchBookInfoFun(searchStr: searchStr, searchType: searchType, dayTime: dayTime, count: count, offset: offset, failure: { error in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
             } else {
@@ -228,17 +229,6 @@ extension GTSearchResultsViewController {
 extension GTSearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         
-        // 重置步长和数据
-        self.searchOffset = 0
-        self.dataModel = nil
-        self.tableView.reloadData()
-        
-        let trimmedString = (searchController.searchBar.text ?? " ").trimmingCharacters(in: .whitespaces)
-        if !trimmedString.isEmpty {
-            self.searchWord = trimmedString
-            self.showActivityIndicatorView()
-            self.getSearchData(trimmedString)
-        }
     }
 }
 

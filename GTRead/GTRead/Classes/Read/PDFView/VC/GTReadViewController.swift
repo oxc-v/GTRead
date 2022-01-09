@@ -340,14 +340,12 @@ class GTReadViewController: EyeTrackViewController {
     
     //MARK: -评论
     @objc private func commentButtonDidClicked() {
-        navgationBarHiddenStatu = true
-        let commentVC = GTCommentViewController(bookId: self.bookId)
-        commentVC.pageNum = ((pdfdocument?.index(for: pdfView.currentPage!) ?? -1 ) + 1)
-        self.addChild(commentVC)
-        self.view.addSubview(commentVC.view)
-        commentVC.view.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
+        let layout = GTCommentCollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 20, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumInteritemSpacing = 10
+        let vc = GTBaseNavigationViewController(rootViewController: GTPDFCommentCollectionViewController(collectionViewLayout: layout))
+        self.present(vc, animated: true)
     }
     
     // 视线跟踪图标

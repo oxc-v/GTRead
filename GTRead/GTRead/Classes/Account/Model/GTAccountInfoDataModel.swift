@@ -10,9 +10,9 @@ import UIKit
 
 struct GTAccountInfoDataModel: Codable {
     var userId: Int
-    var nickName: String
-    var headImgUrl: String
-    var profile: String
+    var nickName: String?
+    var headImgUrl: String?
+    var profile: String?
     var male: Int?
     var age: Int?
 

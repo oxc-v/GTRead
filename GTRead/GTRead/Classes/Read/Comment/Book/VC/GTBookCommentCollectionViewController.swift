@@ -50,22 +50,22 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
         sender.zoomOut()
         sender.isHidden = true
         
-        let cell = self.collectionView.cellForItem(at: IndexPath(row: sender.tag + 2, section: 0)) as! GTBookBigCommentCollectionViewCell
+        let cell = self.collectionView.cellForItem(at: IndexPath(row: sender.tag, section: 0)) as! GTBookBigCommentCollectionViewCell
         cell.yesCommentBtn.isHidden = false
         cell.yesCommentBtn.zoomIn()
         
-        self.test[sender.tag] = false
+        self.test[sender.tag - 2] = false
     }
     
     @objc private func yesCommentBtnDidClicked(sender: UIButton) {
         sender.zoomOut()
         sender.isHidden = true
         
-        let cell = self.collectionView.cellForItem(at: IndexPath(row: sender.tag + 2, section: 0)) as! GTBookBigCommentCollectionViewCell
+        let cell = self.collectionView.cellForItem(at: IndexPath(row: sender.tag, section: 0)) as! GTBookBigCommentCollectionViewCell
         cell.noCommentBtn.isHidden = false
         cell.noCommentBtn.zoomIn()
         
-        self.test[sender.tag] = true
+        self.test[sender.tag - 2] = true
     }
     
     @objc private func filtrateBtnDidClicked(sender: UIButton) {
@@ -115,8 +115,8 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookBigCommentCollectionViewCell", for: indexPath) as! GTBookBigCommentCollectionViewCell
             cell.yesCommentBtn.isHidden = self.test[indexPath.row - 2]
             cell.noCommentBtn.isHidden = !(cell.yesCommentBtn.isHidden)
-            cell.noCommentBtn.tag = indexPath.row - 2
-            cell.yesCommentBtn.tag = indexPath.row - 2
+            cell.noCommentBtn.tag = indexPath.row
+            cell.yesCommentBtn.tag = indexPath.row
             cell.noCommentBtn.addTarget(self, action: #selector(noCommentBtnDidClicked(sender:)), for: .touchUpInside)
             cell.yesCommentBtn.addTarget(self, action: #selector(yesCommentBtnDidClicked(sender:)), for: .touchUpInside)
             

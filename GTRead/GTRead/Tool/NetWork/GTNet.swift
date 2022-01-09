@@ -226,7 +226,7 @@ extension GTNet {
     // 获取书架书籍
     func getShelfBook(failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
         let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
-        let params = ["userId": dataModel?.userId ?? ""] as [String : Any]
+        let params = ["userId": dataModel!.userId] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/getMyshelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -241,7 +241,7 @@ extension GTNet {
         for item in books {
             bookIds.append(item.bookId)
         }
-        let params = ["userId": dataModel?.userId ?? "", "bookIds": bookIds] as [String : Any]
+        let params = ["userId": dataModel!.userId, "bookIds": bookIds] as [String : Any]
         self.requestWith(url: "http://39.105.217.90:8003/bookShelfService/delFromShelfFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (e) in
@@ -426,9 +426,11 @@ extension GTNet {
 // 搜索
 extension GTNet {
     // 搜索书籍
-    func searchBookInfoFun(words: String, dayTime: String, count: Int, offset: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["words": words, "dayTime": dayTime, "count" : count, "offset": offset] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/FuzzySearchBooksFun", httpMethod: .post, params: params) { (json) in
+    func searchBookInfoFun(searchStr: String, searchType: GTSearchType, dayTime: String, count: Int, offset: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = [searchType.rawValue: searchStr, "dayTime": dayTime, "count": count, "offset": offset, "userId": 10000] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/searchBookInfoFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)

@@ -32,7 +32,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     
     private var dataModel: GTShelfDataModel? {
         didSet {
-            if dataModel?.lists == nil || dataModel?.count == -1 {
+            if dataModel == nil || dataModel?.count == 0 {
                 editButton.isEnabled = false
             } else {
                 editButton.isEnabled = true
@@ -96,8 +96,6 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         
         // 注册添加书籍到书库的通知
         NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTAddBookToShelf, object: nil)
-        // 注册删除书库书籍的通知
-        NotificationCenter.default.addObserver(self, selector: #selector(getShelfDataFromServer), name: .GTDeleteBookToShelf, object: nil)
         // 注册书本下载完毕通知
         NotificationCenter.default.addObserver(self, selector: #selector(tryOpenBook(notification:)), name: .GTDownloadBookFinished, object: nil)
         // 注册账户信息修改的通知
@@ -149,6 +147,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         editButton = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 30))
         editButton.setTitle("编辑", for: .normal)
         editButton.setTitleColor(UIColor.black, for: .normal)
+        editButton.setTitleColor(.lightGray, for: .disabled)
         editButton.addTarget(self, action: #selector(editEvent), for: .touchUpInside)
         
         deleteButton = UIButton(type: .custom)
@@ -160,6 +159,8 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         let rightItems = [UIBarButtonItem(customView: editButton),UIBarButtonItem(customView: deleteButton)]
         self.navigationItem.rightBarButtonItems = rightItems
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
+        
+        editButton.isEnabled = false
         
         accountBtn = UIButton(type: .custom)
         accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
@@ -177,6 +178,8 @@ class GTShelfCollectionViewController: GTCollectionViewController {
         let vc = GTShelfSearchResultsViewController()
         searchController = UISearchController(searchResultsController: vc)
         searchController.loadViewIfNeeded()
+        searchController.delegate = self
+        searchController.searchBar.delegate = self
         searchController.searchBar.placeholder = "搜索书库"
         searchController.searchBar.sizeToFit()
         searchController.searchResultsUpdater = vc
@@ -224,6 +227,7 @@ class GTShelfCollectionViewController: GTCollectionViewController {
     
     // accountBtn image change
     @objc private func accountBtnReloadImg() {
+        self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.accountBtn.sd_setImage(with: URL(string: self.accountInfoDataModel?.headImgUrl ?? ""), for: .normal, placeholderImage: UIImage(named: "head_placeholder"), options: SDWebImageOptions(rawValue: 0), context: nil)
     }
     
@@ -343,10 +347,24 @@ class GTShelfCollectionViewController: GTCollectionViewController {
                 self.showNotificationMessageView(message: "服务器数据错误")
             } else if dataModel?.FailBookIds == nil {
                 self.showNotificationMessageView(message: "书籍删除成功")
-                // 发送书籍删除的通知
-                NotificationCenter.default.post(name: .GTDeleteBookToShelf, object: self)
+                
+                for item in self.selectedBooks {
+                    self.dataModel!.lists!.removeAll(where: {$0.bookId == item.bookId})
+                }
+                self.dataModel!.count = self.dataModel!.lists!.count
+                GTUserDefault.shared.set(self.dataModel, forKey: GTUserDefaultKeys.GTShelfDataModel)
             } else {
                 self.showNotificationMessageView(message: "个别书籍删除失败")
+                
+                for item in dataModel!.FailBookIds! {
+                    self.selectedBooks.removeAll(where: {$0.bookId == item})
+                }
+                
+                for item in self.selectedBooks {
+                    self.dataModel!.lists!.removeAll(where: {$0.bookId == item.bookId})
+                }
+                self.dataModel!.count = self.dataModel!.lists!.count
+                GTUserDefault.shared.set(self.dataModel, forKey: GTUserDefaultKeys.GTShelfDataModel)
             }
         })
     }
@@ -474,5 +492,16 @@ extension GTShelfCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 10
+    }
+}
+
+extension GTShelfCollectionViewController: UISearchBarDelegate, UISearchControllerDelegate {
+    
+    func presentSearchController(_ searchController: UISearchController) {
+        self.accountBtn.isHidden = true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.accountBtn.isHidden = false
     }
 }

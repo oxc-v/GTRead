@@ -14,7 +14,7 @@ class GTAnalyseTableViewController: GTTableViewController {
     private var accountBtn: UIButton!
     
     private let sectionHeaderHeight = 50.0
-    private var sectionText = [String]()
+    private var sectionText = ["", "阅读数据"]
     
     private var accountInfoDataModel: GTAccountInfoDataModel? {
         didSet {
@@ -34,9 +34,10 @@ class GTAnalyseTableViewController: GTTableViewController {
     private var dataModel: GTAnalyseDataModel? {
         didSet {
             if dataModel != nil {
-                self.sectionText.append("")
-                self.sectionText.append("阅读数据")
-                if dataModel?.lists != nil || dataModel?.speedPoints != nil || dataModel?.scatterDiagram != nil {
+                if dataModel?.lists != nil {
+                    self.sectionText.append("时间分布")
+                }
+                if dataModel?.speedPoints != nil || dataModel?.scatterDiagram != nil {
                     self.sectionText.append("数据图表")
                 }
             } else {
@@ -110,6 +111,7 @@ class GTAnalyseTableViewController: GTTableViewController {
         tableView.backgroundColor = .white
         tableView.register(GTReadTargetTableViewCell.self, forCellReuseIdentifier: "GTReadTargetTableViewCell")
         tableView.register(GTReadDetailTableViewCell.self, forCellReuseIdentifier: "GTReadDetailTableViewCell")
+        tableView.register(GTReadTimeChartTableViewCell.self, forCellReuseIdentifier: "GTReadTimeChartTableViewCell")
         tableView.register(GTReadChartTableViewCell.self, forCellReuseIdentifier: "GTReadChartTableViewCell")
     }
     
@@ -204,11 +206,13 @@ class GTAnalyseTableViewController: GTTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.section {
-        case 0:
+        switch self.sectionText[indexPath.section] {
+        case "":
             return 450
-        case 1:
+        case "阅读数据":
             return 250
+        case "时间分布":
+            return 350
         default:
             return 380
         }
@@ -232,8 +236,8 @@ class GTAnalyseTableViewController: GTTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
+        switch self.sectionText[indexPath.section] {
+        case "":
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadTargetTableViewCell", for: indexPath) as! GTReadTargetTableViewCell
             cell.selectionStyle = .none
             cell.targetBtn.addTarget(self, action: #selector(targetBtnDidClicked), for: .touchUpInside)
@@ -242,12 +246,17 @@ class GTAnalyseTableViewController: GTTableViewController {
                 cell.updateWithData(model: self.dataModel!)
             }
             return cell
-        case 1:
+        case "阅读数据":
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadDetailTableViewCell", for: indexPath) as! GTReadDetailTableViewCell
             cell.selectionStyle = .none
             if self.dataModel != nil {
                 cell.dataModel = self.dataModel!.thisTimeData
             }
+            return cell
+        case "时间分布":
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadTimeChartTableViewCell", for: indexPath) as! GTReadTimeChartTableViewCell
+            cell.selectionStyle = .none
+            cell.updateWithData(model: self.dataModel!)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadChartTableViewCell", for: indexPath) as! GTReadChartTableViewCell
@@ -257,7 +266,6 @@ class GTAnalyseTableViewController: GTTableViewController {
             }
             return cell
         }
-        
     }
 }
 

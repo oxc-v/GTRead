@@ -24,7 +24,7 @@ class GTAccountTextEditViewController: GTBaseViewController {
     init(editType: Int) {
         self.accountInfoDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         self.editType = editType
-        self.placeholder = self.editType == 0 ? self.accountInfoDataModel!.nickName : self.accountInfoDataModel!.profile
+        self.placeholder = self.editType == 0 ? self.accountInfoDataModel!.nickName! : self.accountInfoDataModel!.profile!
         super.init(nibName: nil, bundle: nil)
     }
     

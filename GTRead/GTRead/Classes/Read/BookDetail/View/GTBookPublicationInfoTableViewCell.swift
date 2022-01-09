@@ -12,7 +12,6 @@ class GTBookPublicationInfoTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
     
-//    var dataModel: GTBookPublicationInfoDataModel?
     var dataModel: GTBookDataModel?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -55,11 +54,15 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
         switch indexPath.row {
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
+            
+            let type = self.dataModel!.baseInfo.bookType
+            let index = type < GTBookTypeLists.count ? type : 0
+            
             cell.titleLabel.text = "类型"
             cell.imgView.isHidden = false
-            cell.imgView.image = UIImage(named: "bookType_" + String(self.dataModel!.baseInfo.bookType))
+            cell.imgView.image = UIImage(named: "bookType_" + String(index))
             cell.contentLabel.isHidden = false
-            cell.subtitleLabel.text = GTBookTypeLists[self.dataModel!.baseInfo.bookType]
+            cell.subtitleLabel.text = GTBookTypeLists[index]
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell

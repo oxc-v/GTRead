@@ -11,9 +11,10 @@ import Charts
 
 class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
     
-    var titleLabel: UILabel!
-    private var separatorView: UIView!
+    private var titleLabel: UILabel!
     private var chartView: ScatterChartView!
+    private var baseView: GTShadowView!
+    private var imgView: UIImageView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,21 +28,32 @@ class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
     
     private func setupView() {
         
-        titleLabel = UILabel()
-        titleLabel.textAlignment = .left
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        self.contentView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+        baseView = GTShadowView(opacity: 0.1)
+        baseView.backgroundColor = .white
+        baseView.layer.cornerRadius = 20
+        self.contentView.addSubview(baseView)
+        baseView.snp.makeConstraints { make in
+            make.size.equalToSuperview()
         }
         
-        separatorView = UIView()
-        separatorView.backgroundColor = UIColor(hexString: "#cacacc")
-        self.contentView.addSubview(separatorView)
-        separatorView.snp.makeConstraints { make in
-            make.height.equalTo(0.5)
-            make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.width.equalToSuperview()
+        imgView = UIImageView()
+        imgView.image = UIImage(named: "read_state")
+        imgView.contentMode = .scaleAspectFill
+        baseView.addSubview(imgView)
+        imgView.snp.makeConstraints { (make) in
+            make.top.equalTo(20)
+            make.height.width.equalTo(40)
+            make.left.top.equalTo(20)
+        }
+
+        titleLabel = UILabel()
+        titleLabel.text = "学习状态"
+        titleLabel.textAlignment = .left
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        baseView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(imgView.snp.bottom).offset(5)
+            make.left.top.equalTo(imgView.snp.left)
         }
         
         chartView = ScatterChartView()
@@ -58,7 +70,7 @@ class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
         chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
         self.contentView.addSubview(chartView)
         chartView.snp.makeConstraints { make in
-            make.top.equalTo(separatorView.snp.bottom).offset(20)
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview().offset(-10)
         }

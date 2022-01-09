@@ -15,7 +15,11 @@ class GTSearchViewController: GTTableViewController {
     
     private let sectionMargin = 10.0
     private let sectionHeaderHeight = 50.0
-    private var sectionText = [String]()
+    private var sectionText = [String]() {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     private var sectionTextForSearching = [String]()
     
     private var accountBtn: UIButton!
@@ -23,6 +27,10 @@ class GTSearchViewController: GTTableViewController {
     private var accountInfoDataModel: GTAccountInfoDataModel?
     private var exploreMoreDataModel: GTExploreMoreDataModel?
     private var hotSearchWordDataModel: GTHotSearchWordDataModel?
+    
+    private var searchOffset: Int = 0
+    private var searchType: GTSearchType = .bookName
+    private var searchResultVC: GTSearchResultsViewController?
     
     private var searchHistoryDataModel: GTSearchHistoryDataModel? {
         didSet {
@@ -35,9 +43,13 @@ class GTSearchViewController: GTTableViewController {
     
     private var isBeginSearch = false {
         didSet {
-            if isBeginSearch && self.searchHistoryDataModel != nil {
-                self.sectionTextForSearching.append("历史搜索")
+            if isBeginSearch {
+                if self.searchHistoryDataModel != nil {
+                    self.sectionTextForSearching.append("历史搜索")
+                }
+                self.accountBtn.isHidden = true
             } else {
+                self.accountBtn.isHidden = false
                 self.sectionTextForSearching.removeAll()
             }
             self.tableView.reloadData()
@@ -120,16 +132,16 @@ class GTSearchViewController: GTTableViewController {
         self.navigationItem.title = "搜索"
         self.navigationController?.navigationBar.layoutMargins = UIEdgeInsets(top: 0, left: GTViewMargin, bottom: 0, right: GTViewMargin)
         
-        let vc = GTSearchResultsViewController()
-        searchController = UISearchController(searchResultsController: vc)
+        self.searchResultVC = GTSearchResultsViewController()
+        searchController = UISearchController(searchResultsController: searchResultVC)
         searchController.loadViewIfNeeded()
         searchController.searchBar.placeholder = "搜索图书"
-        searchController.searchBar.scopeButtonTitles = ["书名", "作者", "出版社", "类别"]
+        searchController.searchBar.scopeButtonTitles = ["书名", "作者", "出版社"]
         searchController.searchBar.searchBarStyle = .default
         searchController.searchBar.delegate = self
         searchController.delegate = self
         searchController.searchBar.sizeToFit()
-        searchController.searchResultsUpdater = vc
+        searchController.searchResultsUpdater = searchResultVC
         UIBarButtonItem.appearance(whenContainedInInstancesOf:[UISearchBar.self]).tintColor = .black
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "取消"
         definesPresentationContext = true
@@ -260,6 +272,22 @@ class GTSearchViewController: GTTableViewController {
             self.searchController.isActive = true
             self.searchController.searchBar.text = text
             self.appendSearchHistoryData(text: text)
+            
+            // 同步数据
+            self.searchOffset = 0
+            self.searchResultVC?.searchOffset = 0
+            self.searchResultVC?.searchStr = text
+            self.searchResultVC?.dataModel = nil
+            self.searchResultVC?.tableView.reloadData()
+            
+            // 获取时间戳
+            let date = Date.init()
+            let timeStamp = date.timeIntervalSince1970
+            
+            let count = 10
+            
+            // 从服务器请求搜索数据
+            self.searchResultVC?.getSearchData(searchStr: text, searchType: self.searchType, dayTime: String(timeStamp), count: count, offset: self.searchOffset)
         }
     }
     
@@ -532,9 +560,63 @@ extension GTSearchViewController: UISearchBarDelegate, UISearchControllerDelegat
         self.saveSearchHistoryForDisk()
     }
     
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.searchResultVC?.dataModel = nil
+        self.searchResultVC?.tableView.reloadData()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
-            self.appendSearchHistoryData(text: text)
+            let trimmedString = text.trimmingCharacters(in: .whitespaces)
+            if !trimmedString.isEmpty {
+                self.appendSearchHistoryData(text: text)
+                
+                // 同步数据
+                self.searchOffset = 0
+                self.searchResultVC?.searchOffset = 0
+                self.searchResultVC?.searchStr = trimmedString
+                self.searchResultVC?.dataModel = nil
+                self.searchResultVC?.tableView.reloadData()
+                
+                // 获取时间戳
+                let date = Date.init()
+                let timeStamp = date.timeIntervalSince1970
+                
+                let count = 10
+                
+                // 从服务器请求搜索数据
+                self.searchResultVC?.getSearchData(searchStr: trimmedString, searchType: self.searchType, dayTime: String(timeStamp), count: count, offset: self.searchOffset)
+            }
+        }
+    }
+    
+    // 搜索类别索引发生变化
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        switch selectedScope {
+        case 0:
+            self.searchType = .bookName
+        case 1:
+            self.searchType = .authorName
+        case 2:
+            self.searchType = .publishHouse
+        default:
+            break
+        }
+        self.searchResultVC?.searchType = self.searchType
+        
+        let trimmedString = (searchBar.text)!.trimmingCharacters(in: .whitespaces)
+        if !trimmedString.isEmpty {
+            self.searchResultVC?.dataModel = nil
+            self.searchResultVC?.tableView.reloadData()
+            
+            // 获取时间戳
+            let date = Date.init()
+            let timeStamp = date.timeIntervalSince1970
+            
+            let count = 10
+            
+            // 从服务器请求搜索数据
+            self.searchResultVC?.getSearchData(searchStr: trimmedString, searchType: self.searchType, dayTime: String(timeStamp), count: count, offset: self.searchOffset)
         }
     }
 }

@@ -145,18 +145,4 @@ class GTBookBigCommentCollectionViewCell: UICollectionViewCell {
         layoutAttributes.frame.size = contentView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
         return layoutAttributes
     }
-    
-    @objc private func noCommentBtnDidClicked(sender: UIButton) {
-        sender.zoomOut()
-        sender.isHidden = true
-        yesCommentBtn.isHidden = false
-        yesCommentBtn.zoomIn()
-    }
-    
-    @objc private func yesCommentBtnDidClicked(sender: UIButton) {
-        sender.zoomOut()
-        sender.isHidden = true
-        noCommentBtn.isHidden = false
-        noCommentBtn.zoomIn()
-    }
 }

@@ -26,6 +26,8 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
     var progressView_5: UIProgressView!
     var numberLab: UILabel!
     
+    private let progressHeight = 3
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -114,7 +116,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         progressView_1.progressTintColor = .black
         self.contentView.addSubview(progressView_1)
         progressView_1.snp.makeConstraints { make in
-            make.height.equalTo(5)
+            make.height.equalTo(progressHeight)
             make.centerY.equalTo(startView_1.snp.centerY)
             make.width.equalTo(150)
             make.right.equalTo(-20)
@@ -125,7 +127,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         progressView_2.setProgress(0.2, animated: true)
         self.contentView.addSubview(progressView_2)
         progressView_2.snp.makeConstraints { make in
-            make.height.equalTo(5)
+            make.height.equalTo(progressHeight)
             make.centerY.equalTo(startView_2.snp.centerY)
             make.width.equalTo(150)
             make.right.equalTo(-20)
@@ -136,7 +138,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         progressView_3.setProgress(0.2, animated: true)
         self.contentView.addSubview(progressView_3)
         progressView_3.snp.makeConstraints { make in
-            make.height.equalTo(5)
+            make.height.equalTo(progressHeight)
             make.centerY.equalTo(startView_3.snp.centerY)
             make.width.equalTo(150)
             make.right.equalTo(-20)
@@ -147,7 +149,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         progressView_4.setProgress(0.05, animated: true)
         self.contentView.addSubview(progressView_4)
         progressView_4.snp.makeConstraints { make in
-            make.height.equalTo(5)
+            make.height.equalTo(progressHeight)
             make.centerY.equalTo(startView_4.snp.centerY)
             make.width.equalTo(150)
             make.right.equalTo(-20)
@@ -158,7 +160,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         progressView_5.setProgress(0.05, animated: true)
         self.contentView.addSubview(progressView_5)
         progressView_5.snp.makeConstraints { make in
-            make.height.equalTo(5)
+            make.height.equalTo(progressHeight)
             make.centerY.equalTo(startView_5.snp.centerY)
             make.width.equalTo(150)
             make.right.equalTo(-20)

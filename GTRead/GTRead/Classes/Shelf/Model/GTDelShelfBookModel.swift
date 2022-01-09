@@ -8,7 +8,7 @@
 import UIKit
 
 struct GTDelShelfBookModel: Codable {
-    var userId: String
+    var userId: Int
     var susCount: Int
     var FailBookIds: [String]?
     

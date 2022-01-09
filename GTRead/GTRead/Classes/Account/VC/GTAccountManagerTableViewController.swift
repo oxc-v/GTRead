@@ -123,7 +123,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
         }, success: { (json) in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            if let dataModel = try? decoder.decode(GTRegisterAccountDataModel.self, from: data!) {
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
                 if dataModel.code == -1 {
                     self.loadingView.isAnimating = false
                     self.loginErrorBtn?.setTitle("账号或密码错误", for: .normal)
@@ -131,7 +131,7 @@ class GTAccountManagerTableViewController: GTTableViewController {
                 } else {
                     // ----此处需要完善 记得暂停加载动画
                     UserDefaults.standard.set(self.passwordTextfield?.text, forKey: GTUserDefaultKeys.GTAccountPassword)
-                    self.getAccountInfo(userId: dataModel.userId!)
+                    self.getAccountInfo(userId: Int((self.accountTextfield?.text)!)!)
                 }
             } else {
                 self.loadingView.isAnimating = false

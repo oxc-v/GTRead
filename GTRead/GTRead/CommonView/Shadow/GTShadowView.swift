@@ -32,7 +32,7 @@ class GTShadowView: UIView {
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 3, height: 3)
         layer.shadowOpacity = self.opacity
-        layer.shadowRadius = 5
+        layer.shadowRadius = 10
         layer.shadowPath = shadowPath.cgPath
     }
 }

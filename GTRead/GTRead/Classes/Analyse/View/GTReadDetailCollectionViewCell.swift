@@ -25,7 +25,7 @@ class GTReadDetailCollectionViewCell: UICollectionViewCell {
 
         baseView = GTShadowView(opacity: 0.1)
         baseView.backgroundColor = .white
-        baseView.layer.cornerRadius = 10
+        baseView.layer.cornerRadius = 20
         self.contentView.addSubview(baseView)
         baseView.snp.makeConstraints { make in
             make.size.equalToSuperview()
@@ -35,7 +35,7 @@ class GTReadDetailCollectionViewCell: UICollectionViewCell {
         imgView.contentMode = .scaleAspectFill
         self.addSubview(imgView)
         imgView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(50)
+            make.height.width.equalTo(40)
             make.left.top.equalTo(16)
         }
         
@@ -48,12 +48,12 @@ class GTReadDetailCollectionViewCell: UICollectionViewCell {
         }
         
         titleLabel = UILabel()
-        titleLabel.textColor = UIColor(hexString: "#b4b4b4")
-        titleLabel.font = titleLabel.font.withSize(12)
+        titleLabel.textColor = .lightGray
+        titleLabel.font = titleLabel.font.withSize(15)
         self.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(imgView.snp.left)
-            make.bottom.equalTo(dataLabel.snp.top).offset(-10)
+            make.bottom.equalTo(dataLabel.snp.top).offset(-20)
         }
     }
     
