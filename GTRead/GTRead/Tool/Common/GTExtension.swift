@@ -63,6 +63,9 @@ extension Notification.Name {
     
     // 评论内容筛选选项变化
     static let GTCommentFilterValueChanged = Notification.Name("GTCommentFilterValueChanged")
+    
+    // 刷新页码评论内容
+    static let GTReflashPDFComment = Notification.Name("GTReflashPDFComment")
 }
 
 extension UIViewController {
@@ -235,6 +238,19 @@ extension UITextView {
 }
 
 extension String {
+    
+    func timeIntervalChangeToTimeStr(_ dateFormat: String? = "yyyy-MM-dd HH:mm") -> String {
+        let timeInterval = Double(self) ?? 0
+        let date:Date = Date.init(timeIntervalSince1970: timeInterval)
+        let formatter = DateFormatter.init()
+        if dateFormat == nil {
+            formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        } else{
+            formatter.dateFormat = dateFormat
+        }
+        
+        return formatter.string(from: date as Date)
+    }
     
     func utf8DecodedString()-> String {
         let data = self.data(using: .utf8)

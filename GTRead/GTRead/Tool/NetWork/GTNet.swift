@@ -423,6 +423,129 @@ extension GTNet {
     }
 }
 
+// 书籍
+extension GTNet {
+    
+    // 添加书籍评论
+    func addBookComment(userId: Int, bookId: String, score: Int, title: String, content: String, remarkTime: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+
+        let params = ["userId" : userId, "score": score, "bookId": bookId, "title": title, "content" : content, "remarkTime": remarkTime] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8005/BookCommentService/addCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 获取书籍的评论列表
+    func getBookCommentLists(observer: Int, offset: Int, count: Int, bookId: String, pattern: GTBookCommentPattern, reverse: Bool, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["observer" : observer,  "offset": offset, "count": count, "bookId": bookId, "pattern": pattern.rawValue, "reverse" : reverse] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8005/BookCommentService/getBookCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 点赞书籍评论
+    func hitBookComment(userId: Int, praised: Int, bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["hitter": userId,  "praised": praised, "bookId": bookId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8005/BookCommentService/hitCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 取消点赞
+    func cancelHitBookComment(userId: Int, praised: Int, bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["hitter": userId,  "praised": praised, "bookId": bookId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8005/BookCommentService/CancalHitCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 获取顶层页评论
+    func getTopPDFCommentFun(observer: Int, offset: Int, count: Int, bookId: String, pattern: GTPDFCommentPattern, reverse: Bool, page: Int,  failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["observer" : observer,  "offset": offset, "count": count, "bookId": bookId, "pattern": pattern.rawValue, "reverse" : reverse, "page": page] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/getTopCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 获取子页评论
+    func getSubPDFCommentFun(observer: Int, offset: Int, count: Int, bookId: String, pattern: GTPDFCommentPattern, reverse: Bool, page: Int, parentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["observer" : observer,  "offset": offset, "count": count, "bookId": bookId, "pattern": pattern.rawValue, "reverse" : reverse, "page": page, "parentId": parentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/getSubCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 添加顶层页评论
+    func addTopCommentFun(userId: Int, bookId: String, page: Int, title: String, content: String, remarkTime: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["userId" : userId, "page": page, "bookId": bookId, "title": title, "content" : content, "remarkTime": remarkTime] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/addTopCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 添加子页评论
+    func addSubCommentFun(userId: Int, bookId: String, page: Int, title: String, content: String, remarkTime: String, parentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["userId" : userId, "page": page, "bookId": bookId, "title": title, "content" : content, "remarkTime": remarkTime, "parentId": parentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/addSubCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 点赞页码评论
+    func hitPDFCommentFun(userId: Int, praised: Int, bookId: String, page: Int, commentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["hitter": userId, "praised": praised, "bookId": bookId, "page": page, "commentId": commentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/hitCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    
+    // 取消点赞页码评论
+    func cancelHitPDFCommentFun(userId: Int, praised: Int, bookId: String, page: Int, commentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["hitter": userId, "praised": praised, "bookId": bookId, "page": page, "commentId": commentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/CancalHitCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+}
+
 // 搜索
 extension GTNet {
     // 搜索书籍

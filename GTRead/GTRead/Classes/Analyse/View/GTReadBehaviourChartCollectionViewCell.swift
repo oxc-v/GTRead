@@ -12,7 +12,7 @@ import Charts
 class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
     
     private var titleLabel: UILabel!
-    private var chartView: ScatterChartView!
+    private var chartView: PieChartView!
     private var baseView: GTShadowView!
     private var imgView: UIImageView!
     
@@ -52,57 +52,38 @@ class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         baseView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(imgView.snp.bottom).offset(5)
-            make.left.top.equalTo(imgView.snp.left)
+            make.top.equalTo(imgView.snp.bottom).offset(10)
+            make.left.equalTo(imgView.snp.left)
         }
         
-        chartView = ScatterChartView()
-        chartView.xAxis.drawGridLinesEnabled = false
-        chartView.leftAxis.drawGridLinesEnabled = false
-        chartView.leftAxis.drawZeroLineEnabled = true
-        chartView.rightAxis.enabled = false
-        chartView.xAxis.labelPosition = .bottom
-        chartView.dragEnabled = false
-        chartView.scaleXEnabled = false
-        chartView.scaleYEnabled = false
-        chartView.doubleTapToZoomEnabled = false
+        chartView = PieChartView()
         chartView.animate(xAxisDuration: 1, yAxisDuration: 1)
-        chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
-        self.contentView.addSubview(chartView)
+        chartView.noDataText = "暂无数据"
+        baseView.addSubview(chartView)
         chartView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.width.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-10)
+            make.left.equalTo(20)
+            make.bottom.right.equalToSuperview().offset(-20)
         }
     }
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        if model.scatterDiagram != nil {
-            let chartData =  ScatterChartData()
-            for i in 0..<model.scatterDiagram!.count {
-                var dataEntries = [ChartDataEntry]()
-                for j in 0..<model.scatterDiagram![i].locate.count {
-                    let entry = ChartDataEntry.init(x: Double(model.scatterDiagram![i].locate[j].x), y: Double(model.scatterDiagram![i].locate[j].y))
-                    dataEntries.append(entry)
-                }
-                dataEntries.sort(by: { $0.x < $1.x })
-                let chartDataSet = ScatterChartDataSet(entries: dataEntries, label: model.scatterDiagram![i].action)
-                
-                // 线条颜色
-                chartDataSet.colors = [UIColor(hexString: model.scatterDiagram![i].color)]
-                
-                // 散点样式
-                chartDataSet.setScatterShape(.circle)
-                
-                chartDataSet.drawValuesEnabled = false
-                
-                chartData.dataSets.append(chartDataSet)
-            }
-            // 设置散点图数据
-            chartView.data = chartData
-        } else {
-            chartView.clear()
+        //生成5条随机数据
+        let dataEntries = (0..<3).map { (i) -> PieChartDataEntry in
+            return PieChartDataEntry(value: Double(arc4random_uniform(50) + 10), label: "走神")
         }
+        let chartDataSet = PieChartDataSet(entries: dataEntries, label: "")
+        
+        //设置颜色
+        chartDataSet.colors = [UIColor(hexString: "#258cf6"), UIColor(hexString: "#2ec9a4"), UIColor(hexString: "#5950c5")]
+            
+        chartDataSet.yValuePosition = .outsideSlice //数值显示在外
+            
+        let chartData = PieChartData(dataSet: chartDataSet)
+        chartData.setValueTextColor(.black)//文字颜色为黑色
+            
+        //设置饼状图数据
+        chartView.data = chartData
     }
 }

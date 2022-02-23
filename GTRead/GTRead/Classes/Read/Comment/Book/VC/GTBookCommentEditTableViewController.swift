@@ -18,6 +18,12 @@ class GTBookCommentEditTableViewController: GTTableViewController {
     private var titleLab: UILabel!
     private var loadingView: GTLoadingView!
     
+    private let userId: Int
+    private let bookId: String
+    private let imgUrl: String
+    private var commentScore: Int!
+    private var commentTile: String!
+    private var commentContent: String!
     private let textViewPlaceholder = "告诉别人您喜欢（或不喜欢）这本书的原因..."
     
     // 当数组该count为3时，commitBtn按钮才被启用
@@ -29,6 +35,17 @@ class GTBookCommentEditTableViewController: GTTableViewController {
                 commitBtn.isEnabled = false
             }
         }
+    }
+    
+    init(style: UITableView.Style, userId: Int, bookId: String, imgUrl: String) {
+        self.userId = userId
+        self.bookId = bookId
+        self.imgUrl = imgUrl
+        super.init(style: style)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -73,7 +90,7 @@ class GTBookCommentEditTableViewController: GTTableViewController {
         imgView.imgView.contentMode = .scaleAspectFill
         imgView.imgView.clipsToBounds = true
         imgView.imgView.layer.cornerRadius = 5
-        imgView.imgView.sd_setImage(with: URL(string: ""), placeholderImage: UIImage(named: "book_placeholder"))
+        imgView.imgView.sd_setImage(with: URL(string: self.imgUrl), placeholderImage: UIImage(named: "book_placeholder"))
         titleView.addSubview(imgView)
         imgView.snp.makeConstraints { make in
             make.height.equalTo(70)
@@ -99,6 +116,19 @@ class GTBookCommentEditTableViewController: GTTableViewController {
         tableView.register(GTBookCommentEditTableViewCell.self, forCellReuseIdentifier: "GTBookCommentEditTableViewCell")
     }
     
+    // 控制加载动画的显示
+    private func showLoadingView(_ show: Bool) {
+        if show {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: loadingView))
+            loadingView.isAnimating = true
+        } else {
+            self.navigationItem.rightBarButtonItems?.removeAll()
+            self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: commitBtn))
+            loadingView.isAnimating = false
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
@@ -118,7 +148,7 @@ class GTBookCommentEditTableViewController: GTTableViewController {
                 if !self.commitBtnEnableFlag.contains(0) {
                     self.commitBtnEnableFlag.append(0)
                 }
-                
+                self.commentScore = Int(rating)
                 cell.starLab.text = "感谢您的评分"
             }
         }
@@ -132,7 +162,36 @@ class GTBookCommentEditTableViewController: GTTableViewController {
     
     // 提交按钮点击事件
     @objc private func commitBtnDidClicked(sender: UIButton) {
+        self.showLoadingView(true)
         
+        // 获取当前时间戳
+        let date = Date.init()
+        let timeStamp = date.timeIntervalSince1970
+        
+        GTNet.shared.addBookComment(userId: self.userId, bookId: self.bookId, score: self.commentScore, title: self.commentTile, content: self.commentContent, remarkTime: String(timeStamp), failure: { error in
+            self.showLoadingView(false)
+            
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
+                if dataModel.code == 1 {
+                    self.showNotificationMessageView(message: "评论提交成功")
+                    self.dismiss(animated: true)
+                } else {
+                    self.showNotificationMessageView(message: "评论提交失败")
+                }
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+            
+            self.showLoadingView(false)
+        })
     }
 }
 
@@ -146,6 +205,7 @@ extension GTBookCommentEditTableViewController: UITextViewDelegate {
             if !self.commitBtnEnableFlag.contains(2) {
                 self.commitBtnEnableFlag.append(2)
             }
+            self.commentContent = newText
         } else {
             self.commitBtnEnableFlag.removeAll(where: {$0 == 2})
         }
@@ -179,6 +239,7 @@ extension GTBookCommentEditTableViewController: UITextFieldDelegate {
                 if !self.commitBtnEnableFlag.contains(1) {
                     self.commitBtnEnableFlag.append(1)
                 }
+                self.commentTile = newText
             } else {
                 self.commitBtnEnableFlag.removeAll(where: {$0 == 1})
             }

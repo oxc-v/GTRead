@@ -231,7 +231,8 @@ class GTBookStoreTableViewController: GTTableViewController {
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTBookTypeTableViewCell", for: indexPath) as! GTBookTypeTableViewCell
             cell.selectionStyle = .none
-            cell.accessoryType = .disclosureIndicator
+//            cell.accessoryType = .disclosureIndicator
+            
             if indexPath.row == 5 {
                 cell.imgView.image = UIImage(named: "bookType_all")
             } else {
@@ -249,6 +250,19 @@ class GTBookStoreTableViewController: GTTableViewController {
             leftMenu.menuWidth = 320
             leftMenu.presentationStyle = .menuSlideIn
             self.present(leftMenu, animated: true)
+        } else if indexPath.section == 2 {
+            if indexPath.row != self.partitionInfo.count - 1 {
+                let layout = UICollectionViewFlowLayout()
+                layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+                let vc = GTBookReadMoreCollectionViewController(title: self.partitionInfo[indexPath.row], layout: layout)
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let leftMenu = SideMenuNavigationController(rootViewController: GTBookPartitionTableViewController(style: .grouped))
+                leftMenu.leftSide = true
+                leftMenu.menuWidth = 320
+                leftMenu.presentationStyle = .menuSlideIn
+                self.present(leftMenu, animated: true)
+            }
         }
     }
 }

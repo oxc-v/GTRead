@@ -9,20 +9,22 @@ import Foundation
 import UIKit
 import SDWebImage
 import ExpandableLabel
+import Fuse
 
 class GTBookDetailTableViewController: GTTableViewController {
     
     private var finishedBtn: UIButton!
     private var loadingView: GTLoadingView!
     
-    private let dataModel: GTBookDataModel
+    let dataModel: GTBookDataModel
+    var commentDataModel: GTBookCommentDataModel?
+    let accountDataModel: GTAccountInfoDataModel?
     
     private var isCollapsedBookIntro = true
     
-    private let commentData = ["t", "e", "r"]
-    
     init(_ dataModel: GTBookDataModel) {
         self.dataModel = dataModel
+        self.accountDataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -37,6 +39,9 @@ class GTBookDetailTableViewController: GTTableViewController {
         self.setupNavigationBar()
         // TableView
         self.setupTableView()
+        
+        // 加载书本评论内容
+        self.getBookCommentLists()
     }
     
     // NavigationBar
@@ -76,25 +81,62 @@ class GTBookDetailTableViewController: GTTableViewController {
     
     // startReadBtn clicked
     @objc private func startReadBtnDidClicked(sender: UIButton) {
-        sender.clickedAnimation(withDuration: 0.1, completion: { _ in
-            let fileName = self.dataModel.bookId
-            if GTDiskCache.shared.getPDF(fileName) != nil {
-                let userInfo = ["dataModel": self.dataModel]
-                NotificationCenter.default.post(name: .GTDownloadBookFinished, object: self, userInfo: userInfo)
-            } else {
-                let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: self.dataModel))
-                self.present(vc, animated: true)
-            }
-        })
+        // 判断用户是否登录
+        if self.accountDataModel != nil {
+            sender.clickedAnimation(withDuration: 0.1, completion: { _ in
+                let fileName = self.dataModel.bookId
+                if GTDiskCache.shared.getPDF(fileName) != nil {
+                    let userInfo = ["dataModel": self.dataModel]
+                    NotificationCenter.default.post(name: .GTDownloadBookFinished, object: self, userInfo: userInfo)
+                } else {
+                    let vc = GTBaseNavigationViewController(rootViewController: GTDownloadPDFViewContrlloer(model: self.dataModel))
+                    self.present(vc, animated: true)
+                }
+            })
+        } else {
+            self.showLoginAlertController()
+        }
+    }
+    
+    // 获取评论内容列表--需用户登录后才能查看
+    private func getBookCommentLists() {
+        if self.accountDataModel != nil {
+            self.loadingView.isAnimating = true
+            
+            GTNet.shared.getBookCommentLists(observer: self.accountDataModel!.userId, offset: 0, count: 10, bookId: self.dataModel.bookId, pattern: .hit, reverse: false, failure: { error in
+                self.loadingView.isAnimating = false
+                
+                if GTNet.shared.networkAvailable() {
+                    self.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.showNotificationMessageView(message: "网络连接不可用")
+                }
+            }, success: { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                if let dataModel = try? decoder.decode(GTBookCommentDataModel.self, from: data!) {
+                    if dataModel.count != 0 {
+                        self.commentDataModel = dataModel
+                        
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    }
+                } else {
+                    self.showNotificationMessageView(message: "服务器数据错误")
+                }
+                
+                self.loadingView.isAnimating = false
+            })
+        }
     }
     
     // addShelfBtn clicked
     @objc private func addShelfBtnDidClicked(sender: UIButton) {
-        
-        self.loadingView.isAnimating = true
-        
         sender.clickedAnimation(withDuration: 0.1, completion: { _ in
-            if let accountDataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel) {
+            if self.accountDataModel != nil {
+                self.loadingView.isAnimating = true
+                
                 // 判断书籍是否已加入书库
                 let shelfDataModel: GTShelfDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
                 if shelfDataModel != nil && shelfDataModel!.count > 0 {
@@ -128,7 +170,6 @@ class GTBookDetailTableViewController: GTTableViewController {
                 }
             } else {
                 self.showLoginAlertController()
-                self.loadingView.isAnimating = false
             }
         })
     }
@@ -136,16 +177,20 @@ class GTBookDetailTableViewController: GTTableViewController {
     // 处理编辑评论按钮点击事件
     @objc private func editCommentBtnDidClicked(sender: UIButton) {
         sender.clickedAnimation(withDuration: 0.1, completion: { _ in
-            let vc = GTCommentNavigationController(rootViewController: GTBookCommentEditTableViewController(style: .plain))
-            self.present(vc, animated: true)
+            if self.accountDataModel != nil {
+                let vc = GTCommentNavigationController(rootViewController: GTBookCommentEditTableViewController(style: .plain, userId: self.accountDataModel!.userId, bookId: self.dataModel.bookId, imgUrl: self.dataModel.downInfo.bookHeadUrl))
+                self.present(vc, animated: true)
+            } else {
+                self.showLoginAlertController()
+            }
         })
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.commentData.count == 0 {
-            return 3
-        } else {
+        if self.commentDataModel != nil {
             return 4
+        } else {
+            return 3
         }
     }
 

@@ -57,7 +57,6 @@ class GTPDFReplyCommentCollectionViewCell: UICollectionViewCell {
         }
         
         likeBtn = UIButton()
-        likeBtn.isEnabled = false
         likeBtn.setTitle("热门", for: .normal)
         likeBtn.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         likeBtn.setTitleColor(.lightGray, for: .normal)

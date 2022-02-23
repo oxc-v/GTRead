@@ -13,7 +13,7 @@ class GTBookCommentTableViewCell: UITableViewCell {
     private var titleLabel: UILabel!
     private var readMoreBtn: UIButton!
     private var collectionView: UICollectionView!
-    var viewController: UIViewController?
+    var viewController: GTBookDetailTableViewController!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -78,9 +78,9 @@ class GTBookCommentTableViewCell: UITableViewCell {
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.minimumInteritemSpacing = 10
         
-        let vc = GTBookCommentCollectionViewController(collectionViewLayout: layout)
+        let vc = GTBookCommentCollectionViewController(imgUrl: self.viewController.dataModel.downInfo.bookHeadUrl, bookId: self.viewController.dataModel.bookId, userId: self.viewController.accountDataModel!.userId,bookScore: self.viewController.dataModel.gradeInfo.averageScore, remarkCount: self.viewController.dataModel.gradeInfo.remarkCount, commentDataModel: self.viewController.commentDataModel!, layout: layout)
         
-        self.viewController?.navigationController?.pushViewController(vc, animated: true)
+        self.viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
     required init?(coder: NSCoder) {
@@ -94,13 +94,28 @@ extension GTBookCommentTableViewCell: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 7
+        return self.viewController.commentDataModel?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookSmallCommentCollectionViewCell", for: indexPath) as! GTBookSmallCommentCollectionViewCell
-
+        
+        let commentItem = self.viewController.commentDataModel!.lists![indexPath.row]
+        cell.commentTitleLabel.text = commentItem.title
+        cell.commentContentLabel.text = commentItem.content
+        cell.starView.rating = Double(commentItem.score)
+        cell.timeLabel.text = commentItem.remarkTime.timeIntervalChangeToTimeStr()
+        cell.nicknameLabel.text = commentItem.nickName
+        cell.imgView.sd_setImage(with: URL(string: commentItem.headUrl), placeholderImage: UIImage(named: "head_man"))
+        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        cell?.clickedAnimation(withDuration: 0.1, completion: { _ in
+            self.readMoreBtnDidClicked()
+        })
     }
 }
 

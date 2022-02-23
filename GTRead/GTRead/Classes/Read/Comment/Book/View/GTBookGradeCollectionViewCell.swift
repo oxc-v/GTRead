@@ -37,7 +37,6 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
     private func setupView() {
         
         gradeLab = UILabel()
-        gradeLab.text = "4.5"
         gradeLab.font = UIFont.boldSystemFont(ofSize: 45)
         gradeLab.textAlignment = .left
         self.contentView.addSubview(gradeLab)
@@ -167,7 +166,6 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         }
         
         numberLab = UILabel()
-        numberLab.text = "888个评分"
         numberLab.font = UIFont.systemFont(ofSize: 15)
         numberLab.textAlignment = .right
         self.contentView.addSubview(numberLab)

@@ -101,6 +101,7 @@ extension GTRankingListCollectionViewCell: UITableViewDelegate, UITableViewDataS
         
         cell.selectionStyle = .none
         cell.numberLab.text = String(indexPath.row + 1)
+
         cell.authorNameLab.text = self.dataModel?.lists?[indexPath.row].baseInfo.authorName
         cell.bookNameLab.text = self.dataModel?.lists?[indexPath.row].baseInfo.bookName
         cell.imgView.sd_setImage(with: URL(string: self.dataModel?.lists?[indexPath.row].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))

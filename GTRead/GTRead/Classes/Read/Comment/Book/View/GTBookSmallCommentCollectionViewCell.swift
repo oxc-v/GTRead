@@ -28,7 +28,6 @@ class GTBookSmallCommentCollectionViewCell: UICollectionViewCell {
         self.contentView.layer.cornerRadius = 15
         
         commentTitleLabel = UILabel()
-        commentTitleLabel.text = "评论标题一朝一暮的光阴，如涓涓流水，去而不返。一聚一散的无常，如花开花谢如花开花谢，来去有时。 过往之事不可追，未来之事不可猜。 余生，便做一个豁达之人，让眼底有光，无惧黑暗。"
         commentTitleLabel.textAlignment = .left
         commentTitleLabel.numberOfLines = 1
         commentTitleLabel.font = UIFont.boldSystemFont(ofSize: 13)
@@ -40,7 +39,6 @@ class GTBookSmallCommentCollectionViewCell: UICollectionViewCell {
         }
         
         commentContentLabel = UILabel()
-        commentContentLabel.text = "一朝一暮的光阴，如涓涓流水，去而不返。一聚一散的无常，如花开花谢，来去有时。 过往之事不可追，未来之事不可猜。 余生，便做一个豁达之人，让眼底有光，无惧黑暗。让心中有爱，不失温度。让灵魂有家，随处可栖。 有人说：眼睛，是心灵的窗户。 若一个人..."
         commentContentLabel.textAlignment = .left
         commentContentLabel.numberOfLines = 3
         commentContentLabel.font = UIFont.systemFont(ofSize: 12)
@@ -66,7 +64,6 @@ class GTBookSmallCommentCollectionViewCell: UICollectionViewCell {
         }
         
         timeLabel = UILabel()
-        timeLabel.text = "2022-01-02 16:00"
         timeLabel.textAlignment = .left
         timeLabel.numberOfLines = 0
         timeLabel.font = UIFont.systemFont(ofSize: 12)
@@ -78,7 +75,6 @@ class GTBookSmallCommentCollectionViewCell: UICollectionViewCell {
         }
         
         nicknameLabel = UILabel()
-        nicknameLabel.text = "欧秀成"
         nicknameLabel.textAlignment = .left
         nicknameLabel.font = UIFont.systemFont(ofSize: 12)
         self.contentView.addSubview(nicknameLabel)
@@ -90,7 +86,6 @@ class GTBookSmallCommentCollectionViewCell: UICollectionViewCell {
         }
         
         imgView = UIImageView()
-        imgView.image = UIImage(named: "head_men")
         imgView.contentMode = .scaleAspectFill
         imgView.clipsToBounds = true
         imgView.layer.cornerRadius = 9

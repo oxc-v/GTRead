@@ -52,28 +52,29 @@ class GTReadSpeedChartCollectionViewCell: UICollectionViewCell {
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         baseView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(imgView.snp.bottom).offset(5)
-            make.left.top.equalTo(imgView.snp.left)
+            make.top.equalTo(imgView.snp.bottom).offset(10)
+            make.left.equalTo(imgView.snp.left)
         }
         
         chartView = LineChartView()
         chartView.xAxis.drawGridLinesEnabled = false
         chartView.leftAxis.drawGridLinesEnabled = false
         chartView.leftAxis.drawZeroLineEnabled = true
+        chartView.leftAxis.enabled = true
+        chartView.legend.enabled = false    // 隐藏label
         chartView.rightAxis.enabled = false
-        chartView.xAxis.drawAxisLineEnabled = false
         chartView.xAxis.labelPosition = .bottom
         chartView.dragEnabled = false
         chartView.scaleXEnabled = false
         chartView.scaleYEnabled = false
         chartView.doubleTapToZoomEnabled = false
-        chartView.noDataText = "你今天还没有阅读书籍哟，赶快去阅读叭"
+        chartView.noDataText = "暂无数据"
         chartView.animate(xAxisDuration: 1, yAxisDuration: 1)
-        self.contentView.addSubview(chartView)
+        baseView.addSubview(chartView)
         chartView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.width.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-20)
+            make.left.equalTo(20)
+            make.bottom.right.equalToSuperview().offset(-20)
         }
     }
     
@@ -93,7 +94,7 @@ class GTReadSpeedChartCollectionViewCell: UICollectionViewCell {
             let chartDataSet = LineChartDataSet(entries: dataEntries, label: "阅读速度")
 
             //将线条颜色设置为橙色
-            chartDataSet.colors = [.orange]
+            chartDataSet.colors = [UIColor(hexString: "#5950c5")]
 
             //修改线条大小
             chartDataSet.lineWidth = 2

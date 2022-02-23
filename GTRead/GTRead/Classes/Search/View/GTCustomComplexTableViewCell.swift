@@ -30,7 +30,6 @@ class GTCustomComplexTableViewCell: UITableViewCell {
         gtImgView = GTShadowImageView()
         gtImgView.imgView.contentMode = .scaleAspectFill
         gtImgView.imgView.clipsToBounds = true
-        gtImgView.imgView.layer.masksToBounds = true
         gtImgView.imgView.layer.cornerRadius = 5
         imgView = gtImgView.imgView
         self.contentView.addSubview(gtImgView)

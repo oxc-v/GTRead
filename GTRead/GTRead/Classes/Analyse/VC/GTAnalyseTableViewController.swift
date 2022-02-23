@@ -14,7 +14,7 @@ class GTAnalyseTableViewController: GTTableViewController {
     private var accountBtn: UIButton!
     
     private let sectionHeaderHeight = 50.0
-    private var sectionText = ["", "阅读数据"]
+    private let sectionText = ["", "阅读数据", "数据图表"]
     
     private var accountInfoDataModel: GTAccountInfoDataModel? {
         didSet {
@@ -33,16 +33,13 @@ class GTAnalyseTableViewController: GTTableViewController {
 
     private var dataModel: GTAnalyseDataModel? {
         didSet {
-            if dataModel != nil {
-                if dataModel?.lists != nil {
-                    self.sectionText.append("时间分布")
-                }
-                if dataModel?.speedPoints != nil || dataModel?.scatterDiagram != nil {
-                    self.sectionText.append("数据图表")
-                }
-            } else {
-                self.sectionText.removeAll()
-            }
+//            if dataModel != nil {
+//                if dataModel?.speedPoints != nil {
+//                    self.sectionText.append("数据图表")
+//                }
+//            } else {
+//                self.sectionText.removeAll()
+//            }
             
             self.tableView.reloadData()
         }
@@ -50,6 +47,9 @@ class GTAnalyseTableViewController: GTTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // 测试xxxxxxxxxxxxxxxxxx-------------------------------------------------xxxxxxxxxxxxxxxxxxxx--------------
+        self.dataModel = GTAnalyseDataModel(lists: [GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 8), GTOneDayReadTime(min: 9), GTOneDayReadTime(min: 10), GTOneDayReadTime(min: 37), GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 67), GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 17), GTOneDayReadTime(min: 47), GTOneDayReadTime(min: 27), GTOneDayReadTime(min: 47),], thisTimeData: GTThisTimeReadData(hour: 1, min: 1, sec: 1, focus: 32, pages: 1, rows: 1), scatterDiagram: [GTOneDayBehaviour(action: "d", color: "d", locate: [GTOneDayBehaviourPoint(x: 0, y: 0)])], speedPoints: [GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2)], status: GTErrorMessage(code: 1, errorRes: "oxc"))
         
         // NavigationBar
         self.setupNavigationBar()
@@ -111,7 +111,6 @@ class GTAnalyseTableViewController: GTTableViewController {
         tableView.backgroundColor = .white
         tableView.register(GTReadTargetTableViewCell.self, forCellReuseIdentifier: "GTReadTargetTableViewCell")
         tableView.register(GTReadDetailTableViewCell.self, forCellReuseIdentifier: "GTReadDetailTableViewCell")
-        tableView.register(GTReadTimeChartTableViewCell.self, forCellReuseIdentifier: "GTReadTimeChartTableViewCell")
         tableView.register(GTReadChartTableViewCell.self, forCellReuseIdentifier: "GTReadChartTableViewCell")
     }
     
@@ -211,10 +210,8 @@ class GTAnalyseTableViewController: GTTableViewController {
             return 450
         case "阅读数据":
             return 250
-        case "时间分布":
-            return 350
         default:
-            return 380
+            return UITableView.automaticDimension
         }
     }
     
@@ -253,11 +250,6 @@ class GTAnalyseTableViewController: GTTableViewController {
                 cell.dataModel = self.dataModel!.thisTimeData
             }
             return cell
-        case "时间分布":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadTimeChartTableViewCell", for: indexPath) as! GTReadTimeChartTableViewCell
-            cell.selectionStyle = .none
-            cell.updateWithData(model: self.dataModel!)
-            return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadChartTableViewCell", for: indexPath) as! GTReadChartTableViewCell
             cell.selectionStyle = .none
@@ -283,8 +275,9 @@ extension GTAnalyseTableViewController {
         }) { json in
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
-            self.dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!)
-            if self.dataModel == nil {
+            if let dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!) {
+                self.dataModel = dataModel
+            } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
             

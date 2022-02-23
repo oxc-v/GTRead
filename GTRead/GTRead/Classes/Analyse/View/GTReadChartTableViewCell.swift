@@ -12,20 +12,24 @@ class GTReadChartTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
 
-    private var item = [Int]()
-    private let itemCountInRow = 3;
+//    private var item = [Int]()
+    private let itemCount = 3;
+    private let itemCountInRow = 2;
     private var itemWidth: CGFloat = 0
     private var itemHeight: CGFloat = 0
     private let itemMargin: CGFloat = 50
     
     var dataModel: GTAnalyseDataModel? {
         didSet {
-            if dataModel?.speedPoints != nil {
-                item.append(0)
-            }
-            if dataModel?.scatterDiagram != nil {
-                item.append(1)
-            }
+//            if dataModel?.lists != nil {
+//                item.append(0)
+//            }
+//            if dataModel?.speedPoints != nil {
+//                item.append(1)
+//            }
+//            if dataModel?.scatterDiagram != nil {
+//                item.append(2)
+//            }
             collectionView.reloadData()
         }
     }
@@ -34,7 +38,7 @@ class GTReadChartTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         itemWidth = floor((UIScreen.main.bounds.width - 2 * GTViewMargin - (CGFloat(itemCountInRow - 1) * itemMargin)) / CGFloat(itemCountInRow))
-        itemHeight = floor(itemWidth * 1.33)
+        itemHeight = floor(itemWidth * 1.05)
 
         // CollectionView
         self.setupCollectionView()
@@ -43,13 +47,14 @@ class GTReadChartTableViewCell: UITableViewCell {
     // CollectionView
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 30, right: GTViewMargin)
         collectionView = GTDynamicCollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(GTReadSpeedChartCollectionViewCell.self, forCellWithReuseIdentifier: "GTReadSpeedChartCollectionViewCell")
+        collectionView.register(GTReadTimeChartCollectionViewCell.self, forCellWithReuseIdentifier: "GTReadTimeChartCollectionViewCell")
         collectionView.register(GTReadBehaviourChartCollectionViewCell.self, forCellWithReuseIdentifier: "GTReadBehaviourChartCollectionViewCell")
         self.contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -92,12 +97,18 @@ extension GTReadChartTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return item.count
+        return self.itemCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch item[indexPath.row] {
+        switch indexPath.row {
         case 0:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTReadTimeChartCollectionViewCell", for: indexPath) as! GTReadTimeChartCollectionViewCell
+            if self.dataModel != nil {
+                cell.updateWithData(model: self.dataModel!)
+            }
+            return cell
+        case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTReadSpeedChartCollectionViewCell", for: indexPath) as! GTReadSpeedChartCollectionViewCell
             if self.dataModel != nil {
                 cell.updateWithData(model: self.dataModel!)
@@ -116,7 +127,15 @@ extension GTReadChartTableViewCell: UICollectionViewDelegate, UICollectionViewDa
 
 extension GTReadChartTableViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: itemWidth, height: itemHeight)
+        switch indexPath.row {
+        case 0:
+            return CGSize(width: UIScreen.main.bounds.width - 2 * GTViewMargin, height: 380)
+        case 1, 2:
+            return CGSize(width: itemWidth, height: itemHeight)
+        default:
+            return CGSize.zero
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -124,6 +143,6 @@ extension GTReadChartTableViewCell: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return self.itemMargin
     }
 }

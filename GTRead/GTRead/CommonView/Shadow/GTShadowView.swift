@@ -30,7 +30,7 @@ class GTShadowView: UIView {
         let shadowPath = UIBezierPath(rect: bounds)
         layer.masksToBounds = false
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 3, height: 3)
+        layer.shadowOffset = CGSize(width: 2, height: 2)
         layer.shadowOpacity = self.opacity
         layer.shadowRadius = 10
         layer.shadowPath = shadowPath.cgPath

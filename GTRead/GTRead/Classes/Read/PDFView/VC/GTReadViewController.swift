@@ -344,7 +344,12 @@ class GTReadViewController: EyeTrackViewController {
         layout.sectionInset = UIEdgeInsets(top: 20, left: GTViewMargin, bottom: 0, right: GTViewMargin)
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.minimumInteritemSpacing = 10
-        let vc = GTBaseNavigationViewController(rootViewController: GTPDFCommentCollectionViewController(collectionViewLayout: layout))
+        
+        let dataModel: GTAccountInfoDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTAccountDataModel)
+        
+        let page = self.pdfdocument?.page(at: self.currentPage)
+        let thumbnail = page?.thumbnail(of: CGSize(width: 50, height: 70), for: .cropBox)
+        let vc = GTBaseNavigationViewController(rootViewController: GTPDFCommentCollectionViewController(pdfImg: thumbnail!, page: self.currentPage, bookId: self.bookId, userId: dataModel!.userId, layout: layout))
         self.present(vc, animated: true)
     }
     
