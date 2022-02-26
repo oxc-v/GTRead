@@ -1,14 +1,14 @@
 //
-//  GTBookStoreADBookDataModel.swift
+//  GTBookListsDataModel.swift
 //  GTRead
 //
-//  Created by Dev on 2021/11/12.
+//  Created by Dev on 2022/2/24.
 //
 
 import Foundation
 import UIKit
 
-struct GTBookStoreADBookDataModel: Codable {
+struct GTBookListsDataModel: Codable {
     var lists: [GTBookDataModel]?
     var count: Int
     

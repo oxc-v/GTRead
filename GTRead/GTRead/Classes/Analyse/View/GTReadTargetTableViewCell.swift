@@ -160,10 +160,8 @@ class GTReadTargetTableViewCell: UITableViewCell {
     func updateWithData(model: GTAnalyseDataModel) {
         totalMinTime = 0
         
-        if model.lists != nil {
-            for index in 0..<model.lists!.count {
-                totalMinTime += model.lists![index].min
-            }
+        for index in 0..<model.timeLists!.count {
+            totalMinTime += model.timeLists![index]
         }
         
         // 设置时间格式

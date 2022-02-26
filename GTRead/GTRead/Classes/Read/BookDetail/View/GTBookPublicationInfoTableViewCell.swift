@@ -56,13 +56,13 @@ extension GTBookPublicationInfoTableViewCell: UICollectionViewDelegate, UICollec
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell
             
             let type = self.dataModel!.baseInfo.bookType
-            let index = type < GTBookTypeLists.count ? type : 0
+            let index = type < bookTypeStr.count ? type : 0
             
             cell.titleLabel.text = "类型"
             cell.imgView.isHidden = false
             cell.imgView.image = UIImage(named: "bookType_" + String(index))
             cell.contentLabel.isHidden = false
-            cell.subtitleLabel.text = GTBookTypeLists[index]
+            cell.subtitleLabel.text = bookTypeStr[index]
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookPublicationInfoCollectionViewCell", for: indexPath) as! GTBookPublicationInfoCollectionViewCell

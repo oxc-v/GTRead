@@ -89,28 +89,24 @@ class GTReadTimeChartCollectionViewCell: UICollectionViewCell {
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        if model.lists != nil {
-            let chartData = BarChartData()
-            var dataEntries = [BarChartDataEntry]()
-            var i = 0
-            for index in 0..<(model.lists!.count * 2) {
-                if index % 2 == 0 {
-                    let entry = BarChartDataEntry(x: Double(index), y: Double(model.lists![i].min))
-                    dataEntries.append(entry)
-                    i += 1
-                } else {
-                    let entry = BarChartDataEntry(x: Double(index), y: Double(0))
-                    dataEntries.append(entry)
-                }
-                
+        let chartData = BarChartData()
+        var dataEntries = [BarChartDataEntry]()
+        var i = 0
+        for index in 0..<(model.timeLists!.count * 2) {
+            if index % 2 == 0 {
+                let entry = BarChartDataEntry(x: Double(index), y: Double(model.timeLists![i]))
+                dataEntries.append(entry)
+                i += 1
+            } else {
+                let entry = BarChartDataEntry(x: Double(index), y: Double(0))
+                dataEntries.append(entry)
             }
-            let chartDataSet = BarChartDataSet(entries: dataEntries)
-            chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
-            chartDataSet.drawValuesEnabled = false
-            chartData.dataSets.append(chartDataSet)
-            chartView.data = chartData
-        } else {
-            chartView.clear()
+            
         }
+        let chartDataSet = BarChartDataSet(entries: dataEntries)
+        chartDataSet.colors = [UIColor(hexString: "#2ec9a4")]
+        chartDataSet.drawValuesEnabled = false
+        chartData.dataSets.append(chartDataSet)
+        chartView.data = chartData
     }
 }

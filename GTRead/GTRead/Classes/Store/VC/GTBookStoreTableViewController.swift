@@ -9,12 +9,16 @@ import Foundation
 import UIKit
 import SDWebImage
 import SideMenu
+import CryptoKit
+
+let bookTypeStr = ["计算机与互联网", "教育", "经管理财", "科幻奇幻", "悬疑推理", "言情", "文学", "历史", "地理", "政治", "化学", "生物", "物理", "数学"]
 
 class GTBookStoreTableViewController: GTTableViewController {
     
     private var accountBtn: UIButton!
     
     private var accountInfoDataModel: GTAccountInfoDataModel?
+    private var pushBookDataModel: GTBookStoreADBookDataModel?
     
     private let sectionHeaderHeight = 50.0
     private let cellInfo = ["", "排行榜", "类型"]
@@ -28,6 +32,11 @@ class GTBookStoreTableViewController: GTTableViewController {
         // Tableview
         self.setupTableView()
         
+        // 获取推送书籍
+        self.getPushBookLists()
+        
+        // 注册书本下载完毕通知
+        NotificationCenter.default.addObserver(self, selector: #selector(downloadBookFinishedNotification(notification:)), name: .GTDownloadBookFinished, object: nil)
         // 注册用户登录的通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleLoginSuccessfulNotification), name: .GTLoginSuccessful, object: nil)
         // 注册账户信息修改的通知
@@ -40,6 +49,24 @@ class GTBookStoreTableViewController: GTTableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleOpenRegisterViewNotification), name: .GTOpenRegisterView, object: nil)
         // 注册打开修改密码视图通知
         NotificationCenter.default.addObserver(self, selector: #selector(handleOpenUpdatePwdViewNotification), name: .GTOpenUpdatePwdView, object: nil)
+    }
+    
+    // 书本下载完毕通知
+    @objc private func downloadBookFinishedNotification(notification: Notification) {
+        if self.tabBarController?.selectedIndex == 2 && self.navigationController?.topViewController == self {
+            if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
+                let fileName = dataModel.bookId              
+                if let url = GTDiskCache.shared.getPDF(fileName) {
+                    self.dismiss(animated: true, completion: {
+                        let vc = GTReadViewController(path: url, bookId: fileName)
+                        vc.hidesBottomBarWhenPushed = true;
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    })
+                } else {
+                    self.showNotificationMessageView(message: "文件打开失败")
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -90,6 +117,7 @@ class GTBookStoreTableViewController: GTTableViewController {
     private func setupTableView() {
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
+        tableView.register(GTNoDataTableViewCell.self, forCellReuseIdentifier: "GTNoDataTableViewCell")
         tableView.register(GTSubareaTableViewCell.self, forCellReuseIdentifier: "GTSubareaTableViewCell")
         tableView.register(GTAdTableViewCell.self, forCellReuseIdentifier: "GTAdTableViewCell")
         tableView.register(GTRankingListTableViewCell.self, forCellReuseIdentifier: "GTRankingListTableViewCell")
@@ -153,6 +181,34 @@ class GTBookStoreTableViewController: GTTableViewController {
             self.customPresentViewController(self.getPresenter(widthFluid: 0.72, heightFluid: 0.65), viewController: vc, animated: true, completion: nil)
         }
     }
+    
+    // 获取推送书籍
+    @objc private func getPushBookLists() {
+        GTNet.shared.getPushBookLists(offset: 0, size: 5, failure: { e in
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTBookStoreADBookDataModel.self, from: data!) {
+                if dataModel.count != 0 {
+                    self.pushBookDataModel = dataModel
+                }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+        })
+    }
+    
+    // 获取每个分类的前三书籍
+    
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return self.cellInfo.count
@@ -218,10 +274,17 @@ class GTBookStoreTableViewController: GTTableViewController {
                 cell.selectionStyle = .none
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "GTAdTableViewCell", for: indexPath) as! GTAdTableViewCell
-                cell.selectionStyle = .none
-                cell.viewController = self
-                return cell
+                if self.pushBookDataModel != nil {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "GTAdTableViewCell", for: indexPath) as! GTAdTableViewCell
+                    cell.selectionStyle = .none
+                    cell.viewController = self
+                    cell.dataModel = self.pushBookDataModel!
+                    return cell
+                } else {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "GTNoDataTableViewCell", for: indexPath) as! GTNoDataTableViewCell
+                    cell.selectionStyle = .none
+                    return cell
+                }
             }
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTRankingListTableViewCell", for: indexPath) as! GTRankingListTableViewCell
@@ -254,7 +317,7 @@ class GTBookStoreTableViewController: GTTableViewController {
             if indexPath.row != self.partitionInfo.count - 1 {
                 let layout = UICollectionViewFlowLayout()
                 layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
-                let vc = GTBookReadMoreCollectionViewController(title: self.partitionInfo[indexPath.row], layout: layout)
+                let vc = GTBookReadMoreCollectionViewController(type: GTBookType.allCases[indexPath.row], title: self.partitionInfo[indexPath.row], layout: layout)
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let leftMenu = SideMenuNavigationController(rootViewController: GTBookPartitionTableViewController(style: .grouped))

@@ -33,23 +33,12 @@ class GTAnalyseTableViewController: GTTableViewController {
 
     private var dataModel: GTAnalyseDataModel? {
         didSet {
-//            if dataModel != nil {
-//                if dataModel?.speedPoints != nil {
-//                    self.sectionText.append("数据图表")
-//                }
-//            } else {
-//                self.sectionText.removeAll()
-//            }
-            
             self.tableView.reloadData()
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 测试xxxxxxxxxxxxxxxxxx-------------------------------------------------xxxxxxxxxxxxxxxxxxxx--------------
-        self.dataModel = GTAnalyseDataModel(lists: [GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 8), GTOneDayReadTime(min: 9), GTOneDayReadTime(min: 10), GTOneDayReadTime(min: 37), GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 67), GTOneDayReadTime(min: 7), GTOneDayReadTime(min: 17), GTOneDayReadTime(min: 47), GTOneDayReadTime(min: 27), GTOneDayReadTime(min: 47),], thisTimeData: GTThisTimeReadData(hour: 1, min: 1, sec: 1, focus: 32, pages: 1, rows: 1), scatterDiagram: [GTOneDayBehaviour(action: "d", color: "d", locate: [GTOneDayBehaviourPoint(x: 0, y: 0)])], speedPoints: [GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2), GTReadSpeedData(point: 2)], status: GTErrorMessage(code: 1, errorRes: "oxc"))
         
         // NavigationBar
         self.setupNavigationBar()
@@ -247,7 +236,7 @@ class GTAnalyseTableViewController: GTTableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "GTReadDetailTableViewCell", for: indexPath) as! GTReadDetailTableViewCell
             cell.selectionStyle = .none
             if self.dataModel != nil {
-                cell.dataModel = self.dataModel!.thisTimeData
+                cell.dataModel = self.dataModel!
             }
             return cell
         default:
@@ -265,7 +254,7 @@ extension GTAnalyseTableViewController {
     // 从服务器加载数据
     private func getDataFromServer() {
         self.showActivityIndicatorView()
-        GTNet.shared.getAnalyseData(failure: {json in
+        GTNet.shared.getAnalyseData(failure: {erro in
             self.hideActivityIndicatorView()
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
@@ -276,11 +265,13 @@ extension GTAnalyseTableViewController {
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             if let dataModel = try? decoder.decode(GTAnalyseDataModel.self, from: data!) {
-                self.dataModel = dataModel
+                if dataModel.status.code == 1 {
+                    self.dataModel = dataModel
+                }
             } else {
                 self.showNotificationMessageView(message: "服务器数据错误")
             }
-            
+
             self.hideActivityIndicatorView()
         }
         

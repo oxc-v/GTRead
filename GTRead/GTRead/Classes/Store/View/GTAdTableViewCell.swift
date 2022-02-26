@@ -16,7 +16,7 @@ class GTAdTableViewCell: UITableViewCell {
     private var separatorView: UIView!
     var viewController: GTBookStoreTableViewController?
     
-    var dataModel: GTShelfDataModel?
+    var dataModel: GTBookStoreADBookDataModel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -65,7 +65,7 @@ class GTAdTableViewCell: UITableViewCell {
 extension GTAdTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.dataModel?.lists?.count ?? 0
+        return self.dataModel.lists!.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -74,8 +74,8 @@ extension GTAdTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTAdCollectionViewCell", for: indexPath) as! GTAdCollectionViewCell
-        cell.titleLabel.text = (self.dataModel?.lists?[indexPath.section].baseInfo.bookName ?? "") + "这本书真的很不错咧，乃当今天下第一书"
-        cell.imgView.sd_setImage(with: URL(string: self.dataModel?.lists?[indexPath.section].downInfo.bookHeadUrl ?? ""), placeholderImage: UIImage(named: "book_placeholder"))
+        cell.titleLabel.text = self.dataModel.lists![indexPath.section].bookTitle
+        cell.imgView.sd_setImage(with: URL(string: self.dataModel.lists![indexPath.section].downInfo.bookHeadUrl), placeholderImage: UIImage(named: "book_placeholder"))
         cell.imgView.image?.getColors(quality: .high) { colors in
             guard let colors = colors else { return }
             

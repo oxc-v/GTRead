@@ -37,7 +37,7 @@ class GTBookPartitionTableViewController: GTTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return GTBookTypeLists.count
+        return bookTypeStr.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -50,7 +50,7 @@ class GTBookPartitionTableViewController: GTTableViewController {
         cell.accessoryType = .disclosureIndicator
         
         cell.imgView.image = UIImage(named: "bookType_" + String(indexPath.row))
-        cell.titleLab.text = GTBookTypeLists[indexPath.row]
+        cell.titleLab.text = bookTypeStr[indexPath.row]
         
         return cell
     }
@@ -58,7 +58,7 @@ class GTBookPartitionTableViewController: GTTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
-        let vc = GTBookReadMoreCollectionViewController(title: GTBookTypeLists[indexPath.row], layout: layout)
+        let vc = GTBookReadMoreCollectionViewController(type: GTBookType.allCases[indexPath.row], title: bookTypeStr[indexPath.row], layout: layout)
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

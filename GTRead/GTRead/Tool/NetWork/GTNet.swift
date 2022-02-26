@@ -546,6 +546,31 @@ extension GTNet {
     }
 }
 
+// 书城
+extension GTNet {
+    // 获取推送书籍
+    func getPushBookLists(offset: Int, size: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["offset": offset, "size": size] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getPushBooksFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 获取某个类型的书籍
+    func getBookListsForType(type: GTBookType, offset: Int, count: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["bookType": type.rawValue, "offset": offset, "count": count] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8002/bookCityService/getTypedBooksFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+}
+
 // 搜索
 extension GTNet {
     // 搜索书籍
@@ -619,7 +644,7 @@ extension GTNet {
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let dayTime = dateFormatter.string(from: Date())
         let params = ["userId" : dataModel!.userId,  "dayTime": dayTime] as [String : Any]
-        self.requestWith(url: "http://39.105.217.90:8004/collectService/getReadTimeCount", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8004/collectService/getReadSightAnalyResFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)

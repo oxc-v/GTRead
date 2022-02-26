@@ -15,12 +15,14 @@ class GTRankingListTableViewCell: UITableViewCell {
     
     var viewController: GTBookStoreTableViewController?
     
-    private let headerText = ["计算机与互联网", "教育", "经管理财"]
+    private var headerText = [String]()
+    private var bookListsDataModel = [GTBookListsDataModel]()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         self.setupCollectionView()
+        self.getRankingLists()
     }
     
     required init?(coder: NSCoder) {
@@ -57,6 +59,33 @@ class GTRankingListTableViewCell: UITableViewCell {
             make.bottom.equalToSuperview().offset(-20)
         }
     }
+    
+    private func getRankingLists() {
+        for i in 0..<GTBookType.allCases.count {
+            GTNet.shared.getBookListsForType(type: GTBookType.allCases[i], offset: 0, count: 3, failure: { e in
+                if GTNet.shared.networkAvailable() {
+                    self.viewController?.showNotificationMessageView(message: "服务器连接中断")
+                } else {
+                    self.viewController?.showNotificationMessageView(message: "网络连接不可用")
+                }
+            }, success: { json in
+                let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+                let decoder = JSONDecoder()
+                if let dataModel = try? decoder.decode(GTBookListsDataModel.self, from: data!) {
+                    if dataModel.count == 3 {
+                        self.headerText.append(bookTypeStr[i])
+                        self.bookListsDataModel.append(dataModel)
+                        
+                        DispatchQueue.main.async {
+                            self.collectionView.reloadData()
+                        }
+                    }
+                } else {
+                    self.viewController?.showNotificationMessageView(message: "服务器数据错误")
+                }
+            })
+        }
+    }
 }
 
 extension GTRankingListTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -66,12 +95,12 @@ extension GTRankingListTableViewCell: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return self.headerText.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTRankingListCollectionViewCell", for: indexPath) as! GTRankingListCollectionViewCell
-        cell.dataModel = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
+        cell.dataModel = self.bookListsDataModel[indexPath.row]
         cell.viewController = self.viewController
         cell.headerText = self.headerText[indexPath.row]
         return cell

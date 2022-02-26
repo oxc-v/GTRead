@@ -43,6 +43,7 @@
 		D715A2492776F64F00EAA956 /* GTRankingListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D715A2482776F64F00EAA956 /* GTRankingListCollectionViewCell.swift */; };
 		D715A24B2776F76500EAA956 /* GTRankingListBookTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D715A24A2776F76500EAA956 /* GTRankingListBookTableViewCell.swift */; };
 		D715A24D277733E500EAA956 /* GTShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D715A24C277733E500EAA956 /* GTShadowView.swift */; };
+		D71F64DD27C784070077603A /* GTBookListsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71F64DC27C784070077603A /* GTBookListsDataModel.swift */; };
 		D729FE4F273446F100379852 /* GTErrorDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D729FE4E273446F100379852 /* GTErrorDataModel.swift */; };
 		D72C5213273B74E40006BF07 /* GTMinutePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72C5212273B74E40006BF07 /* GTMinutePickerViewController.swift */; };
 		D72F4186277DE17200CFAF41 /* GTBookCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72F4185277DE17100CFAF41 /* GTBookCommentTableViewCell.swift */; };
@@ -128,6 +129,7 @@
 		D7D7E208273D70B9005266A9 /* GTBookStoreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D7E207273D70B9005266A9 /* GTBookStoreTableViewController.swift */; };
 		D7D8861227C38F3C00AC26ED /* GTPDFCommentDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D8861127C38F3C00AC26ED /* GTPDFCommentDataModel.swift */; };
 		D7DE9C4A273FB2AF007B72DE /* GTPDFPageDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DE9C49273FB2AF007B72DE /* GTPDFPageDataModel.swift */; };
+		D7E613C027C75C2300B88221 /* GTNoDataTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E613BF27C75C2300B88221 /* GTNoDataTableViewCell.swift */; };
 		D7F67EDF27506A0900F2FE47 /* GTBookPublicationInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F67EDE27506A0900F2FE47 /* GTBookPublicationInfoTableViewCell.swift */; };
 		D7F67EE5275072AB00F2FE47 /* GTBookPublicationInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F67EE4275072AB00F2FE47 /* GTBookPublicationInfoCollectionViewCell.swift */; };
 		D7F8C9542724803A00336968 /* GTPdfDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F8C9532724803A00336968 /* GTPdfDataModel.swift */; };
@@ -214,6 +216,7 @@
 		D715A2482776F64F00EAA956 /* GTRankingListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTRankingListCollectionViewCell.swift; sourceTree = "<group>"; };
 		D715A24A2776F76500EAA956 /* GTRankingListBookTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTRankingListBookTableViewCell.swift; sourceTree = "<group>"; };
 		D715A24C277733E500EAA956 /* GTShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTShadowView.swift; sourceTree = "<group>"; };
+		D71F64DC27C784070077603A /* GTBookListsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBookListsDataModel.swift; sourceTree = "<group>"; };
 		D729FE4E273446F100379852 /* GTErrorDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTErrorDataModel.swift; sourceTree = "<group>"; };
 		D72C5212273B74E40006BF07 /* GTMinutePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTMinutePickerViewController.swift; sourceTree = "<group>"; };
 		D72F4185277DE17100CFAF41 /* GTBookCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBookCommentTableViewCell.swift; sourceTree = "<group>"; };
@@ -299,6 +302,7 @@
 		D7D7E207273D70B9005266A9 /* GTBookStoreTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBookStoreTableViewController.swift; sourceTree = "<group>"; };
 		D7D8861127C38F3C00AC26ED /* GTPDFCommentDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPDFCommentDataModel.swift; sourceTree = "<group>"; };
 		D7DE9C49273FB2AF007B72DE /* GTPDFPageDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPDFPageDataModel.swift; sourceTree = "<group>"; };
+		D7E613BF27C75C2300B88221 /* GTNoDataTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTNoDataTableViewCell.swift; sourceTree = "<group>"; };
 		D7F67EDE27506A0900F2FE47 /* GTBookPublicationInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBookPublicationInfoTableViewCell.swift; sourceTree = "<group>"; };
 		D7F67EE4275072AB00F2FE47 /* GTBookPublicationInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTBookPublicationInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		D7F8C9532724803A00336968 /* GTPdfDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTPdfDataModel.swift; sourceTree = "<group>"; };
@@ -574,6 +578,7 @@
 			children = (
 				D729FE4E273446F100379852 /* GTErrorDataModel.swift */,
 				D763499027468F570072D042 /* GTBookDataModel.swift */,
+				D71F64DC27C784070077603A /* GTBookListsDataModel.swift */,
 			);
 			path = DataModel;
 			sourceTree = "<group>";
@@ -936,6 +941,7 @@
 				D715A24A2776F76500EAA956 /* GTRankingListBookTableViewCell.swift */,
 				D730B0B52778894400FFC602 /* GTBookTypeTableViewCell.swift */,
 				D7A490DD2785D5930099A1EA /* GTBookReadMoreCollectionViewCell.swift */,
+				D7E613BF27C75C2300B88221 /* GTNoDataTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1309,6 +1315,7 @@
 				D715A2472776F1DE00EAA956 /* GTRankingListTableViewCell.swift in Sources */,
 				AEA5B0A7262C14500064D4AE /* EyeTrackInfo.swift in Sources */,
 				D7152A462753CA000028DEBB /* GTAccountManagerImgTableViewCell.swift in Sources */,
+				D7E613C027C75C2300B88221 /* GTNoDataTableViewCell.swift in Sources */,
 				D7D7E1FD273CAD72005266A9 /* GTReadTargetDataModel.swift in Sources */,
 				D7FF306C2781D495004CC2D3 /* GTBookBigCommentCollectionViewCell.swift in Sources */,
 				D7AA051C2717D49600CE4DD3 /* GTBookCache.swift in Sources */,
@@ -1374,6 +1381,7 @@
 				D769775B276F308E005CDF9A /* GTReadBehaviourChartCollectionViewCell.swift in Sources */,
 				D7378D86273D7ECF00678B77 /* GTBookStoreADBookDataModel.swift in Sources */,
 				AEA5B0A4262C14500064D4AE /* Extension.swift in Sources */,
+				D71F64DD27C784070077603A /* GTBookListsDataModel.swift in Sources */,
 				D730B0B2277853AB00FFC602 /* GTSubareaTableViewCell.swift in Sources */,
 				AEA5B0A6262C14500064D4AE /* Eye.swift in Sources */,
 				AEA5B0A9262C14500064D4AE /* Device.swift in Sources */,

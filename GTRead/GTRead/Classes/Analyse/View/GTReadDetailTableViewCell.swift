@@ -14,7 +14,7 @@ class GTReadDetailTableViewCell: UITableViewCell {
     
     private let collectionViewCellTitle = ["时间", "专注度", "页数", "行数"]
     private let collectionViewCellImg = ["this_time", "this_concentration", "this_line", "this_page"]
-    var dataModel: GTThisTimeReadData?
+    var dataModel: GTAnalyseDataModel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

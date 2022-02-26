@@ -9,12 +9,13 @@ import Foundation
 import UIKit
 import SDWebImage
 import Alamofire
+import CoreAudio
 
 class GTRankingListCollectionViewCell: UICollectionViewCell {
     
     private var tableView: UITableView!
     var viewController: GTBookStoreTableViewController?
-    var dataModel: GTShelfDataModel?
+    var dataModel: GTBookListsDataModel?
     
     private let headerHeight = 40.0
     var headerText: String?
@@ -42,6 +43,13 @@ class GTRankingListCollectionViewCell: UICollectionViewCell {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    @objc private func readMoreBtnDidClicked(sender: UIButton) {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 30, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        let vc = GTBookReadMoreCollectionViewController(type: GTBookType.allCases[sender.tag], title: bookTypeStr[sender.tag], layout: layout)
+        self.viewController?.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -81,12 +89,14 @@ extension GTRankingListCollectionViewCell: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footerView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: self.headerHeight))
         let btn = UIButton()
+        btn.tag = self.dataModel!.lists![section].baseInfo.bookType
         btn.setTitle("查看更多", for: .normal)
         btn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         btn.setTitleColor(.black, for: .normal)
         btn.setImage(UIImage(named: "right_>"), for: .normal)
         btn.semanticContentAttribute = .forceRightToLeft
         btn.contentHorizontalAlignment = .left
+        btn.addTarget(self, action: #selector(readMoreBtnDidClicked(sender:)), for: .touchUpInside)
         footerView.addSubview(btn)
         btn.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)

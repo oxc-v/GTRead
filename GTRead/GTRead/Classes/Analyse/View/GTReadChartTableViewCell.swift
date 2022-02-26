@@ -12,7 +12,6 @@ class GTReadChartTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
 
-//    private var item = [Int]()
     private let itemCount = 3;
     private let itemCountInRow = 2;
     private var itemWidth: CGFloat = 0
@@ -21,15 +20,6 @@ class GTReadChartTableViewCell: UITableViewCell {
     
     var dataModel: GTAnalyseDataModel? {
         didSet {
-//            if dataModel?.lists != nil {
-//                item.append(0)
-//            }
-//            if dataModel?.speedPoints != nil {
-//                item.append(1)
-//            }
-//            if dataModel?.scatterDiagram != nil {
-//                item.append(2)
-//            }
             collectionView.reloadData()
         }
     }

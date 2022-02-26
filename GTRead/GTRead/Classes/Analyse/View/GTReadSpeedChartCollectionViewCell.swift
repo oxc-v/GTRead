@@ -80,33 +80,28 @@ class GTReadSpeedChartCollectionViewCell: UICollectionViewCell {
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        if model.speedPoints != nil {
-            let chartData = LineChartData()
+        let chartData = LineChartData()
 
-            //生成10条随机数据
-            var dataEntries = [ChartDataEntry]()
-            for i in 0..<model.speedPoints!.count {
-                let entry = ChartDataEntry.init(x: Double(i), y: Double(model.speedPoints![i].point))
-                dataEntries.append(entry)
-            }
-            dataEntries.sort(by: { $0.x < $1.x })
-            //这10条数据作为1根折线里的所有数据
-            let chartDataSet = LineChartDataSet(entries: dataEntries, label: "阅读速度")
-
-            //将线条颜色设置为橙色
-            chartDataSet.colors = [UIColor(hexString: "#5950c5")]
-
-            //修改线条大小
-            chartDataSet.lineWidth = 2
-
-            chartDataSet.drawValuesEnabled = false
-
-            //目前折线图只包括1根折线
-            chartData.dataSets.append(chartDataSet)
-            //设置散点图数据
-            chartView.data = chartData
-        } else {
-            chartView.clear()
+        var dataEntries = [ChartDataEntry]()
+        for i in 0..<model.speedPoints!.count {
+            let entry = ChartDataEntry.init(x: Double(i), y: Double(model.speedPoints![i]))
+            dataEntries.append(entry)
         }
+        dataEntries.sort(by: { $0.x < $1.x })
+        //这10条数据作为1根折线里的所有数据
+        let chartDataSet = LineChartDataSet(entries: dataEntries, label: "阅读速度")
+
+        //将线条颜色设置为橙色
+        chartDataSet.colors = [UIColor(hexString: "#5950c5")]
+
+        //修改线条大小
+        chartDataSet.lineWidth = 2
+
+        chartDataSet.drawValuesEnabled = false
+
+        //目前折线图只包括1根折线
+        chartData.dataSets.append(chartDataSet)
+        //设置散点图数据
+        chartView.data = chartData
     }
 }

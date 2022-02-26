@@ -69,9 +69,11 @@ class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
     
     // 更新数据
     func updateWithData(model: GTAnalyseDataModel) {
-        //生成5条随机数据
-        let dataEntries = (0..<3).map { (i) -> PieChartDataEntry in
-            return PieChartDataEntry(value: Double(arc4random_uniform(50) + 10), label: "走神")
+        
+        var dataEntries = [PieChartDataEntry]()
+        for item in model.pipChart! {
+            let entry = PieChartDataEntry(value: Double(item.Percentage), label: item.behavior)
+            dataEntries.append(entry)
         }
         let chartDataSet = PieChartDataSet(entries: dataEntries, label: "")
         
