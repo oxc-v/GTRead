@@ -18,6 +18,7 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
     private let pdfPage: Int
     private let pdfImg: UIImage
     private let commentId: Int
+    private let flag: Int       // 0表示直接打开编辑界面，1表示不用打开编辑界面
     private let parentComment: GTPDFCommentItem
     
     private var pattern: GTPDFCommentPattern = .hit
@@ -25,7 +26,8 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
     private var offset: Int
     private var commentDataModel: GTPDFCommentDataModel?
     
-    init (comment: GTPDFCommentItem, commentId: Int, img: UIImage, page: Int, bookId: String, userId: Int, layout: UICollectionViewLayout) {
+    init (flag: Int, comment: GTPDFCommentItem, commentId: Int, img: UIImage, page: Int, bookId: String, userId: Int, layout: UICollectionViewLayout) {
+        self.flag = flag
         self.bookId = bookId
         self.userId = userId
         self.pdfPage = page
@@ -38,6 +40,14 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if self.flag == 0 {
+            self.editCommentBtnDidClicked(sender: self.editCommentBtn)
+        }
     }
     
     override func viewDidLoad() {
@@ -70,7 +80,6 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
         self.collectionView.mj_footer?.beginRefreshing()
         
         collectionView.backgroundColor = .white
-//        collectionView.register(GTPDFCommentCollectionViewCell.self, forCellWithReuseIdentifier: "GTPDFCommentCollectionViewCell")
         collectionView.register(GTPDFReplyCommentCollectionViewCell.self, forCellWithReuseIdentifier: "GTPDFReplyCommentCollectionViewCell")
         collectionView.register(GTPDFParentCommentCollectionViewCell.self, forCellWithReuseIdentifier: "GTPDFParentCommentCollectionViewCell")
     }
@@ -223,12 +232,41 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
         self.collectionView.mj_footer?.beginRefreshing()
     }
     
+    // 删除子页评论按钮点击事件
+    @objc private func delSubCommentBtnDidClicked(sender: UIButton) {
+        let commentId = (self.commentDataModel?.lists![sender.tag])!.commentId
+        GTNet.shared.delPDFCommentFun(commentId: commentId, type: 1, failure: { e in
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
+                if dataModel.code == 1 {
+                    self.commentDataModel?.lists?.removeAll(where: {$0.commentId == commentId})
+                    self.showNotificationMessageView(message: "评论删除成功")
+                    
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                } else {
+                    self.showNotificationMessageView(message: "评论删除失败")
+                }
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+        })
+    }
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (self.commentDataModel?.count ?? 0) + 2
+        return (self.commentDataModel?.lists?.count ?? 0) + 2
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -262,7 +300,14 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
             cell.timeLabel.text = commentItem.remarkTime.timeIntervalChangeToTimeStr()
             cell.nicknameLabel.text = commentItem.nickname
             cell.imgView.sd_setImage(with: URL(string: commentItem.headUrl), placeholderImage: UIImage(named: "head_men"))
-//            cell.readMoreBtn.setTitle(String(self.commentDataModel!.lists![indexPath.row - 2].replyCount) + " 条回复", for: .normal)
+            
+            if self.commentDataModel!.lists![indexPath.row - 2].reviewer == self.userId {
+                cell.delCommentBtn.tag = indexPath.row - 2
+                cell.delCommentBtn.isHidden = false
+                cell.delCommentBtn.addTarget(self, action: #selector(delSubCommentBtnDidClicked(sender:)), for: .touchUpInside)
+            } else {
+                cell.delCommentBtn.isHidden = true
+            }
             
             cell.yesCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)
             cell.noCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)

@@ -544,6 +544,17 @@ extension GTNet {
             failure(error)
         }
     }
+    
+    // 删除页评论
+    func delPDFCommentFun(commentId: Int, type: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["type": type, "commentId": commentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/delCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
 }
 
 // 书城

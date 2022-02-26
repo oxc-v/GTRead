@@ -55,7 +55,7 @@ class GTBookStoreTableViewController: GTTableViewController {
     @objc private func downloadBookFinishedNotification(notification: Notification) {
         if self.tabBarController?.selectedIndex == 2 && self.navigationController?.topViewController == self {
             if let dataModel = notification.userInfo?["dataModel"] as? GTBookDataModel {
-                let fileName = dataModel.bookId              
+                let fileName = dataModel.bookId
                 if let url = GTDiskCache.shared.getPDF(fileName) {
                     self.dismiss(animated: true, completion: {
                         let vc = GTReadViewController(path: url, bookId: fileName)

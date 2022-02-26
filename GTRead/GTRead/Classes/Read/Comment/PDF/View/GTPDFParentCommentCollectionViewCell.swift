@@ -17,6 +17,7 @@ class GTPDFParentCommentCollectionViewCell: UICollectionViewCell {
     var imgView: UIImageView!
     var yesCommentBtn: UIButton!
     var noCommentBtn: UIButton!
+    var delCommentBtn: UIButton!
     
     private let leftMargin = 20
     private let topMargin = 20
@@ -27,6 +28,17 @@ class GTPDFParentCommentCollectionViewCell: UICollectionViewCell {
         self.contentView.backgroundColor = UIColor(hexString: "#f2f1f6")
         self.contentView.layer.cornerRadius = 15
         
+        delCommentBtn = UIButton()
+        delCommentBtn.isHidden = true
+        delCommentBtn.setImage(UIImage(named: "comment_del"), for: .normal)
+        delCommentBtn.imageView?.contentMode = .scaleAspectFit
+        self.contentView.addSubview(delCommentBtn)
+        delCommentBtn.snp.makeConstraints { make in
+            make.height.width.equalTo(25)
+            make.right.equalTo(-leftMargin)
+            make.top.equalTo(topMargin)
+        }
+        
         commentTitleLabel = UILabel()
         commentTitleLabel.textAlignment = .left
         commentTitleLabel.numberOfLines = 0
@@ -35,7 +47,7 @@ class GTPDFParentCommentCollectionViewCell: UICollectionViewCell {
         commentTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(topMargin)
             make.left.equalTo(leftMargin)
-            make.right.equalTo(-leftMargin)
+            make.right.equalTo(delCommentBtn.snp.left).offset(-16)
         }
         
         commentContentLabel = UILabel()

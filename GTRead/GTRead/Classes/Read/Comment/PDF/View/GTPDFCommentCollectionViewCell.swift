@@ -18,6 +18,8 @@ class GTPDFCommentCollectionViewCell: UICollectionViewCell {
     var readMoreBtn: UIButton!
     var yesCommentBtn: UIButton!
     var noCommentBtn: UIButton!
+    var editCommentBtn: UIButton!
+    var delCommentBtn: UIButton!
     
     private let leftMargin = 20
     private let topMargin = 20
@@ -28,6 +30,28 @@ class GTPDFCommentCollectionViewCell: UICollectionViewCell {
         self.contentView.backgroundColor = UIColor(hexString: "#f2f1f6")
         self.contentView.layer.cornerRadius = 15
         
+        editCommentBtn = UIButton()
+        editCommentBtn.isHidden = true
+        editCommentBtn.setImage(UIImage(named: "comment_edit"), for: .normal)
+        editCommentBtn.imageView?.contentMode = .scaleAspectFit
+        self.contentView.addSubview(editCommentBtn)
+        editCommentBtn.snp.makeConstraints { make in
+            make.height.width.equalTo(25)
+            make.right.equalTo(-leftMargin)
+            make.top.equalTo(topMargin)
+        }
+        
+        delCommentBtn = UIButton()
+        delCommentBtn.isHidden = true
+        delCommentBtn.setImage(UIImage(named: "comment_del"), for: .normal)
+        delCommentBtn.imageView?.contentMode = .scaleAspectFit
+        self.contentView.addSubview(delCommentBtn)
+        delCommentBtn.snp.makeConstraints { make in
+            make.height.width.equalTo(25)
+            make.right.equalTo(editCommentBtn.snp.left).offset(-10)
+            make.top.equalTo(topMargin)
+        }
+        
         commentTitleLabel = UILabel()
         commentTitleLabel.textAlignment = .left
         commentTitleLabel.numberOfLines = 0
@@ -36,7 +60,7 @@ class GTPDFCommentCollectionViewCell: UICollectionViewCell {
         commentTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(topMargin)
             make.left.equalTo(leftMargin)
-            make.right.equalTo(-leftMargin)
+            make.right.equalTo(delCommentBtn.snp.left).offset(-16)
         }
         
         commentContentLabel = UILabel()

@@ -263,12 +263,56 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
         self.getPDFCommentLists()
     }
     
+    // 打开子评论页面
+    private func openSubCommentView(flag: Int, comment: GTPDFCommentItem, commentId: Int) {
+        let layout = GTCommentCollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 20, left: GTViewMargin, bottom: 0, right: GTViewMargin)
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumInteritemSpacing = 10
+        let vc = GTPDFReplyCommentCollectionViewController(flag: flag, comment: comment, commentId: commentId, img: self.pdfImg, page: self.pdfPage, bookId: self.bookId, userId: self.userId, layout: layout)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    // 编辑子评论按钮点击事件
+    @objc private func editSubCommentBtnDidClicked(sender: UIButton) {
+        self.openSubCommentView(flag: 0, comment: self.commentDataModel!.lists![sender.tag], commentId: self.commentDataModel!.lists![sender.tag].commentId)
+    }
+    
+    // 删除顶层页评论按钮点击事件
+    @objc private func delTopCommentBtnDidClicked(sender: UIButton) {
+        let commentId = (self.commentDataModel?.lists![sender.tag])!.commentId
+        GTNet.shared.delPDFCommentFun(commentId: commentId, type: 0, failure: { e in
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTErrorDataModel.self, from: data!) {
+                if dataModel.code == 1 {
+                    self.commentDataModel?.lists?.removeAll(where: {$0.commentId == commentId})
+                    self.showNotificationMessageView(message: "评论删除成功")
+                    
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                } else {
+                    self.showNotificationMessageView(message: "评论删除失败")
+                }
+            } else {
+                self.showNotificationMessageView(message: "服务器数据错误")
+            }
+        })
+    }
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (self.commentDataModel?.count ?? 0) + 1
+        return (self.commentDataModel?.lists?.count ?? 0) + 1
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -286,7 +330,20 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
             cell.timeLabel.text = commentItem.remarkTime.timeIntervalChangeToTimeStr()
             cell.nicknameLabel.text = commentItem.nickname
             cell.imgView.sd_setImage(with: URL(string: commentItem.headUrl), placeholderImage: UIImage(named: "head_men"))
-            cell.readMoreBtn.setTitle(String(self.commentDataModel!.lists![indexPath.row - 1].replyCount) + " 条回复", for: .normal)
+            
+            if self.commentDataModel!.lists![indexPath.row - 1].replyCount > 0 {
+                cell.readMoreBtn.setTitle(String(self.commentDataModel!.lists![indexPath.row - 1].replyCount) + " 条回复", for: .normal)
+            } else {
+                cell.readMoreBtn.isHidden = true
+            }
+            
+            if self.commentDataModel!.lists![indexPath.row - 1].reviewer == self.userId {
+                cell.delCommentBtn.tag = indexPath.row - 1
+                cell.delCommentBtn.isHidden = false
+                cell.delCommentBtn.addTarget(self, action: #selector(delTopCommentBtnDidClicked(sender:)), for: .touchUpInside)
+            } else {
+                cell.delCommentBtn.isHidden = true
+            }
             
             cell.yesCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)
             cell.noCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)
@@ -297,16 +354,15 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
             cell.noCommentBtn.addTarget(self, action: #selector(noCommentBtnDidClicked(sender:)), for: .touchUpInside)
             cell.yesCommentBtn.addTarget(self, action: #selector(yesCommentBtnDidClicked(sender:)), for: .touchUpInside)
             
+            cell.editCommentBtn.isHidden = false
+            cell.editCommentBtn.tag = indexPath.row - 1
+            cell.editCommentBtn.addTarget(self, action: #selector(editSubCommentBtnDidClicked(sender:)), for: .touchUpInside)
+            
             return cell
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let layout = GTCommentCollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: GTViewMargin, bottom: 0, right: GTViewMargin)
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        layout.minimumInteritemSpacing = 10
-        let vc = GTPDFReplyCommentCollectionViewController(comment: self.commentDataModel!.lists![indexPath.row - 1], commentId: self.commentDataModel!.lists![indexPath.row - 1].commentId, img: self.pdfImg, page: self.pdfPage, bookId: self.bookId, userId: self.userId, layout: layout)
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.openSubCommentView(flag: 1, comment: self.commentDataModel!.lists![indexPath.row - 1], commentId: self.commentDataModel!.lists![indexPath.row - 1].commentId)
     }
 }
