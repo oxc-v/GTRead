@@ -17,6 +17,7 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
     private var editCommentBtn: UIButton!
     
     private var commentDataModel: GTBookCommentDataModel
+    private var scoreDataModel: GTBookScoreTotalDataModel?
     private let bookScore: Float
     private let remarkCount: Int
     private let userId: Int
@@ -39,6 +40,12 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.getBookScoreTotal(bookId: self.bookId)
     }
     
     override func viewDidLoad() {
@@ -81,6 +88,33 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
         self.collectionView.register(GTBookGradeCollectionViewCell.self, forCellWithReuseIdentifier: "GTBookGradeCollectionViewCell")
         self.collectionView.register(GTCommentFiltrateCollectionViewcell.self, forCellWithReuseIdentifier: "GTCommentFiltrateCollectionViewcell")
         self.collectionView.register(GTBookBigCommentCollectionViewCell.self, forCellWithReuseIdentifier: "GTBookBigCommentCollectionViewCell")
+    }
+    
+    // 获取评分统计
+    private func getBookScoreTotal(bookId: String) {
+        GTNet.shared.getBookScoreSegStat(bookId: bookId, failure: { e in
+            if GTNet.shared.networkAvailable() {
+                self.showNotificationMessageView(message: "服务器连接中断")
+            } else {
+                self.showNotificationMessageView(message: "网络连接不可用")
+            }
+        }, success: { json in
+            let data = try? JSONSerialization.data(withJSONObject: json, options: [])
+            let decoder = JSONDecoder()
+            if let dataModel = try? decoder.decode(GTBookScoreTotalDataModel.self, from: data!) {
+                if dataModel.status.code == 1 {
+                    self.scoreDataModel = dataModel
+                    
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
+                    }
+                } else {
+                    self.showNotificationMessageView(message: "获取书籍评分统计失败")
+                }
+            } else {
+                self.showNotificationMessageView(message: "书籍评分统计数据错误")
+            }
+        })
     }
     
     // 上拉刷新
@@ -261,6 +295,7 @@ class GTBookCommentCollectionViewController: GTCollectionViewController {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTBookGradeCollectionViewCell", for: indexPath) as! GTBookGradeCollectionViewCell
             cell.gradeLab.text = String(format: "%.1f", self.bookScore)
             cell.numberLab.text = String(self.remarkCount) + "个评分"
+            cell.setupScore(model: self.scoreDataModel)
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GTCommentFiltrateCollectionViewcell", for: indexPath) as! GTCommentFiltrateCollectionViewcell

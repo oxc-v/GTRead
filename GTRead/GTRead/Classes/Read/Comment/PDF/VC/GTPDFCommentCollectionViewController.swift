@@ -38,6 +38,12 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.reloadComment()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,7 +52,6 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
         
         // 评论筛选值变化
         NotificationCenter.default.addObserver(self, selector: #selector(handleGTCommentFilterValueChangedNotification(notif:)), name: .GTCommentFilterValueChanged, object: nil)
-        
         // 刷新评论内容
         NotificationCenter.default.addObserver(self, selector: #selector(reloadComment), name: .GTReflashPDFComment, object: nil)
     }
@@ -76,7 +81,6 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
         footer.setTitle("已经到底啦～", for: .noMoreData)
         footer.setRefreshingTarget(self, refreshingAction: #selector(refreshCommentData(refreshControl:)))
         self.collectionView.mj_footer = footer
-        self.collectionView.mj_footer?.beginRefreshing()
         
         collectionView.backgroundColor = .white
         collectionView.register(GTCommentFiltrateCollectionViewcell.self, forCellWithReuseIdentifier: "GTCommentFiltrateCollectionViewcell")
@@ -165,7 +169,6 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
             let data = try? JSONSerialization.data(withJSONObject: json, options: [])
             let decoder = JSONDecoder()
             if let dataModel = try? decoder.decode(GTPDFCommentDataModel.self, from: data!) {
-                print(dataModel)
                 if dataModel.count > 0 {
                     self.offset += dataModel.count
                     self.commentDataModel = dataModel
@@ -248,7 +251,6 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
                         cell.yesCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)
                         cell.noCommentBtn.setTitle(String(commentItem.hitCount), for: .normal)
                     } else {
-                        print(dataModel.errorRes)
                         self.showNotificationMessageView(message: "取消点赞失败")
                     }
                 } else {
@@ -281,7 +283,7 @@ class GTPDFCommentCollectionViewController: GTCollectionViewController {
     // 删除顶层页评论按钮点击事件
     @objc private func delTopCommentBtnDidClicked(sender: UIButton) {
         let commentId = (self.commentDataModel?.lists![sender.tag])!.commentId
-        GTNet.shared.delPDFCommentFun(commentId: commentId, type: 0, failure: { e in
+        GTNet.shared.delTopPDFComment(commentId: commentId, failure: { e in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
             } else {

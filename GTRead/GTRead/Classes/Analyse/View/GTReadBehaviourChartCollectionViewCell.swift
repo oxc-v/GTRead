@@ -72,7 +72,7 @@ class GTReadBehaviourChartCollectionViewCell: UICollectionViewCell {
         
         var dataEntries = [PieChartDataEntry]()
         for item in model.pipChart! {
-            let entry = PieChartDataEntry(value: Double(item.Percentage), label: item.behavior)
+            let entry = PieChartDataEntry(value: Double(item.Percentage * 100), label: item.behavior)
             dataEntries.append(entry)
         }
         let chartDataSet = PieChartDataSet(entries: dataEntries, label: "")

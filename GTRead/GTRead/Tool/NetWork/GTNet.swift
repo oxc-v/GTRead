@@ -426,6 +426,18 @@ extension GTNet {
 // 书籍
 extension GTNet {
     
+    // 获取书籍评分统计
+    func getBookScoreSegStat(bookId: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        
+        let params = ["bookId": bookId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8005/BookCommentService/getBookScoreSegStatFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
     // 添加书籍评论
     func addBookComment(userId: Int, bookId: String, score: Int, title: String, content: String, remarkTime: String, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
 
@@ -545,11 +557,22 @@ extension GTNet {
         }
     }
     
-    // 删除页评论
-    func delPDFCommentFun(commentId: Int, type: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
-        let params = ["type": type, "commentId": commentId] as [String : Any]
+    // 删除顶层页评论
+    func delTopPDFComment(commentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["commentId": commentId] as [String : Any]
         
-        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/delCommentFun", httpMethod: .post, params: params) { (json) in
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/delSupperCommentFun", httpMethod: .post, params: params) { (json) in
+            success(json)
+        } error: { (error) in
+            failure(error)
+        }
+    }
+    
+    // 删除页子评论
+    func delSubPDFComment(commentId: Int, parentId: Int, failure: @escaping ((AnyObject)->()), success: @escaping ((AnyObject)->())) {
+        let params = ["commentId": commentId, "parentId": parentId] as [String : Any]
+        
+        self.requestWith(url: "http://39.105.217.90:8008/PageCommentService/delSubCommentFun", httpMethod: .post, params: params) { (json) in
             success(json)
         } error: { (error) in
             failure(error)

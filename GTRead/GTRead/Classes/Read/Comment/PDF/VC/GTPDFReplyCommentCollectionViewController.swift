@@ -235,7 +235,7 @@ class GTPDFReplyCommentCollectionViewController: GTCollectionViewController {
     // 删除子页评论按钮点击事件
     @objc private func delSubCommentBtnDidClicked(sender: UIButton) {
         let commentId = (self.commentDataModel?.lists![sender.tag])!.commentId
-        GTNet.shared.delPDFCommentFun(commentId: commentId, type: 1, failure: { e in
+        GTNet.shared.delSubPDFComment(commentId: commentId, parentId: self.parentComment.commentId, failure: { e in
             if GTNet.shared.networkAvailable() {
                 self.showNotificationMessageView(message: "服务器连接中断")
             } else {

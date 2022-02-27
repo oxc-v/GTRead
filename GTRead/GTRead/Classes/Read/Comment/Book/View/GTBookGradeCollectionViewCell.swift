@@ -19,11 +19,11 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
     private var startView_3: UIImageView!
     private var startView_4: UIImageView!
     private var startView_5: UIImageView!
-    var progressView_1: UIProgressView!
-    var progressView_2: UIProgressView!
-    var progressView_3: UIProgressView!
-    var progressView_4: UIProgressView!
-    var progressView_5: UIProgressView!
+    private var progressView_1: UIProgressView!
+    private var progressView_2: UIProgressView!
+    private var progressView_3: UIProgressView!
+    private var progressView_4: UIProgressView!
+    private var progressView_5: UIProgressView!
     var numberLab: UILabel!
     
     private let progressHeight = 3
@@ -111,7 +111,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         }
         
         progressView_1 = UIProgressView()
-        progressView_1.setProgress(0.5, animated: true)
+        progressView_1.setProgress(0, animated: true)
         progressView_1.progressTintColor = .black
         self.contentView.addSubview(progressView_1)
         progressView_1.snp.makeConstraints { make in
@@ -123,7 +123,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         
         progressView_2 = UIProgressView()
         progressView_2.progressTintColor = .black
-        progressView_2.setProgress(0.2, animated: true)
+        progressView_2.setProgress(0, animated: true)
         self.contentView.addSubview(progressView_2)
         progressView_2.snp.makeConstraints { make in
             make.height.equalTo(progressHeight)
@@ -134,7 +134,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         
         progressView_3 = UIProgressView()
         progressView_3.progressTintColor = .black
-        progressView_3.setProgress(0.2, animated: true)
+        progressView_3.setProgress(0, animated: true)
         self.contentView.addSubview(progressView_3)
         progressView_3.snp.makeConstraints { make in
             make.height.equalTo(progressHeight)
@@ -145,7 +145,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         
         progressView_4 = UIProgressView()
         progressView_4.progressTintColor = .black
-        progressView_4.setProgress(0.05, animated: true)
+        progressView_4.setProgress(0, animated: true)
         self.contentView.addSubview(progressView_4)
         progressView_4.snp.makeConstraints { make in
             make.height.equalTo(progressHeight)
@@ -156,7 +156,7 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
         
         progressView_5 = UIProgressView()
         progressView_5.progressTintColor = .black
-        progressView_5.setProgress(0.05, animated: true)
+        progressView_5.setProgress(0, animated: true)
         self.contentView.addSubview(progressView_5)
         progressView_5.snp.makeConstraints { make in
             make.height.equalTo(progressHeight)
@@ -183,5 +183,21 @@ class GTBookGradeCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupScore(model: GTBookScoreTotalDataModel?) {
+        if model?.lists != nil && model?.lists?.count == 5 {
+            var total = 0
+            for item in model!.lists! {
+                total += item.count
+            }
+            if total != 0 {
+                self.progressView_1.setProgress(Float(model!.lists![4].count) / Float(total), animated: true)
+                self.progressView_2.setProgress(Float(model!.lists![3].count) / Float(total), animated: true)
+                self.progressView_3.setProgress(Float(model!.lists![2].count) / Float(total), animated: true)
+                self.progressView_4.setProgress(Float(model!.lists![1].count) / Float(total), animated: true)
+                self.progressView_5.setProgress(Float(model!.lists![0].count) / Float(total), animated: true)
+            }
+        }
     }
 }
