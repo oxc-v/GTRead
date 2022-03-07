@@ -138,13 +138,20 @@ class GTBookDetailTableViewController: GTTableViewController {
                 self.loadingView.isAnimating = true
                 
                 // 判断书籍是否已加入书库
+                var isExit = false
                 let shelfDataModel: GTShelfDataModel? = GTUserDefault.shared.data(forKey: GTUserDefaultKeys.GTShelfDataModel)
                 if shelfDataModel != nil && shelfDataModel!.count > 0 {
                     if (shelfDataModel!.lists)!.contains(where: {$0.bookId == self.dataModel.bookId}) {
                         self.showNotificationMessageView(message: "书籍已经在书架了哟")
                         self.loadingView.isAnimating = false
+                        isExit = true
+                    } else {
+                        isExit = false
                     }
-                } else {
+                }
+                
+                if !isExit {
+                    print("oxc")
                     GTNet.shared.addBookToShelfFun(bookId: self.dataModel.bookId, failure: { error in
                         self.loadingView.isAnimating = false
                         if GTNet.shared.networkAvailable() {
@@ -153,6 +160,7 @@ class GTBookDetailTableViewController: GTTableViewController {
                             self.showNotificationMessageView(message: "网络连接不可用")
                         }
                     }, success: { json in
+                        print("cxj")
                         self.loadingView.isAnimating = false
                         
                         let data = try? JSONSerialization.data(withJSONObject: json, options: [])
