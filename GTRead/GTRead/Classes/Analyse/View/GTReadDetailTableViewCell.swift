@@ -12,7 +12,7 @@ class GTReadDetailTableViewCell: UITableViewCell {
     
     private var collectionView: UICollectionView!
     
-    private let collectionViewCellTitle = ["时间", "专注度", "页数", "行数"]
+    private let collectionViewCellTitle = ["时间", "专注度", "行数", "页数"]
     private let collectionViewCellImg = ["this_time", "this_concentration", "this_line", "this_page"]
     var dataModel: GTAnalyseDataModel? {
         didSet {

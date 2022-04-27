@@ -151,7 +151,6 @@ class GTBookDetailTableViewController: GTTableViewController {
                 }
                 
                 if !isExit {
-                    print("oxc")
                     GTNet.shared.addBookToShelfFun(bookId: self.dataModel.bookId, failure: { error in
                         self.loadingView.isAnimating = false
                         if GTNet.shared.networkAvailable() {
@@ -160,7 +159,6 @@ class GTBookDetailTableViewController: GTTableViewController {
                             self.showNotificationMessageView(message: "网络连接不可用")
                         }
                     }, success: { json in
-                        print("cxj")
                         self.loadingView.isAnimating = false
                         
                         let data = try? JSONSerialization.data(withJSONObject: json, options: [])
